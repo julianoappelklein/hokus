@@ -1,0 +1,12 @@
+{
+    "files.exclude": {
+        "node_modules/": true,
+        "dist/":true,
+        "samples/":true,
+        "build/":true
+    },
+    "files.associations": {
+        "*.hokus": "json",
+        "*.jsonc": "jsonc"
+    }
+}

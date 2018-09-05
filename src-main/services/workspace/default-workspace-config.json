@@ -1,0 +1,34 @@
+{
+	"hugover": "0.35",
+	"collections":[
+		{
+			"key": "posts",
+			"title": "Posts",
+			"folder": "content/posts/",
+			"extension": "md",
+			"dataformat": "yaml",
+			"itemtitle": "Post",
+			"fields":[
+				{ "type":"info", "content":"#" },
+                { "key":"title", "title":"Title", "type":"string" },
+                { "key":"mainContent", "title":"Content", "type":"markdown" },
+                { "key":"pubdate", "title":"Pub Date", "type":"date" },
+				{ "key":"draft", "title":"Draft", "type":"boolean" },
+				{ "key":"resource-manager", "type":"resource-manager", "resourcetype":"img", "path":"imgs", "extensions":["png","jpg","gif"], "fields":[
+					{ "key":"title", "title":"Title", "type":"string" },
+					{ "key":"description", "title":"Description", "type":"string", "multiline":true }
+				]}
+			]
+		}
+	],
+	"singles":[
+		{
+			"key": "mainConfig",
+			"title": "Main Config",
+			"file": "config.yaml",
+			"fields":[
+                { "key":"title", "title":"Site Title", "type":"string" }
+			]
+		}
+	]
+}

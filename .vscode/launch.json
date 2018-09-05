@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug CreateThumbnail Process",
+            "program": "${workspaceFolder}/src-main/spawns/create-thumbnail.js",
+            "args":["D:/dog03.gif","D:/dog03_thumb.gif"]
+        },
+        {
+            //from: https://electronjs.org/docs/tutorial/debugging-main-process-vscode
+
+            "name": "Debug Main Process",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "args" : ["."],
+            "env": {
+                "APP_ENV": "development",
+                "REACT_DEV_URL": "http://localhost:4000"
+            },
+            "windows": {
+                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+            }
+        },
+        {
+            //from: https://gist.github.com/paambaati/54d33e409b4f7cf059cc
+
+            "name": "Run Mocha", // Name of configuration; appears in the launch configuration drop down menu.
+            "type": "node", // Type of configuration. Possible values: "node", "mono".
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",// Workspace relative or absolute path to the program.
+            "stopOnEntry": false, // Automatically stop program after launch.
+            "args": ["--no-timeouts", "test.js"], // Command line arguments passed to the program.
+            "cwd": "${workspaceFolder}", // Workspace relative or absolute path to the working directory of the program being debugged. Default is the current workspace.
+            "runtimeExecutable": null, // Workspace relative or absolute path to the runtime executable to be used. Default is the runtime executable on the PATH.
+			"env": { "NODE_ENV": "production"} // Environment variables passed to the program.
+		}
+    ]
+}

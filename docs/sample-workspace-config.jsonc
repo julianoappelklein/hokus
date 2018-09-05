@@ -1,0 +1,45 @@
+{
+    "hugoVer":"0.35",//required
+    "collections": 
+    [
+        {
+            //sample with content file
+            "key":"posts", //required:true
+            "title":"Blog Posts", //required: true
+            "folder":"content/posts", //required: true, must starts with 'content'
+            "extension": "md", //required:true, options: ['md','mmark','html']
+            "dataformat": "yaml", //required:false, options: ['json','yaml'], default:'yaml'
+            "itemtitle":"Post", //required: false
+            "fields":[/*see: saple-fields.json*/]
+        },
+        {
+            //sample with data file
+            "key":"authors", //required:true
+            "title":"Blog Posts", //required: true
+            "folder":"data/posts", //required: true, must starts with 'data'
+            "extension": "yaml", //required:true, options: ['json','yaml']
+            "dataformat": "yaml", //required:false, options: ['json','yaml'], must match extension
+            "itemtitle":"Post", //required: false
+            "fields":[/*see: saple-fields.json*/] 
+        }
+    ],
+    "single": 
+    [
+        {
+            //sample with data file
+            "key":"styleConfig", //required:true
+            "title":"Style Config", //required:true
+            "file":"config.yaml", //required:true
+            "dataformat": "yaml", //required:false, options: ['json','yaml'], must match the file extension
+            "fields":[/*see: saple-fields.json*/] 
+        },
+        {
+            //sample with content file
+            "key":"home", //required:true
+            "title":"Home", //required:true
+            "file":"content/home.md", //required:true, options: ['json', 'yaml','']
+            "dataformat":"yaml",//required:false (true if file format), options: ['json','yaml'], default:'yaml'
+            "fields":[/*see: saple-fields.json*/] 
+        }
+    ]
+}
