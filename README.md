@@ -26,12 +26,17 @@ Hokus is not ready to use, but you can [download our binaries right now](https:/
 
 ## Getting Started
 
-* [Download the binaries (only for Windows)](https://s3.amazonaws.com/hokus.io/hokus-cms-win-x64.exe).
+* [Download the binaries (only for Windows)](https://s3.amazonaws.com/hokus.io/hokus-cms-win-x64.exe) (to run in Linux or Mac, see below).
 * Install it.
 * Open Hokus.
 * Configure a new website (at the moment, the only option is to point to a root of a local Hugo website - the Folder Source).
 * A default configuration (hokus.yaml) will be placed at the root of your website. After this, you are ready to create a post.
 * Tweek the config to sweet your needs. You can create more collections and singles.
+
+## Running In Linux or Mac
+
+You can download the source code and compile the project in your enviroment.
+If you want, you could send me the compiled binaries for sharing.
 
 ## Help Wanted
 
