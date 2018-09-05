@@ -2,6 +2,8 @@
 
 A CMS for Hugo to run in your computer.
 
+[![](https://www.hokus.io/img/home-video-placeholder.jpg)](https://www.hokus.io/)
+
 For a quick preview, access our website and look for our **preview video**:
 https://www.hokus.io/
 
