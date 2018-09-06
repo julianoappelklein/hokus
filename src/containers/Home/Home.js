@@ -18,7 +18,6 @@ import TextField from 'material-ui/TextField';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 import { Wrapper, InfoLine, InfoBlock, MessageBlock } from './components/shared';
 import Workspaces from './components/Workspaces';
-import EmptyConfigurations from './components/EmptyConfigurations';
 import CreateSiteDialog from './components/CreateSiteDialog/';
 
 import type { Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from './../../types';
