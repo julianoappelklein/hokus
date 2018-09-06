@@ -63,13 +63,13 @@ function getWorkspaceServicePromise(siteKey, workspaceKey, callback){
     });
 }
 
-api.getConfigurations = function(args, promise){
+api.getConfigurations = function(options, promise){
     configurationDataProvider.get(function(err, data){
         if(err)
             promise.reject(err);
         else
             promise.resolve(data);
-    });
+    }, options);
 }
 
 api.openFileExplorer = function({path}, promise){   

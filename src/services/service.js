@@ -29,12 +29,17 @@ class Service extends BaseService {
         this._siteAndWorkspaceDataPromise = undefined;
     }
 
-    getConfigurations() /* : Promise<Configurations> */{
-        if(this._configurations)
-            return Promise.resolve(this._configurations);
+    getConfigurations(refetch?: boolean) /* : Promise<Configurations> */{
+        if(this._configurations){
+            if(refetch===true)
+                this._configurations = null;
+            else
+                return Promise.resolve(this._configurations);
+        }
         if(!this._configurationsPromise){
-            this._configurationsPromise = api.getConfigurations().then((configurations)=>{
+            this._configurationsPromise = api.getConfigurations({invalidateCache: refetch}).then((configurations)=>{
                 this._configurations = configurations;
+                this._configurationsPromise = null;
                 return configurations;
             });
         }

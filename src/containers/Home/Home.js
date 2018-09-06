@@ -183,6 +183,14 @@ class Home extends React.Component<HomeProps, HomeState>{
         this.setState({createSiteDialog: true});
     }
 
+    handleCreateSiteSubmit = (data)=>{
+        this.setState({createSiteDialog:false})
+        service.api.createSite(data).then(()=>{
+            service.getConfigurations(true)
+                .then((configurations)=>this.setState({configurations}));
+        });
+    }
+
     render(){
 
         let { siteKey } = this.props;
@@ -231,12 +239,7 @@ class Home extends React.Component<HomeProps, HomeState>{
                 <CreateSiteDialog
                     open={createSiteDialog}
                     onCancelClick={()=>this.setState({createSiteDialog:false})}
-                    onSubmitClick={(data)=>{
-                        this.setState({createSiteDialog:false})
-                        service.api.createSite(data);
-                        //TODO - make this right
-                        window.location = window.location;
-                    }}
+                    onSubmitClick={this.handleCreateSiteSubmit}
                 />
             </div>         
         );

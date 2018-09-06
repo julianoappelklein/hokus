@@ -3,8 +3,8 @@
 import mainProcessBridge from './utils/main-process-bridge'
 
 export class API {
-    getConfigurations(){
-        return mainProcessBridge.request('getConfigurations');
+    getConfigurations(options?: {invalidateCache: bool}){
+        return mainProcessBridge.request('getConfigurations', options);
     }
 
     listWorkspaces(siteKey){

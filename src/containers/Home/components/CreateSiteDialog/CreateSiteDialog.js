@@ -29,17 +29,19 @@ const SITE_SOURCES = [
 
 const OUTPUT_FORMATS = ['JSON','YAML','TOML'];
 
+const INITIAL_STATE = {
+    formIsValid: false,
+    model: {},
+    sourceIndex: -1,
+    key:''
+};
+
 export default class CreateSiteDialog extends React.Component<CreateSiteDialogProps,CreateSiteDialogState>{
     
     constructor(props: CreateSiteDialogProps){
         super(props);
 
-        this.state = {
-            formIsValid: false,
-            model: {},
-            sourceIndex: -1,
-            key:''
-        }
+        this.state = JSON.parse(JSON.stringify(INITIAL_STATE));
     }
 
     handleFormChange(model: any, valid: bool){
@@ -64,6 +66,7 @@ export default class CreateSiteDialog extends React.Component<CreateSiteDialogPr
             }
         );
         this.props.onSubmitClick(data);
+        this.setState(JSON.parse(JSON.stringify(INITIAL_STATE)));
     }
 
     handleSourceChange(e: Event, index: number){
