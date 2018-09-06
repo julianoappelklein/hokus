@@ -1,3 +1,5 @@
+//@flow
+
 const { spawn } = require('child_process');
 const pathHelper = require('./path-helper');
 const fs = require('fs-extra');
@@ -8,16 +10,29 @@ let {ipcMain} = require('electron');
 
 let currentServerProccess = undefined;
 
+/*::
+type HugoServerConfig = {
+    hugoArgs: Array<string>,
+    workspacePath: string,
+    hugover: string,
+    env: any,
+    destination: string
+}
+*/
+
 class HugoServer{
-    constructor({hugoArgs, workspacePath, hugover, env, destination}){
-        this.hugoArgs = hugoArgs;
-        this.workspacePath = workspacePath;
-        this.hugover = hugover;
-        this.env = env;
-        this.destination = destination;
+
+    /*::
+    config: HugoServerConfig;
+    */
+
+    constructor(config/*: HugoServerConfig*/){
+        this.config = config;
     }   
 
     _validateHugoArgs(){
+
+        let {hugoArgs} = this.config;
 
         //TODO: do some real validation do prevent damages!
         // The validation should consider the Hugo version
@@ -41,10 +56,10 @@ class HugoServer{
         ];
 
         let invalidMessage;
-        for(let i=0; i < this.hugoArgs.length; i++){
-            let arg = this.hugoArgs[i];
+        for(let i=0; i < hugoArgs.length; i++){
+            let arg = hugoArgs[i];
             arg = arg.trim()
-            this.hugoArgs[i] = arg;
+            hugoArgs[i] = arg;
             let isFlag = arg.startsWith('-');
             if(isFlag){
                 for(let f=0; f < forbiddenFlags.length; f++){
@@ -89,7 +104,9 @@ class HugoServer{
         }
     }
 
-    serve(callback){
+    serve(callback/*: (error: ?Error)=>void*/){
+
+        let {hugoArgs, workspacePath, hugover, env, destination} = this.config;
 
         this.stopIfRunning();
 
@@ -99,46 +116,45 @@ class HugoServer{
             return;
         }
         else{
-            this.hugoArgs.unshift('server');
+            hugoArgs.unshift('server');
 
-            const exec = pathHelper.getHugoBinForVer(this.hugover);
+            const exec = pathHelper.getHugoBinForVer(hugover);
             fs.exists(exec, (exists) => {
-                if(exists){
-                    try{
-                        
-                        currentServerProccess = spawn(
-                            exec,
-                            this.hugoArgs,
-                            {
-                                cwd: this.workspacePath,
-                                windowsHide: true,
-                                timeout: undefined,
-                                env: this.env
-                            }
-                        );
-                        let {stdout} = currentServerProccess;
-                        this.emitLines(stdout);
-                        stdout.setEncoding('utf8');
-                        stdout.resume();
-
-                        let isFirst = true;
-                        stdout.on('line', function (line) {
-                            if(isFirst){
-                                isFirst=false;
-                                outputConsole.appendLine('Starting Hugo Server...');
-                                outputConsole.appendLine('');
-                                return;
-                            }
-                            outputConsole.appendLine(line);
-                        });                        
-                        
-                    }
-                    catch(e){
-                        callback(e);
-                    }
+                if(!exists){
+                    callback(new Error('Could not find hugo.exe for version '+ hugover));
+                    return;
                 }
-                else{
-                    callback('Could not find hugo.exe for version '+this.hugover);
+                try{
+                    
+                    currentServerProccess = spawn(
+                        exec,
+                        hugoArgs,
+                        {
+                            cwd: workspacePath,
+                            windowsHide: true,
+                            timeout: undefined,
+                            env: env
+                        }
+                    );
+                    let {stdout} = currentServerProccess;
+                    this.emitLines(stdout);
+                    stdout.setEncoding('utf8');
+                    stdout.resume();
+
+                    let isFirst = true;
+                    stdout.on('line', function (line) {
+                        if(isFirst){
+                            isFirst=false;
+                            outputConsole.appendLine('Starting Hugo Server...');
+                            outputConsole.appendLine('');
+                            return;
+                        }
+                        outputConsole.appendLine(line);
+                    });                        
+                    
+                }
+                catch(e){
+                    callback(e);
                 }
             })
         }

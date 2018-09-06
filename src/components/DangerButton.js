@@ -1,7 +1,23 @@
-import React from 'react';
+//@flow
 
-class DangerButton extends React.Component{
-    constructor(props){
+import * as React from 'react';
+
+type DangerButtonProps = {
+    button: React.Element<*>,
+    loadedButton?: React.Element<*>,
+    loadedProps?: Object,
+    onClick: (event: Event, warn: bool)=>void
+}
+
+type DangerButtonState = {
+    clicked: bool
+}
+
+class DangerButton extends React.Component<DangerButtonProps,DangerButtonState>{
+    
+    timeout: any;
+
+    constructor(props: DangerButtonProps){
         super(props);
         this.state = { clicked:false }
         this.timeout = 0;
@@ -16,7 +32,7 @@ class DangerButton extends React.Component{
         this.clearTimeout();
     }
 
-    onButtonClick(e){
+    onButtonClick(e: Event){
         
         if(this.props.onClick)
                 this.props.onClick(e, this.state.clicked);
@@ -36,15 +52,17 @@ class DangerButton extends React.Component{
 
     render(){
         if(this.props.loadedButton){
-            if(!this.state.clicked){
-                return React.cloneElement(this.props.button, { onClick: this.onButtonClick.bind(this) });
-            }
-            else{
-                return React.cloneElement(this.props.loadedButton, { onClick: this.onButtonClick.bind(this) });
-            }
+            return React.cloneElement(
+                (this.state.clicked ? this.props.loadedButton : this.props.button),
+                { onClick: this.onButtonClick.bind(this) }
+            );            
         }
         else{
-            let _props = Object.assign(this.state.clicked ? this.props.loadedProps : { onClick: this.onButtonClick.bind(this) });
+            let _props = Object.assign(
+                {},
+                (this.state.clicked ? this.props.loadedProps : undefined ),
+                { onClick: this.onButtonClick.bind(this) }
+            );
             return React.cloneElement(this.props.button, _props);
         }
         

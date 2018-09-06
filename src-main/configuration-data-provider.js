@@ -1,3 +1,5 @@
+//@flow
+
 const osenv = require('osenv');
 const glob = require('glob');
 const fs = require('fs-extra');
@@ -5,12 +7,18 @@ const path = require('path');
 const pathHelper = require('./path-helper');
 const formatProviderResolver = require('./format-provider-resolver');
 const outputConsole = require('./output-console');
+const Joi = require('joi');
 
 let configurationCache = undefined;
 
 const supportedFormats = formatProviderResolver.allFormatsExt().join(',');
 const defaultPathSearchPattern = (pathHelper.getRoot() + 'config.{'+supportedFormats+'}').replace(/\\/gi,'/');
 const namespacedPathSearchPattern = (pathHelper.getRoot() + 'config.*.{'+supportedFormats+'}').replace(/\\/gi,'/');
+const globalConfigPattern = (pathHelper.getRoot() + 'config.{'+supportedFormats+'}').replace(/\\/gi,'/');
+/*::
+    import type { SiteConfig } from './../global-types';
+*/
+
 
 let EMPTY_CFG = {
     empty:true,
@@ -20,32 +28,42 @@ function emptyCfg(){
     return EMPTY_CFG;
 }
 
-function normalizeConfig(config){
 
-    if(typeof(config)==='string'){
-        config = JSON.parse(config);
-    }
 
-    if(config===undefined || config.sites === undefined || config.sites.length===0){
-        return emptyCfg();
-    }
-
-    function normalizeSite(sites){
-        if(sites.collections===undefined)
-            sites.collections = [];
-        if(sites.singles===undefined)
-            sites.singles = [];
-        return sites;
-    }
-
-    config.sites = config.sites.map(normalizeSite);
-
-    _configurations = config;
-
-    return config;
+function normalizeSite(site/*: SiteConfig*/)/*: void*/{
+    
 }
 
-function get(callback, {invalidateCache}={}){
+function validateSite(site/*: SiteConfig*/)/*: void*/{
+    if(site==null){
+        throw new Error(`Site config can't be null.`);
+    }
+    const schema = Joi.object().keys({
+        key: Joi.string().required(),
+        name: Joi.string().required(),
+        source: Joi.object().required(),
+        serve: Joi.array(),
+        build: Joi.array(),
+        publish: Joi.array(),
+        transform: Joi.array()
+    });
+    const result = Joi.validate(site, schema);
+    if(result.error)
+        throw result.error;
+}
+
+
+const GLOBAL_DEFAULTS = {
+    debugEnabled: false,
+    cookbookEnabled: true,
+    siteManagementEnabled: true
+}
+
+function invalidateCache(){
+    configurationCache = undefined;
+}
+
+function get(callback/*: (err: ?Error, data: any)=>void*/, {invalidateCache}/*: {invalidateCache?: bool}*/ = {}){
 
     if(invalidateCache===true)
         configurationCache = undefined;
@@ -59,7 +77,7 @@ function get(callback, {invalidateCache}={}){
         .concat(glob.sync(namespacedPathSearchPattern))
         .map(x=>path.normalize(x));
         
-    let configurations = {sites:[]};
+    let configurations/*: { sites: Array<{}>, global: {} }*/ = {sites:[], global: GLOBAL_DEFAULTS};
 
     for(let i = 0; i < files.length; i++){
         let file = files[i];
@@ -67,20 +85,37 @@ function get(callback, {invalidateCache}={}){
             try{
                 let strData = fs.readFileSync(file, {encoding: 'utf-8'});
                 let formatProvider = formatProviderResolver.resolveForFilePath(file);
-                let data = formatProvider.parse(strData);
-                data = normalizeConfig(data);
-                if(data!=EMPTY_CFG){
-                    configurations.sites = configurations.sites.concat(data.sites);
-                }
-                else{
-                    outputConsole.appendLine(`Configuration file '${file}' is empty.`);
-                }
+                let site = formatProvider.parse(strData);
+                validateSite(site);
+                normalizeSite(site);
+                site.configPath = file;
+                configurations.sites.push(site);
+                
             }
             catch(e){
                 outputConsole.appendLine(`Configuration file is invalid '${file}': ${e.toString()}`);
             }
         }
     }
+
+    let globalConfigFile = (glob.sync(globalConfigPattern)||[])[0];
+    if(globalConfigFile){
+        try{
+            let strData = fs.readFileSync(globalConfigFile, {encoding: 'utf-8'});
+            let formatProvider = formatProviderResolver.resolveForFilePath(globalConfigFile);
+            let global = formatProvider.parse(strData);
+            global = {
+                debugEnabled: global.debugEnabled == null ? GLOBAL_DEFAULTS.debugEnabled : global.debugEnabled===true, //default false
+                cookbookEnabled: global.cookbookEnabled == null ? GLOBAL_DEFAULTS.cookbookEnabled : global.debugEnabled===true, //default true
+                siteManagementEnabled: global.siteManagementEnabled == null ? GLOBAL_DEFAULTS.siteManagementEnabled : global.siteManagementEnabled===true
+            }
+            configurations.global = global;
+        }
+        catch(e){
+            outputConsole.appendLine(`Global configuration file is invalid '${globalConfigFile}': ${e.toString()}`);
+        }
+    }
+    
     
     if(configurations.sites.length>0){
         configurationCache = configurations;
@@ -92,4 +127,4 @@ function get(callback, {invalidateCache}={}){
     
 }
 
-module.exports = { get }
+module.exports = { get, invalidateCache }

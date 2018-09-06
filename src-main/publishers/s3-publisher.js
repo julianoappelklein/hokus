@@ -1,16 +1,30 @@
+//@flow
+
 const s3 = require('s3')
 
-class S3Publisher{
-    constructor(config){
-        let {accessKeyId, secretAccessKey, region, localDir, s3PutObjectParams} = config;
-        this.accessKeyId = accessKeyId;
-        this.secretAccessKey = secretAccessKey;
-        this.region = region;
-        this.localDir = localDir;
-        this.s3PutObjectParams = s3PutObjectParams;
+/*::
+import type { IPublisher } from './types';
+
+type S3PublisherConfig = {
+    accessKeyId: string,
+    secretAccessKey: string,
+    region: string,
+    localDir: string,
+    s3PutObjectParams: {[string]: string}
+};
+
+ */
+
+class S3Publisher/*:: implements IPublisher*/{
+
+    /*::
+    _config: S3PublisherConfig;
+    */
+    constructor(config/*: S3PublisherConfig */){
+        this._config = config;
     }
 
-    unixBackslashes (input){
+    unixBackslashes (input/*: string*/){
         const isExtendedLengthPath = /^\\\\\?\\/.test(input);
         const hasNonAscii = /[^\u0000-\u0080]+/.test(input);
 
@@ -21,11 +35,11 @@ class S3Publisher{
         return input.replace(/\\/g, '/');
     }
 
-    winBackslashes (input){
+    winBackslashes (input/*: string*/){
         return input.replace(/\//g,'\\');
     }
 
-    publish(callback){
+    publish(callback/*: (error: ?Error)=>void*/)/*: void*/{
         let clientConfig = {
             //maxAsyncS3: 20,     // this is the default 
             //s3RetryCount: 3,    // this is the default 
@@ -33,18 +47,18 @@ class S3Publisher{
             //multipartUploadThreshold: 20971520, // this is the default (20 MB) 
             //multipartUploadSize: 15728640, // this is the default (15 MB) 
             s3Options: {
-                accessKeyId: this.accessKeyId,
-                secretAccessKey: this.secretAccessKey,
-                region: this.region
+                accessKeyId: this._config.accessKeyId,
+                secretAccessKey: this._config.secretAccessKey,
+                region: this._config.region
                 // any other options are passed to new AWS.S3(). See: http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Config.html#constructor-property 
             }
         };
         var client = s3.createClient(clientConfig);
 
         var params = {
-            localDir: this.unixBackslashes(this.localDir),
+            localDir: this.unixBackslashes(this._config.localDir),
             deleteRemoved: true, // default false, whether to remove s3 objects that have no corresponding local file. 
-            s3Params: this.s3PutObjectParams
+            s3Params: this._config.s3PutObjectParams
             /*{
                 Bucket: "s3 bucket name",
                 Prefix: "some/remote/dir/",

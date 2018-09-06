@@ -2,7 +2,7 @@
 
 import mainProcessBridge from './utils/main-process-bridge'
 
-class API {
+export class API {
     getConfigurations(){
         return mainProcessBridge.request('getConfigurations');
     }
@@ -89,9 +89,13 @@ class API {
     getThumbnailForCollectionItemImage(siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath){
         return mainProcessBridge.request('getThumbnailForCollectionItemImage', {siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath}, {timeout: 30000});
     }
+
+    createSite(siteConfig: any){
+        return mainProcessBridge.request('createSite', siteConfig);
+    }
 }
 
-let api : API = new API();
+const api : API = new API();
 
 //just to help debugging
 // for(let key in api){

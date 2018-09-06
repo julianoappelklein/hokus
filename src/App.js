@@ -10,16 +10,20 @@ import CollectionItem from './containers/CollectionItem';
 import Single from './containers/Single';
 import Header from './containers/Header';
 import NotificationUI from './containers/NotificationUI';
+import WorkspaceSidebar from './containers/WorkspaceSidebar';
+import { Sidebar } from './containers/Sidebar';
+import ExtraOptions from './containers/ExtraOptions';
+import { FormsCookbookSidebar, FormsCookbook } from './containers/FormsCookbook';
 
 //MATERIAL UI
+import { MenuItem } from 'material-ui/';
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Redirect from 'react-router-dom/Redirect';
 
 import './css/App.css';
-import SidebarMenu from './containers/SidebarMenu';
-import ExtraOptions from './containers/ExtraOptions';
+
 
 //the default locked UI style
 const style = {
@@ -92,12 +96,8 @@ class App extends React.Component<AppProps,AppState>{
   }
 
   toggleMenuIsLocked(){   
-    let menuIsLocked = !this.state.menuIsLocked;
-    let forceShowMenu;
-    if(!menuIsLocked){
-      forceShowMenu = false;
-    }
-    this.setState({menuIsLocked, forceShowMenu, skipMenuTransition:true});
+    let menuIsLocked = !this.state.menuIsLocked;    
+    this.setState({menuIsLocked, forceShowMenu: true, skipMenuTransition:true});
     window.dispatchEvent(new Event('resize'));
   }
 
@@ -106,8 +106,8 @@ class App extends React.Component<AppProps,AppState>{
     this.setState({forceShowMenu});
   }
 
-  renderSidebar = (history : any, url : string, site : ?string, workspace : ?string)=>{
-    return <SidebarMenu
+  renderWorkspaceSidebar = (history : any, url : string, site : ?string, workspace : ?string)=>{
+    return <WorkspaceSidebar
       key={ url }
       siteKey={ site ? decodeURIComponent(site) : null }
       workspaceKey={ workspace ? decodeURIComponent(workspace) : null }
@@ -116,15 +116,54 @@ class App extends React.Component<AppProps,AppState>{
       menuIsLocked={this.state.menuIsLocked}
       onToggleItemVisibility={()=>{this.toggleForceShowMenu()}}
       onLockMenuClicked={()=>{this.toggleMenuIsLocked()}} />
+  }   
+
+  getExtraOptionsSwitch(){
+    return (<Switch>
+      <Route path="/forms-cookbook" exact={false} render={ ({match, history})=> {
+        return (
+          <ExtraOptions
+                items={ [
+                  <MenuItem primaryText="Reload" onClick={ ()=>{ window.location = window.location; } } />,
+                  <MenuItem primaryText="Restart Application" onClick={ ()=>{ const app = window.require('electron').remote.app; app.relaunch(); app.exit(0); } } />,
+                  <MenuItem primaryText="Exit Cookbook" onClick={()=>{ history.push('/') }} />
+                ]}
+              />
+          );
+      }} />
+      <Route
+        path="*"
+        render={ ({match, history})=>{
+          return (
+            <ExtraOptions
+              items={ [
+                <MenuItem primaryText="Reload" onClick={ ()=>{ window.location = window.location; } } />,
+                <MenuItem primaryText="Restart Application" onClick={ ()=>{ const app = window.require('electron').remote.app; app.relaunch(); app.exit(0); } } />,
+                <MenuItem primaryText="Forms Cookbook" onClick={()=>{ history.push('/forms-cookbook') }} />
+              ]}
+            />
+          );
+        }}
+      />
+    </Switch>);
   }
 
   getMenuSwitch(){
     return (<Switch>
       <Route path='/sites/:site/workspaces/:workspace' render={ ({match, history})=> {
-        return this.renderSidebar(history, match.url, match.params.site, match.params.workspace);
+        return this.renderWorkspaceSidebar(history, match.url, match.params.site, match.params.workspace);
       }} />
-      <Route path="*" render={ ({match, history})=> {
-        return this.renderSidebar(history, match.url, null, null);
+      <Route path="/" exact={true} render={ ({match, history})=> {
+        return this.renderWorkspaceSidebar(history, match.url, null, null);
+      }} />
+      <Route path="/forms-cookbook" exact={false} render={ ({match, history})=> {
+        return (<FormsCookbookSidebar
+          menus={[]}
+          hideItems={!this.state.forceShowMenu && !this.state.menuIsLocked}
+          menuIsLocked={this.state.menuIsLocked}
+          onToggleItemVisibility={()=>{this.toggleForceShowMenu()}}
+          onLockMenuClicked={()=>{this.toggleMenuIsLocked()}}
+        />);
       }} />
     </Switch>);
   }
@@ -135,32 +174,22 @@ class App extends React.Component<AppProps,AppState>{
         return <Home />
       }} />
       <Route path='/sites/:site/workspaces/:workspace' exact render={ ({match})=> {
-        return <Home
-          key={ match.url }
-          siteKey={ decodeURIComponent(match.params.site) }
-          workspaceKey={ decodeURIComponent(match.params.workspace) } />
+        //$FlowFixMe
+        return <Home key={ match.url } siteKey={ decodeURIComponent(match.params.site) } workspaceKey={ decodeURIComponent(match.params.workspace) } />
       }} />
       <Route path='/sites/:site/workspaces/:workspace/collections/:collection' exact render={ ({match})=> {
-        return <Collection
-          key={ match.url }
-          siteKey={ decodeURIComponent(match.params.site) }
-          workspaceKey={ decodeURIComponent(match.params.workspace) }
-          collectionKey={ decodeURIComponent(match.params.collection) } />
+        //$FlowFixMe
+        return <Collection key={ match.url } siteKey={ decodeURIComponent(match.params.site) } workspaceKey={ decodeURIComponent(match.params.workspace) } collectionKey={ decodeURIComponent(match.params.collection) } />
       }} />
       <Route path='/sites/:site/workspaces/:workspace/collections/:collection/:item' exact render={ ({match})=> {
-        return <CollectionItem
-          key={ match.url }
-          siteKey={ decodeURIComponent(match.params.site) }
-          workspaceKey={ decodeURIComponent(match.params.workspace) }
-          collectionKey={ decodeURIComponent(match.params.collection) }
-          collectionItemKey={ decodeURIComponent(match.params.item) } />
+        //$FlowFixMe
+        return <CollectionItem key={ match.url } siteKey={ decodeURIComponent(match.params.site) } workspaceKey={ decodeURIComponent(match.params.workspace) } collectionKey={ decodeURIComponent(match.params.collection) }           collectionItemKey={ decodeURIComponent(match.params.item) } /> 
       }} />
       <Route path='/sites/:site/workspaces/:workspace/singles/:single' exact render={ ({match})=> {
-        return <Single
-          key={ match.url }
-          siteKey={ decodeURIComponent(match.params.site) }
-          workspaceKey={ decodeURIComponent(match.params.workspace) }
-          singleKey={ decodeURIComponent(match.params.single) } />
+        //$FlowFixMe
+        return <Single key={ match.url } siteKey={ decodeURIComponent(match.params.site) } workspaceKey={ decodeURIComponent(match.params.workspace) } singleKey={ decodeURIComponent(match.params.single) } /> }} />
+      <Route path="/forms-cookbook" exact={false} render={ ({match, history})=> {
+        return <FormsCookbook />;
       }} />
       <Route path="*" component={(data)=>{
         console.log('Redirecting...',data);
@@ -205,7 +234,8 @@ class App extends React.Component<AppProps,AppState>{
           {header}
           <div style={containerStyle}>
 
-            <ExtraOptions />
+            { this.getExtraOptionsSwitch() }
+            
 
             <div style={menuContainerStyle} className='hideScrollbar' >
               { this.getMenuSwitch() }

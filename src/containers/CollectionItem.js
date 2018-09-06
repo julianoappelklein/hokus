@@ -4,9 +4,9 @@ import React from 'react';
 import service from './../services/service'
 import { snackMessageService } from './../services/ui-service'
 import { Redirect } from 'react-router-dom'
-import DynamicForm from './../components/DynamicForm';
+import { HokusForm } from './../components/HokusForm';
 import Spinner from './../components/Spinner'
-import fieldsExtender from './../components/dynamic-form/fields-extender'
+import { FormBreadcumb } from './../components/Breadcumb'
 
 import type { WorkspaceConfig } from './../types';
 
@@ -56,23 +56,26 @@ class CollectionItem extends React.Component<CollectionItemProps,CollectionItemS
         
     }
 
+    handleSave(context: any){
+        let { siteKey, workspaceKey, collectionKey, collectionItemKey } = this.props;
+
+        let promise = service.api.updateCollectionItem(siteKey, workspaceKey, collectionKey, collectionItemKey, context.data);
+        promise.then(function(updatedValues){
+            snackMessageService.addSnackMessage("Document saved successfully.")
+            context.accept(updatedValues);
+        }, function(){
+            context.reject('Something went wrong.');
+        })
+    }
+    
+
     render(){
         if(this.state.collectionItemValues===undefined||this.state.selectedWorkspaceDetails==null){
             return <Spinner />;
         }
+        
         let { selectedWorkspaceDetails, collectionItemValues } = this.state;
         let { siteKey, workspaceKey, collectionKey, collectionItemKey } = this.props;
-
-        let onSave = function(context){
-            
-            let promise = service.api.updateCollectionItem(siteKey, workspaceKey, collectionKey, collectionItemKey, context.data);
-            promise.then(function(updatedValues){
-                snackMessageService.addSnackMessage("Document saved successfully.")
-                context.accept(updatedValues);
-            }, function(){
-                context.reject('Something went wrong.');
-            })
-        }.bind(this)
 
         let collection = selectedWorkspaceDetails.collections.find(x => x.key === collectionKey);
         if(collection==null)return null;
@@ -80,18 +83,12 @@ class CollectionItem extends React.Component<CollectionItemProps,CollectionItemS
         let fields = collection.fields.slice(0);
         fields.unshift({key:'__item', type:'readonly', title:'Item'});
 
-        let values =  Object.assign({__item: collectionItemKey}, this.state.collectionItemValues);
+        let values =  Object.assign({__item: collectionItemKey}, this.state.collectionItemValues)
 
-        let prepareFields = (data)=> {
-            let clone = JSON.parse(JSON.stringify(data));
-            fieldsExtender.extendFields(clone);
-            return clone;
-        };
-
-        return(<DynamicForm
+        return(<HokusForm
             debug={false}
             rootName={collection.itemtitle || collection.title}
-            fields={prepareFields(fields)}
+            fields={fields}
             values={values}
             trim={false}
             plugins={{
@@ -102,7 +99,7 @@ class CollectionItem extends React.Component<CollectionItemProps,CollectionItemS
                     return service.api.getThumbnailForCollectionItemImage(siteKey,workspaceKey,collectionKey,collectionItemKey, targetPath);
                 }
             }}
-            onSave={onSave}
+            onSave={this.handleSave.bind(this)}
         />);        
     }
 }

@@ -1,4 +1,6 @@
-let {ipcMain} = require('electron');
+//@flow
+
+let { ipcMain } = require('electron');
 let api = require('./api');
 
 let enableLogging = process.env.ENV==='DEVELOPMENT';
@@ -7,7 +9,7 @@ exports.bind = function(){
 
     let handlers = {};
 
-    function addListener(key){
+    function addListener(key/*: string*/){
         if(api.hasOwnProperty(key)){
 
             if(enableLogging)
@@ -15,16 +17,24 @@ exports.bind = function(){
 
             handlers[key] = function(event, args){
 
-                let promise = {};
+                let context = {};
 
-                promise.reject = function(error){
-                    let pack = { key: key+"Response", token:args.token, response: {error:error?error.stack:'Something went wrong.'} };
+                context.reject = function(error){
+                    let pack = {
+                        key: key+"Response",
+                        token: args.token,
+                        response: {error:error?error.stack:'Something went wrong.'}
+                    };
                     event.sender.send('messageAsyncResponse', pack);
                     console.log('IPC_MAIN_FAIL: '+ key, pack);
                 }
 
-                promise.resolve = function(response){
-                    let pack = { key: key+"Response", token:args.token, response };
+                context.resolve = function(response){
+                    let pack = {
+                        key: key+"Response",
+                        token: args.token,
+                        response
+                    };
                     event.sender.send('messageAsyncResponse', pack);
                     console.log('IPC_MAIN_RESPONDED: '+ key, pack);
                 }
@@ -32,11 +42,11 @@ exports.bind = function(){
                 if(enableLogging)
                     console.log('IPC_MAIN_REQUESTED: '+ key, args);
 
-                api[key](args.data, promise);
+                api[key](args.data, context);
             };
         }
         else{
-            throw 'Could not find API method for key '+key;
+            throw `Could not find API method for key '${key}'.`;
         }
     };
 
@@ -52,7 +62,7 @@ exports.bind = function(){
         let handler = handlers[args.handler];
 
         if(handler===undefined)
-            throw `Could not find handler for key ${args.handler}.`;
+            throw `Could not find handler for key '${args.handler}'.`;
 
         handler(event, args);
     });

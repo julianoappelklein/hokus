@@ -1,19 +1,25 @@
+/* @flow */
+
 let {dialog, remote} = require('electron');
-const FolderSource = require('./sources/folder-source');
 const configurationDataProvider = require('./configuration-data-provider')
 const SiteService = require('./services/site/site-service')
 const WorkspaceService = require('./services/workspace/workspace-service')
+const siteSourceBuilderFactory = require('./site-sources/builders/site-source-builder-factory');
 const hugoDownloader = require('./hugo-downloader')
 const opn = require('opn');
 
-let api = {};
-
-function sourceProviderFactory(sourceCfg){
-    // TODO: use a real factory.
-    return new FolderSource();
+/*::
+type APIContext = {
+    resolve: (data: any) => void,
+    reject: (error: any) => void
 }
 
-function getSiteService(siteKey, callback){
+type Callback = (error: any, data: any)=>void
+*/
+
+let api/*: { [key: string]: ( payload: any, context: APIContext ) => void }*/ = {};
+
+function getSiteService(siteKey, callback/*: Callback*/){
     configurationDataProvider.get(function(err, configurations){
         if(err){ callback(err); return; }
         let siteData = configurations.sites.find((x)=>x.key===siteKey);
@@ -22,10 +28,10 @@ function getSiteService(siteKey, callback){
     });
 }
 
-function getSiteServicePromise(siteKey, callback){
+function getSiteServicePromise(siteKey, callback)/*: Promise<SiteService>*/{
     return new Promise((resolve, reject)=>{
         configurationDataProvider.get(function(err, configurations){
-            if(e) { reject(e); return; } 
+            if(err) { reject(err); return; } 
             let siteData = configurations.sites.find((x)=>x.key===siteKey);
             let siteService = new SiteService(siteData);
             resolve(siteService);
@@ -33,7 +39,7 @@ function getSiteServicePromise(siteKey, callback){
     });
 }
 
-function getWorkspaceService(siteKey, workspaceKey, callback){
+function getWorkspaceService(siteKey, workspaceKey, callback/*: Callback*/){
     getSiteService(siteKey, function(err, siteService){
         if(err){ callback(err); return; }
         let workspaceHead = siteService.getWorkspaceHead(workspaceKey);
@@ -46,10 +52,15 @@ function getWorkspaceServicePromise(siteKey, workspaceKey, callback){
     getSiteServicePromise(siteKey)
     .then((siteService)=>{
         let workspaceHead = siteService.getWorkspaceHead(workspaceKey);
-        let workspaceService = new WorkspaceService(workspaceHead.path);
-        return Promise.resolve({siteService, workspaceService});
+        if(workspaceHead==null) return Promise.reject(new Error('Could not find workspace.'));
+        else{
+            let workspaceService = new WorkspaceService(workspaceHead.path);
+            return { siteService, workspaceService };
+        }
     })
-    .catch((e)=>{ return Promise.reject(e); });
+    .catch((e)=>{
+        return Promise.reject(e);
+    });
 }
 
 api.getConfigurations = function(args, promise){
@@ -66,47 +77,47 @@ api.openFileExplorer = function({path}, promise){
     require('child_process').exec('start "" "'+path+'"');
 }
 
-api.listWorkspaces = function({siteKey}, promise){
+api.listWorkspaces = function({siteKey}, context){
     configurationDataProvider.get(function(err, configurations){
-        if(err){ promise.reject(err); return; }
+        if(err){ context.reject(err); return; }
         let siteData = configurations.sites.find((x)=>x.key===siteKey);
         let service = new SiteService(siteData);
-        promise.resolve(service.listWorkspaces());
+        context.resolve(service.listWorkspaces());
     });
 }
 
-api.getWorkspaceDetails = function({siteKey, workspaceKey}, promise){
+api.getWorkspaceDetails = function({siteKey, workspaceKey}, context){
     getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
-        if(err){ promise.reject(err); return; }
+        if(err){ context.reject(err); return; }
         let configuration = workspaceService.getConfigurationsData();
         hugoDownloader.downloader.download(configuration.hugover);
-        promise.resolve(configuration);
+        context.resolve(configuration);
     });
 }
 
-api.serveWorkspace = function({siteKey, workspaceKey}, promise){
+api.serveWorkspace = function({siteKey, workspaceKey}, context){
     getSiteService(siteKey, function(err, siteService){
-        if(err){ promise.reject(err); return; }
+        if(err){ context.reject(err); return; }
         siteService.serveWorkspace(workspaceKey, function(err){
             if(err){
-                promise.reject(err); return
+                context.reject(err); return
             }
             opn('http://localhost:1313');
-            promise.resolve();
+            context.resolve();
         });
     });
 }
 
-api.publishWorkspace = function({siteKey, workspaceKey, publishKey}, promise){
+api.publishWorkspace = function({siteKey, workspaceKey, publishKey}, context){
     getSiteService(siteKey, function(err, siteService){
-        if(err){ promise.reject(err); return; }
+        if(err){ context.reject(err); return; }
         siteService.buildWorkspaceForPublish(workspaceKey, publishKey, function(err){
-            if(err){ promise.reject(err); return }
+            if(err){ context.reject(err); return }
             else{
                 siteService.publishWorkspace(workspaceKey, publishKey, function(err){
-                    if(err){ promise.reject(err); return }
+                    if(err){ context.reject(err); return }
                     else{
-                        promise.resolve();
+                        context.resolve();
                     }
                 })
             }
@@ -114,120 +125,120 @@ api.publishWorkspace = function({siteKey, workspaceKey, publishKey}, promise){
     });
 }
 
-api.getSingle = function({siteKey, workspaceKey, singleKey}, promise) {
+api.getSingle = function({siteKey, workspaceKey, singleKey}, context) {
     getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
-        if(err){ promise.reject(err); return; }
+        if(err){ context.reject(err); return; }
         workspaceService.getSingle(singleKey).then(r=>{
-            promise.resolve(r);
+            context.resolve(r);
         });
     });
 }
 
-api.updateSingle = function({siteKey, workspaceKey, singleKey, document}, promise) {
+api.updateSingle = function({siteKey, workspaceKey, singleKey, document}, context) {
     getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
-        if(err){ promise.reject(err); return; }
+        if(err){ context.reject(err); return; }
         workspaceService.updateSingle(singleKey, document).then(r=>{
-            promise.resolve(r);
+            context.resolve(r);
         })
    });
 }
 
-api.listCollectionItems = function({siteKey, workspaceKey, collectionKey}, promise){
+api.listCollectionItems = function({siteKey, workspaceKey, collectionKey}, context){
     getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
-        if(err){ promise.reject(err); return; }
+        if(err){ context.reject(err); return; }
         workspaceService.listCollectionItems(collectionKey)
         .then((result)=>{
-            promise.resolve(result)
+            context.resolve(result)
         })
         .catch((error)=>{
-            promise.reject(error);
+            context.reject(error);
         });
    });
 }
 
-api.getCollectionItem = function({siteKey, workspaceKey, collectionKey, collectionItemKey}, promise){
+api.getCollectionItem = function({siteKey, workspaceKey, collectionKey, collectionItemKey}, context){
     getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
-        if(err){ promise.reject(err); return; }
+        if(err){ context.reject(err); return; }
         workspaceService.getCollectionItem(collectionKey, collectionItemKey)
         .then((result)=>{ 
-            promise.resolve(result);
+            context.resolve(result);
         })
         .catch((error)=>{
-            promise.reject(error);
+            context.reject(error);
         });
     });
 }
 
-api.createCollectionItemKey = function({siteKey, workspaceKey, collectionKey, collectionItemKey}, promise){
+api.createCollectionItemKey = function({siteKey, workspaceKey, collectionKey, collectionItemKey}, context){
     getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
-        if(err){ promise.reject(err); return; }
+        if(err){ context.reject(err); return; }
         workspaceService.createCollectionItemKey(collectionKey, collectionItemKey)
-        .then((result)=>{ promise.resolve(result); })
-        .catch((error)=>{ promise.reject(error); });
+        .then((result)=>{ context.resolve(result); })
+        .catch((error)=>{ context.reject(error); });
     });
 }
 
-api.updateCollectionItem = function({siteKey, workspaceKey, collectionKey, collectionItemKey, document}, promise) {
+api.updateCollectionItem = function({siteKey, workspaceKey, collectionKey, collectionItemKey, document}, context) {
     getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
-        if(err){ promise.reject(err); return; }
+        if(err){ context.reject(err); return; }
         workspaceService.updateCollectionItem(collectionKey, collectionItemKey, document)
         .then((result)=>{ 
-            promise.resolve(result);
+            context.resolve(result);
         })
         .catch((error)=>{
-            promise.reject(error);
+            context.reject(error);
         });
     });
 }
 
-api.createCollectionItemKey = function({siteKey, workspaceKey, collectionKey, collectionItemKey}, promise) {
+api.createCollectionItemKey = function({siteKey, workspaceKey, collectionKey, collectionItemKey}, context) {
     getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
-        if(err){ promise.reject(err); return; }
+        if(err){ context.reject(err); return; }
         workspaceService.createCollectionItemKey(collectionKey, collectionItemKey)
         .then((result)=>{ 
-            promise.resolve(result);
+            context.resolve(result);
         })
         .catch((error)=>{
-            promise.reject(error);
+            context.reject(error);
         });
     });
 }
 
-api.copyFilesIntoCollectionItem  = function({siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath, files }, promise){
+api.copyFilesIntoCollectionItem  = function({siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath, files }, context){
     getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
-        if(err){ promise.reject(err); return; }
+        if(err){ context.reject(err); return; }
         workspaceService.copyFilesIntoCollectionItem(collectionKey, collectionItemKey, targetPath, files)
         .then((result)=>{
-            promise.resolve(result);
+            context.resolve(result);
         })
         .catch((error)=>{
-            promise.reject(error);
+            context.reject(error);
         });
     });
 }
 
-api.deleteCollectionItem = function({siteKey, workspaceKey, collectionKey, collectionItemKey}, promise) {
+api.deleteCollectionItem = function({siteKey, workspaceKey, collectionKey, collectionItemKey}, context) {
     getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
-        if(err){ promise.reject(err); return; }
+        if(err){ context.reject(err); return; }
         workspaceService.deleteCollectionItem(collectionKey, collectionItemKey)
         .then((result)=>{
-            promise.resolve({deleted:result});
+            context.resolve({deleted:result});
         })
         .catch((error)=>{
-            promise.reject(error);
+            context.reject(error);
         });
     });
 }
 
-api.renameCollectionItem = function({siteKey, workspaceKey, collectionKey, collectionItemKey, collectionItemNewKey}, promise) {
+api.renameCollectionItem = function({siteKey, workspaceKey, collectionKey, collectionItemKey, collectionItemNewKey}, context) {
     getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
-        if(err){ promise.reject(err); return; }
+        if(err){ context.reject(err); return; }
         workspaceService.renameCollectionItem(collectionKey, collectionItemKey, collectionItemNewKey)
         .then((result)=>{
-            promise.resolve(result);
+            context.resolve(result);
         })
         .catch((error)=>{
-            promise.reject(error);
+            context.reject(error);
         });
     });
 }
@@ -243,6 +254,12 @@ api.getThumbnailForCollectionItemImage = function({siteKey, workspaceKey, collec
             promise.reject(error);
         });
     });
+}
+
+api.createSite = (config/*: any*/, context)=>{
+    siteSourceBuilderFactory.get(config.sourceType).build(config);
+    configurationDataProvider.invalidateCache();
+    context.resolve();
 }
 
 module.exports = api;

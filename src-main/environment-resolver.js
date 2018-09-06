@@ -1,3 +1,5 @@
+//@flow
+
 const PLATFORMS = {
     linux:'linux',
     windows:'windows',
@@ -34,7 +36,7 @@ class EnvironmentResolver{
 }
 
 module.exports = {
-    ARCHS,
     PLATFORMS,
+    ARCHS,
     EnvironmentResolver
 }

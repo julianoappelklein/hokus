@@ -6,9 +6,9 @@ const url = require('url')
 const path = require('path')
 const fs = require('fs-extra')
 
-let mainWindow;
+let mainWindow/*: any*/;
 
-function showNotFound(mainWindow, lookups){
+function showNotFound(mainWindow/*: any*/, lookups/*: Array<string>*/){
     let lookupsHtml = lookups.map((x)=> `<li>${x}</li>`).join('');
     mainWindow.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(`<html>
 <body style="font-family: sans-serif; padding: 2em">
@@ -20,7 +20,7 @@ function showNotFound(mainWindow, lookups){
 </html>`));
 }
 
-function showTesting(mainWindow){
+function showTesting(mainWindow/*: any*/){
     mainWindow.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(`<html>
 <body style="font-family: sans-serif; padding: 2em">
 <h1>Testing</h1>
@@ -29,12 +29,22 @@ function showTesting(mainWindow){
 </html>`));
 }
 
-function showLookingForServer(mainWindow, port){
+function showLookingForServer(mainWindow/*: any*/, port/*: string*/){
     mainWindow.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(`<html>
 <body style="font-family: sans-serif; padding: 2em">
 <h1>Waiting for Development Server</h1>
 <p>Waiting for React development server in port ${port}...</p>
 <p>Have you started it?</p>
+</body>
+</html>`));
+}
+
+function showInvalidDevelopmentUrl(mainWindow/*: any*/, url/*: ?string*/){
+    mainWindow.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(`<html>
+<body style="font-family: sans-serif; padding: 2em">
+<h1>Invalid Development Server URL</h1>
+<p>The provided URL (${url||'EMPTY'}) does not match the required pattern.</p>
+<p>Please, fix this and try again.</p>
 </body>
 </html>`));
 }
@@ -59,36 +69,32 @@ function createWindow () {
     mainWindow.show();
     mainWindow.setMenuBarVisibility(false);
 
-    if(false){
-        
-        //TESTING LOADURL
-        showTesting(mainWindow);
-
-    }
-    else if(process.env.REACT_DEV_URL){
+    if(process.env.REACT_DEV_URL){
         
         //DEVELOPMENT SERVER
 
         let url = process.env.REACT_DEV_URL;
-        let port = 3000;
-        let matchPort = url.match(/:([0-9]{4})$/);
-        if(matchPort)
-            port = parseInt(matchPort[1]);
-        
-        showLookingForServer(mainWindow, port);
-  
-        const net = require('net');
-        const client = new net.Socket();
-        const tryConnection = () => client.connect({port: port}, () => {
-                client.end();
-                if(mainWindow)
-                    mainWindow.loadURL(url);
-            }
-        );
-        client.on('error', (error) => {
-            setTimeout(tryConnection, 1000);
-        });
-        tryConnection();
+        const urlWithPortMatch = url.match(/:([0-9]{4})$/);
+        if(urlWithPortMatch==null){
+            showInvalidDevelopmentUrl(url);
+        }
+        else{
+            let port = urlWithPortMatch[1];
+            showLookingForServer(mainWindow, port);
+    
+            const net = require('net');
+            const client = new net.Socket();
+            const tryConnection = () => client.connect({port: port}, () => {
+                    client.end();
+                    if(mainWindow)
+                        mainWindow.loadURL(url);
+                }
+            );
+            client.on('error', (error) => {
+                setTimeout(tryConnection, 1000);
+            });
+            tryConnection();
+        }
     }
     else{
 

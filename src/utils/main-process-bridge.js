@@ -102,16 +102,19 @@ class MainProcessBridge{
 
     }
 
-    request(method /*: string */, data /*: any */ , opts /* : {timeout:number} */ ={timeout:10000}){
+    request(
+        method /*: string */,
+        data /*: any */ ,
+        opts /* : {timeout:number} */ = {timeout:10000}
+    ) /*: Promise<any> & { forceAbort: ()=>void }*/ {
         let _reject;
         let token = this._createToken();
-        let promise = new Promise(function(resolve, reject){
+        let promise/*:any*/ = new Promise(function(resolve, reject){
             _reject = reject;
             this.ipcRenderer.send('message', {data, token, handler:method});
             let timeoutId = setTimeout(function(){
                 if(this._eraseCallback(token)){
                     reject('timeout');
-                    //$FlowFixMe
                     promise.forceAbort = function(){};
                 }
             }.bind(this), opts.timeout);
@@ -123,13 +126,11 @@ class MainProcessBridge{
                         reject(response.error);
                     }
                     resolve(response);
-                    //$FlowFixMe
                     promise.forceAbort = function(){};
                 }
             });
         }.bind(this));
 
-        //$FlowFixMe
         promise.forceAbort = function(){
             console.log('Promise aborted.');
             _reject('Cancelled');

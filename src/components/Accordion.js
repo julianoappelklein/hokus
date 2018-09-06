@@ -7,6 +7,39 @@ import IconNavigationExpandMore from 'material-ui/svg-icons/navigation/expand-mo
 // import Checkbox from 'material-ui/Checkbox';
 // import IconToggleRadioButtonChecked from 'material-ui/svg-icons/toggle/radio-button-checked';
 
+type AccordionHeaderProps = {
+    active: bool, onClick: ()=>void, style: any, headerLeftItems: any, headerRightItems: any
+}
+
+class AccordionHeader extends React.PureComponent<AccordionHeaderProps,void>{
+    
+    // shouldComponentUpdate(props, state){
+    //     return props.label != this.props.label
+    //         || props.active != this.props.active;
+    // }
+
+    render(){
+        let { active, headerLeftItems, headerRightItems, label, onClick, style } = this.props;
+        return (<a style={style} onClick={onClick}>
+            <span style={{ display:'inline-block', margin: '-10px 0px -10px -5px'}}>
+                { headerLeftItems.map((item, index) => { return  (
+                    <span key={index}  style={{ display: 'inline-block', margin:'0 5px' }}>{item}</span>
+                )})}
+            </span>
+            <span style={{ position:'absolute', top:'8px', right: '5px'}}>
+                { headerRightItems.map((item, index) => { return  (
+                    <span key={index}  style={{ display: 'inline-block', margin:'0 5px' }}>{item}</span>
+                )})}
+                <FlatButton
+                    style={{minWidth: '40px'}}
+                    icon={active?<IconNavigationExpandLess />:<IconNavigationExpandMore />}
+                />
+            </span>
+            {label}
+        </a>);
+    }
+}
+
 class AccordionItem extends React.Component{
     render(){
         let {active, body, label, onHeadClick, headerRightItems=[], headerLeftItems=[], headStyle, bodyStyle, style, wrapperProps } = this.props;
@@ -27,25 +60,16 @@ class AccordionItem extends React.Component{
         },bodyStyle);
         
         return <div style={style} className="accordion-item" {...wrapperProps} >
-            <a style={_headStyle} onClick={onHeadClick}>
-                <span style={{ display:'inline-block', margin: '-10px 0px -10px -5px'}}>
-                    { headerLeftItems.map((item, index) => { return  (
-                        <span key={index}  style={{ display: 'inline-block', margin:'0 5px' }}>{item}</span>
-                    )})}
-                </span>
-                <span style={{ position:'absolute', top:'8px', right: '5px'}}>
-                    { headerRightItems.map((item, index) => { return  (
-                        <span key={index}  style={{ display: 'inline-block', margin:'0 5px' }}>{item}</span>
-                    )})}
-                    <FlatButton
-                        style={{minWidth: '40px'}}
-                        icon={active?<IconNavigationExpandLess />:<IconNavigationExpandMore />}
-                    />
-                </span>
-                {label}
-            </a>
+            <AccordionHeader
+                style={_headStyle}
+                onClick={onHeadClick}
+                headerLeftItems={headerLeftItems}
+                headerRightItems={headerRightItems}
+                active={active}
+                label={label}
+            />
             <div style={_bodyStyle}>
-                {active? body : undefined }
+                { active? body : ( null ) }
             </div>
         </div>;
     }

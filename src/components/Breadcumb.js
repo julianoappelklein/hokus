@@ -1,12 +1,46 @@
-import React from 'react';
+//@flow
+
+import * as React from 'react';
 import Border from './Border';
 import FlatButton from 'material-ui/FlatButton';
 import IconChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
+import * as HoForm from './HoForm';
 
-class Breadcumb extends React.Component{
+
+type BreadcumbItemProps = {
+    disabled?: boolean,
+    label: string,
+    onClick?: ()=>void
+}
+
+type BreadcumbItemState = {
+
+}
+
+export class BreadcumbItem extends React.Component<BreadcumbItemProps,BreadcumbItemState>{
+    render(){
+        return (<FlatButton
+            primary={true}
+            style={{minWidth:'30px', borderRadius:'0px'}}
+            disabled={this.props.disabled}
+            label={this.props.label}
+            onClick={this.props.onClick} />);
+    }
+}
+
+type BreadcumbProps = {
+    items: Array<React.Element<typeof BreadcumbItem>>,
+    style?: any
+}
+
+type BreadcumbState = {
+
+}
+
+export class Breadcumb extends React.Component<BreadcumbProps,BreadcumbState>{
     render(){
         
-        let items = this.props.items;
+        let { items } = this.props;
         let newItems = [];
         
         for(let i = 0; i < items.length; i++){
@@ -29,15 +63,21 @@ class Breadcumb extends React.Component{
     }
 }
 
-class BreadcumbItem extends React.Component{
+export class FormBreadcumb extends React.Component<HoForm.BreadcumbProps,{}>{
+
     render(){
-        return (<FlatButton
-            primary={true}
-            style={{minWidth:'30px', borderRadius:'0px'}}
-            disabled={this.props.disabled}
-            label={this.props.label}
-            onClick={this.props.onClick} />);
+        return (
+        <Breadcumb style={{marginBottom:16}} items={
+            this.props.items.map((item)=>{
+                if(item.node!=null){
+                    let node = item.node;
+                    return ( <BreadcumbItem label={item.label||'Untitled'} onClick={()=>this.props.onNodeSelected(node)} /> );
+                }
+                else{
+                    return ( <BreadcumbItem label={item.label||'Untitled'} disabled={true} /> );
+                }
+            })
+        } />
+        );  
     }
 }
-
-export { Breadcumb, BreadcumbItem };

@@ -1,6 +1,7 @@
 const electron = require('electron')
 const ipcMainBinder = require('./ipc-main-binder');
 const mainWindowManager = require('./main-window-manager');
+const isDev = require('electron-is-dev');
 
 const unhandled = require('electron-unhandled');
  unhandled();
@@ -29,6 +30,17 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  if(isDev){
+    // const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
+    // installExtension(REACT_DEVELOPER_TOOLS)
+    //     .then((name) => {
+    //       console.log(`Added Extension:  ${name}`)
+    //     })
+    //     .catch((err) => {
+    //       console.log('An error occurred: ', err)
+    //     });
+  }
 
 }
 

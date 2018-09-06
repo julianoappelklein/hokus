@@ -1,6 +1,6 @@
 //@flow
 
-import React from 'react';
+import * as React from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import IconMore from 'material-ui/svg-icons/navigation/more-vert';
 import Popover from 'material-ui/Popover';
@@ -13,11 +13,20 @@ const Fragment = React.Fragment;
 const translucentColor = 'RGBA(255,255,255,.2)';
 const translucentColorSubtle = 'RGBA(255,255,255,.05)';
 
-class ExtraOptions extends React.Component /*:: <{},{buttonVisible: bool, menuOpen: bool, anchorEl: ?any}>*/{
+type ExtraOptionsProps = {
+  items: Array<React.Element<typeof MenuItem>>
+}
+
+type ExtraOptionsState = {
+  buttonVisible: bool,
+  menuOpen: bool,
+  anchorEl: ?any
+}
+class ExtraOptions extends React.Component<ExtraOptionsProps,ExtraOptionsState>{
   
-    /*:: closeTimeout : any */
+    closeTimeout : any;
   
-    constructor(props /*: any */){
+    constructor(props: any){
       super(props);
       this.state = {
         buttonVisible:false,
@@ -30,15 +39,15 @@ class ExtraOptions extends React.Component /*:: <{},{buttonVisible: bool, menuOp
       this.setState({menuOpen: false});    
     }
   
-    handleMouseEnter(e /* : Event */){
+    handleMouseEnter(e: Event){
       this.setState({buttonVisible:true });
     }
   
-    handleMouseLeave(e /* : Event */){
+    handleMouseLeave(e: Event){
       this.setState({buttonVisible:false });
     }
   
-    handleClick(e /* : Event */){
+    handleClick(e: Event){
       e.preventDefault();
       this.setState({menuOpen:true, anchorEl: e.currentTarget });
     }
@@ -49,17 +58,6 @@ class ExtraOptions extends React.Component /*:: <{},{buttonVisible: bool, menuOp
       this.closeTimeout = setTimeout(function(){
         this.setState({menuOpen:false});
       }.bind(this), 300);
-    }
-  
-    handleRestartApp(){
-      const remote = window.require('electron').remote;
-      remote.app.relaunch();
-      remote.app.exit(0);
-    }
-  
-    handleReload(){
-      window.location = window.location;
-      this.requestClose();
     }
   
     render(){
@@ -84,9 +82,10 @@ class ExtraOptions extends React.Component /*:: <{},{buttonVisible: bool, menuOp
           targetOrigin={{horizontal: 'left', vertical: 'bottom'}}
           onRequestClose={this.handleRequestClose.bind(this)}
         >
-          <Menu>
-            <MenuItem primaryText="Reload" onClick={this.handleReload.bind(this)} />
-            <MenuItem primaryText="Restart Application" onClick={this.handleRestartApp.bind(this)} />
+          <Menu onClick={()=> this.requestClose() }>
+            { this.props.items.map((item, key)=>{
+              return React.cloneElement(item, {key});
+            }) }
           </Menu>
         </Popover>
       </Fragment>
