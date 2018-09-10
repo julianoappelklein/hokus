@@ -12,7 +12,7 @@ let fields: Array<any> = [
     ]},
     { key:'markdown-section', title:'Markdown', type:'section', fields:[
         { key:'markdown', title:'Markdown', type:'markdown', multiLine:false },
-        { key:'markdown', title:'Markdown MultiLine', type:'markdown', multiLine:true }
+        { key:'markdown-multiline', title:'Markdown MultiLine', type:'markdown', multiLine:true }
     ]},
     { key:'number-section', title:'Number', type:'section', fields:[
         { key:'number', title:'Number', type:'number' }
