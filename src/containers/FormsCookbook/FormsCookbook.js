@@ -81,9 +81,12 @@ export class FormsCookbook extends React.Component<FormsCookbookProps, FormsCook
                         componentRegistry={componentRegistry}
                         values={sample.values}
                         plugins={{
-                            openBundleFileDialog: ()=>{
+                            openBundleFileDialog: function({title, extensions, targetPath}, onFilesReady){
                                 alert('This operation is not supported in the Cookbook. But we\'ll mock something for you.');
-                                return Promise.resolve(['some-file.png']);
+                                return Promise.resolve([`${targetPath}/some-file.${extensions[0]||'png'}`]);
+                            },
+                            getBundleThumbnailSrc: function(targetPath){
+                                return Promise.resolve('data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4\/\/8\/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==');
                             }
                         }}
                     />
