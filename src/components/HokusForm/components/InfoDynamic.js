@@ -30,6 +30,7 @@ type InfoDynamicField = {
     compositeKey: string,
     content: string,
     size: number,
+    lineHeight: string,
     theme: 'default' | 'bare' | 'warn' | 'warn-bare' | 'black' | 'black-bare' | 'gray' | 'gray-bare'
 }
 
@@ -57,7 +58,7 @@ class InfoDynamic extends BaseDynamic<InfoDynamicField, InfoDynamicState> {
             return (null);
         }
 
-        let style = {padding:'10px 20px', borderRadius: '2px'};
+        let style = {padding:'10px 20px', borderRadius: '2px', lineHeight: field.lineHeight};
         
         let infoStyle = infoStyles['default'];
         if(field.theme && infoStyles[field.theme])

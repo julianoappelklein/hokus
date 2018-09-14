@@ -13,7 +13,7 @@ import NotificationUI from './containers/NotificationUI';
 import WorkspaceSidebar from './containers/WorkspaceSidebar';
 import { Sidebar } from './containers/Sidebar';
 import ExtraOptions from './containers/ExtraOptions';
-import { FormsCookbookSidebar, FormsCookbook } from './containers/FormsCookbook';
+import { FormsCookbookSidebar, FormsCookbookRouted } from './containers/FormsCookbook';
 
 //MATERIAL UI
 import { MenuItem } from 'material-ui/';
@@ -189,7 +189,7 @@ class App extends React.Component<AppProps,AppState>{
         //$FlowFixMe
         return <Single key={ match.url } siteKey={ decodeURIComponent(match.params.site) } workspaceKey={ decodeURIComponent(match.params.workspace) } singleKey={ decodeURIComponent(match.params.single) } /> }} />
       <Route path="/forms-cookbook" exact={false} render={ ({match, history})=> {
-        return <FormsCookbook />;
+        return <FormsCookbookRouted />;
       }} />
       <Route path="*" component={(data)=>{
         console.log('Redirecting...',data);

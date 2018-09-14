@@ -14,7 +14,7 @@ export const pizzaDeliveryMenu: FormCookbookSample = {
             { key:'line1', title:'Line 1', type:'string' },
             { key:'line2', title:'Line 2', type:'string' }
         ]},
-        { key:'categories', title:'Pizzas Categories', type:'accordion', fields: [
+        { key:'categories', title:'Pizza Categories', type:'accordion', fields: [
             { key:'key', title:'Key', type:'string' },
             { key:'title', title:'Title', type:'string', arrayTitle:true },
             { key:'pizzas', title:'Pizza Flavours', type:'accordion', fields: [
@@ -24,7 +24,7 @@ export const pizzaDeliveryMenu: FormCookbookSample = {
         ]}
     ],
     values: {
-        title: 'Super Pizza Menu',
+        title: 'Pizza Menu',
         sizes: [
             { title: 'Small', price:'$10', line1:'For one person', line2:'One flavor' },
             { title: 'Medium', price:'$18', line1:'For two persons', line2:'Two flavors' },

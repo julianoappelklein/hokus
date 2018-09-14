@@ -1,7 +1,6 @@
 //@flow
 
 import * as React from 'react';
-import { Route } from 'react-router';
 import { samples } from './samples';
 import { Form, ComponentRegistry } from './../../components/HoForm';
 import dynamicFormComponents from './../../components/HokusForm/components/all'
@@ -11,7 +10,8 @@ import { Dialog, RaisedButton } from 'material-ui';
 const componentRegistry = new ComponentRegistry(dynamicFormComponents);
 
 type FormsCookbookProps = {
-
+    sampleKey: any,
+    samples?: Array<any>
 }
 
 type FormsCookbookState = {
@@ -25,7 +25,7 @@ const MenuBar = (props: { onViewStateClick: ()=>void, onViewConfigClick: ()=>voi
         bottom:0,
         right: '32px',
         padding: '16px',
-        zIndex: 2,
+        zIndex: 10,
         boxShadow: '0px 1px 5px RGBA(0,0,0,.3)'
     }}>
         <RaisedButton onClick={props.onViewConfigClick} label="View Config" />
@@ -41,14 +41,6 @@ export class FormsCookbook extends React.Component<FormsCookbookProps, FormsCook
     constructor(props: FormsCookbookProps){
         super(props);
         this.state = {modal: null};
-    }
-
-    render(){
-        return <Route
-            path={'/forms-cookbook/:sampleKey'}
-            render={({history,match})=>{
-                return this.renderWithRoute(match.params.sampleKey)
-            }} />
     }
 
     handleOnViewStateClick = ()=>{
@@ -67,13 +59,14 @@ export class FormsCookbook extends React.Component<FormsCookbookProps, FormsCook
         this.formRef = ref;
     }
 
-    renderWithRoute(key: string){
-        let sample = samples.find(x => x.key===key);
+    render(){
+        let { sampleKey } = this.props;
+        let sample = (this.props.samples||samples).find(x => x.key===sampleKey);
         if(sample){
             return (<React.Fragment>
                     <Form
                         ref={this.handleFormRef}
-                        key={key}
+                        key={sampleKey}
                         rootName={sample.title}
                         breadcumbComponentType={FormBreadcumb}
                         fields={sample.fields}
