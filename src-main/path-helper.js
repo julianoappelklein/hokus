@@ -1,8 +1,8 @@
-const osenv = require('osenv');
+const userHome = require('user-home');
 
 class PathHelper{
     getRoot(){
-        return osenv.home()+'/Hokus/';
+        return userHome +'/Hokus/';
     }
 
     getSiteRoot(siteKey){
