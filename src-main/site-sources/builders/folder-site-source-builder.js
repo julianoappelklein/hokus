@@ -9,7 +9,7 @@ type BuildConfig = {
 };
 
 */
-const fs = require('fs');
+const fs = require('fs-extra');
 const pathHelper = require('./../../path-helper');
 
 class FolderSiteSourceBuilder/*:: implements SiteSourceBuilder*/ {
@@ -38,7 +38,7 @@ class FolderSiteSourceBuilder/*:: implements SiteSourceBuilder*/ {
         };
 
         let configPath = `${pathHelper.getRoot()}config.${config.key}.json`;
-
+        fs.ensureDirSync(pathHelper.getRoot());
         fs.writeFileSync(configPath, JSON.stringify(siteConfig,null,'  '), 'utf8');
     }
 
