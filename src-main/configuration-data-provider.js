@@ -84,6 +84,7 @@ function get(callback/*: (err: ?Error, data: any)=>void*/, {invalidateCache}/*: 
             try{
                 let strData = fs.readFileSync(file, {encoding: 'utf-8'});
                 let formatProvider = formatProviderResolver.resolveForFilePath(file);
+                if(formatProvider==null) throw new Error(`Could not resolve a format provider for file ${file}.`)
                 let site = formatProvider.parse(strData);
                 validateSite(site);
                 normalizeSite(site);
@@ -102,6 +103,7 @@ function get(callback/*: (err: ?Error, data: any)=>void*/, {invalidateCache}/*: 
         try{
             let strData = fs.readFileSync(globalConfigFile, {encoding: 'utf-8'});
             let formatProvider = formatProviderResolver.resolveForFilePath(globalConfigFile);
+            if(formatProvider==null) throw new Error(`Could not resolve a format provider for "${globalConfigFile}".`)
             let global = formatProvider.parse(strData);
             global = {
                 debugEnabled: global.debugEnabled == null ? GLOBAL_DEFAULTS.debugEnabled : global.debugEnabled===true, //default false

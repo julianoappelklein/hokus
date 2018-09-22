@@ -27,7 +27,13 @@
 			"title": "Main Config",
 			"file": "config.yaml",
 			"fields":[
-                { "key":"title", "title":"Site Title", "type":"string" }
+				{ "key":"title", "title":"Site Title", "type":"string", "tip":"Your page title." },
+				{ "key":"baseURL", "title":"Base URL", "type":"string", "tip":"Your production URL." },
+				{ "key":"theme", "title":"Theme", "type":"readonly", "tip":"The current theme." },
+				{ "key":"languageCode", "title":"Language Code", "type":"readonly" },
+				{ "key":"DefaultContentLanguage", "title":"Site Title", "type":"string" },
+				{ "key":"googleAnalytics", "title":"Google Analytics", "type":"string", "tip":"Provide a Google Analitics Tracking Code to enable analytics." },
+				{ "key":"enableRobotsTXT", "title":"Enable Robots", "type":"boolean", "default":true, "tip":"If you want you page to be indexed, keep this enabled." }
 			]
 		}
 	]

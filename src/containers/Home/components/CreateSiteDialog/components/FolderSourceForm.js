@@ -4,7 +4,8 @@ import { RaisedButton, TextField } from 'material-ui';
 import FolderPicker from './../../../../../components/FolderPicker';
 
 type FolderSourceFormModel = {
-    folderPath: string
+    folderPath: string,
+    theme: string
 }
 
 type FolderSourceFormProps = {
@@ -32,21 +33,35 @@ export default class FolderSourceForm extends React.Component<FolderSourceFormPr
         this.props.onFormChange(data, valid);
     }
 
-    handleFolderSelected(folderPath: ?string){
+    handleFolderSelected = (folderPath: ?string) => {
         this.updateModel({folderPath})
+    }
+
+    handleRepoURLChange = (e:any, theme: string) => {
+        this.updateModel({theme})
     }
 
     render(){
 
         let { model={} } = this.props;
 
-        return (
+        return (<React.Fragment>
             <div>
                 <FolderPicker
+                    label={"Site Folder *"}
                     selectedFolder={model.folderPath}
-                    onFolderSelected={this.handleFolderSelected.bind(this)} />
+                    onFolderSelected={this.handleFolderSelected} />
             </div>
-        )
+            <div>
+                <TextField
+                    floatingLabelFixed={true}
+                    value={model.theme||''}
+                    onChange ={this.handleRepoURLChange}
+                    fullWidth={true}
+                    floatingLabelText={'Theme Repository URL'}
+                />
+            </div>
+        </React.Fragment>)
     }
 
 }

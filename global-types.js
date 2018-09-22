@@ -35,6 +35,7 @@ export type SiteConfig = RawSiteConfig & {
 }
 
 export type WorkspaceConfig = {
+    hugover: string,
     singles: Array<SingleConfig>,
     collections: Array<CollectionConfig>,
 }
@@ -47,6 +48,7 @@ export type WorkspaceHeader = {
 export type SingleConfig = {
     key: string,
     title: string,
+    file: string,
     fields: Array<any>
 }
 
@@ -54,7 +56,11 @@ export type CollectionConfig = {
     key: string,
     title: string,
     itemtitle: string,
-    fields: Array<any>
+    fields: Array<any>,
+    folder: string,
+    extension: string,
+    dataformat: string,
+    protodata: any
 }
 
 export type Configurations = {

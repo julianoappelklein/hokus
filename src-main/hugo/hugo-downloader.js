@@ -3,11 +3,11 @@ const fs = require('fs-extra');
 const mkdirp = require("mkdirp");
 const path = require("path");
 const glob = require("glob");
-const pathHelper = require('./path-helper');
+const pathHelper = require('./../path-helper');
 const {path7za} = require("7zip-bin");
 const request = require('request');
-const outputConsole = require('./output-console');
-const { EnvironmentResolver, ARCHS, PLATFORMS } = require('./environment-resolver');
+const outputConsole = require('./../output-console');
+const { EnvironmentResolver, ARCHS, PLATFORMS } = require('./../environment-resolver');
 
 class OfficialHugoSourceUrlBuilder{
     build(enviromnent, version){

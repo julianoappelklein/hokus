@@ -1,9 +1,9 @@
 //@flow
 
 const { spawn } = require('child_process');
-const pathHelper = require('./path-helper');
+const pathHelper = require('./../path-helper');
 const fs = require('fs-extra');
-const outputConsole = require('./output-console');
+const outputConsole = require('./../output-console');
 var readline = require('readline');
 let {ipcMain} = require('electron');
 
@@ -136,7 +136,7 @@ class HugoServer{
                             env: env
                         }
                     );
-                    let {stdout} = currentServerProccess;
+                    let {stdout, stderr} = currentServerProccess;
                     this.emitLines(stdout);
                     stdout.setEncoding('utf8');
                     stdout.resume();
@@ -154,6 +154,8 @@ class HugoServer{
                     
                 }
                 catch(e){
+                    outputConsole.appendLine('Hugo Server failed to start.');
+                    outputConsole.appendLine(e.message);
                     callback(e);
                 }
             })

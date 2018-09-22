@@ -122,7 +122,7 @@ export default class CreateSiteDialog extends React.Component<CreateSiteDialogPr
                 actions={actions}
             >
                 <TextField
-                    floatingLabelText="Key"
+                    floatingLabelText="Key *"
                     floatingLabelFixed={true}
                     fullWidth={true}
                     placeholder='Only lowercase letters, numbers, "-" and "_".'
@@ -133,7 +133,7 @@ export default class CreateSiteDialog extends React.Component<CreateSiteDialogPr
                     onChange={this.handleSourceChange.bind(this)}
                     fullWidth
                     value={sourceIndex}
-                    floatingLabelText="Source Type">
+                    floatingLabelText="Source Type *">
                     {SITE_SOURCES.map((s, i)=>(
                         <MenuItem
                             key={s.key} value={i}

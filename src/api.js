@@ -93,6 +93,10 @@ export class API {
     createSite(siteConfig: any){
         return mainProcessBridge.request('createSite', siteConfig);
     }
+
+    getHugoTemplates(){
+        return mainProcessBridge.request('getHugoTemplates', null, {timeout: 30000});
+    }
 }
 
 const api : API = new API();

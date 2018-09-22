@@ -1,7 +1,7 @@
 const { describe, before, it } = require('mocha');
 const { expect } = require('chai');
 const assert = require('assert');
-const { HugoDownloader, OfficialHugoPackagesRepository } = require('./src-main/hugo-downloader');
+const { HugoDownloader, OfficialHugoPackagesRepository } = require('./src-main/hugo/hugo-downloader');
 // const formatProviderResolver = require('./src-main/format-provider-resolver');
 // const WorkspaceService = require('./src-main/workspace-service')
 

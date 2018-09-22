@@ -11,6 +11,7 @@ const { promisify } = require('util');
 const mainWindowManager = require('./../../main-window-manager');
 const Jimp = require("jimp");
 const { createThumbnailJob } = require('./../../jobs');
+/*:: import type { WorkspaceConfig } from './../../../global-types.js'; */
 
 class WorkspaceService{
     constructor(workspacePath /* : string */){
@@ -20,14 +21,25 @@ class WorkspaceService{
     /*:: workspacePath : string; */
 
     //Get the workspace configurations data to be used by the client
-    getConfigurationsData(){
+    getConfigurationsData()/*: WorkspaceConfig*/{
         let fileExp = path.join(this.workspacePath,'hokus.{'+formatProviderResolver.allFormatsExt().join(',')+'}');
         let filePath = glob.sync(fileExp)[0];
-        let parsedData;
+        let parsedData/*: any*/ = {};
         let formatProvider;
         if(!filePath){
             parsedData = require('./default-workspace-config.json');
-            formatProvider = formatProviderResolver.getDefaultFormat();
+
+            let hugoConfigExp = path.join(this.workspacePath,'config.{'+formatProviderResolver.allFormatsExt().join(',')+'}');
+            let hugoConfigPath = glob.sync(hugoConfigExp)[0];
+            formatProvider = formatProviderResolver.resolveForFilePath(hugoConfigPath);
+            if(formatProvider!=null){
+                let ext = formatProvider.defaultExt();
+                parsedData.collections.forEach(x => x.dataformat = ext);
+                parsedData.singles.forEach(x => x.file=x.file.replace('config.yaml', 'config.'+ ext));
+            }
+            else
+                formatProvider = formatProviderResolver.getDefaultFormat();
+
             let dump = formatProvider.dump(parsedData);
             fs.writeFileSync(
                 path.join(this.workspacePath,'hokus.'+formatProvider.defaultExt()), 
@@ -37,6 +49,9 @@ class WorkspaceService{
         else{
             let strData = fs.readFileSync(filePath,'utf8');
             formatProvider = formatProviderResolver.resolveForFilePath(filePath);
+            if(formatProvider==null){
+                formatProvider = formatProviderResolver.getDefaultFormat();
+            }
             parsedData = formatProvider.parse(strData);
         }
         
@@ -101,6 +116,7 @@ class WorkspaceService{
     async getSingle(singleKey /* : string */){
         let config = this.getConfigurationsData();
         let single = config.singles.find(x => x.key === singleKey);
+        if(single==null)throw new Error('Could not find single.');
         let filePath = path.join(this.workspacePath, single.file);
 
         if(fs.existsSync(filePath)){
@@ -116,6 +132,7 @@ class WorkspaceService{
     async updateSingle(singleKey /* : string */, document /* : any */ ){
         let config = this.getConfigurationsData();
         let single = config.singles.find(x => x.key === singleKey);
+        if(single==null)throw new Error('Could not find single.');
         let filePath = path.join(this.workspacePath, single.file);
 
         let directory = path.dirname(filePath);
@@ -151,6 +168,8 @@ class WorkspaceService{
         let config = this.getConfigurationsData();
         let collection = config.collections.find(x => x.key === collectionKey);
         let keyExt = path.extname(collectionItemKey);
+        if(collection==null)
+            throw new Error('Could not find collection.');
         let filePath = path.join(this.workspacePath, collection.folder, collectionItemKey);
         if(await fs.exists(filePath)){
             let data = await fs.readFile(filePath,{encoding:'utf8'});
@@ -168,6 +187,8 @@ class WorkspaceService{
     async createCollectionItemKey(collectionKey /* : string */,  collectionItemKey /* : string */){
         let config = this.getConfigurationsData();
         let collection = config.collections.find(x => x.key === collectionKey);
+        if(collection==null)
+            throw new Error('Could not find collection.');
         let filePath;
         let returnedKey;
         if(collection.folder.startsWith('content')){
@@ -190,6 +211,8 @@ class WorkspaceService{
 
     async listCollectionItems(collectionKey /* : string */){
         let collection = this.getConfigurationsData().collections.find(x => x.key === collectionKey);
+        if(collection==null)
+            throw new Error('Could not find collection.');
         let folder = path.join(this.workspacePath, collection.folder).replace(/\\/g,'/');
         
         //TODO: make it more flexible! This should not be handled with IF ELSE.  But is good enough for now.
@@ -219,6 +242,8 @@ class WorkspaceService{
     //Remove item from collection - remove from file system
     removeCollectionItem(collectionKey /* : string */, collectionItemKey /* : string */){
         let collection = this.getConfigurationsData().collections.find(x => x.key === collectionKey);
+        if(collection==null)
+            throw new Error('Could not find collection.');
         let filePath = path.join(this.workspacePath, collection.folder, collectionItemKey);
         if(!fs.existsSync(filePath))
             throw 'Cannot unlink file. It does not exists.';
@@ -240,6 +265,8 @@ class WorkspaceService{
     async renameCollectionItem(collectionKey /* : string */, collectionItemKey /* : string */, collectionItemNewKey /* : string */){
         let config = this.getConfigurationsData();
         let collection = config.collections.find(x => x.key === collectionKey);
+        if(collection==null)
+            throw new Error('Could not find collection.');
         let filePath;
         let newFilePath;
         let newFileKey;
@@ -268,6 +295,8 @@ class WorkspaceService{
         //TODO: only work with "label" of a collection item
         let config = this.getConfigurationsData();
         let collection = config.collections.find(x => x.key === collectionKey);
+        if(collection==null)
+            throw new Error('Could not find collection.');
         let filePath = path.join(this.workspacePath, collection.folder, collectionItemKey);
         if (fs.existsSync(filePath)){
             //TODO: use async await with a promise to test if deletion succeded
@@ -281,6 +310,8 @@ class WorkspaceService{
         //TODO: only work with "label" of a collection item
         let config = this.getConfigurationsData();
         let collection = config.collections.find(x => x.key === collectionKey);
+        if(collection==null)
+            throw new Error('Could not find collection.');
         let filePath = path.join(this.workspacePath, collection.folder, collectionItemKey);
         let directory = path.dirname(filePath);
 
@@ -313,6 +344,8 @@ class WorkspaceService{
     async copyFilesIntoCollectionItem(collectionKey /* : string */, collectionItemKey /* : string */, targetPath /* : string */, files /* : Array<string> */){
         let config = this.getConfigurationsData();
         let collection = config.collections.find(x => x.key === collectionKey);
+        if(collection==null)
+            throw new Error('Could not find collection.');
         let pathFromItemRoot = path.join(collectionItemKey.replace(/\/[^\/]+$/,'') , targetPath);
         let filesBasePath = path.join(this.workspacePath, collection.folder, pathFromItemRoot);
         
@@ -347,6 +380,8 @@ class WorkspaceService{
         
         let config = this.getConfigurationsData();
         let collection = config.collections.find(x => x.key === collectionKey);
+        if(collection==null)
+            throw new Error('Could not find collection.');
         let itemPath = collectionItemKey.replace(/\/[^\/]+$/,'');
         let src = path.join(this.workspacePath, collection.folder, itemPath, targetPath);
         

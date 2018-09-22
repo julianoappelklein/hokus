@@ -39,6 +39,10 @@ class PathHelper{
     getBuildDestination(siteKey, workspaceKey){
         return this.getSiteRoot(siteKey) + 'build/' + workspaceKey + '/';
     }
+
+    getThemesDir(){
+        return this.getRoot() + 'tools/hugothemes/';
+    }
 }
 
 module.exports = new PathHelper();

@@ -1,5 +1,5 @@
 const { execFile } = require('child_process');
-const pathHelper = require('./path-helper');
+const pathHelper = require('./../path-helper');
 const fs = require('fs-extra');
 
 class HugoBuilder{

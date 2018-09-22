@@ -4,13 +4,12 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        // {
-        //     "type": "node",
-        //     "request": "launch",
-        //     "name": "Debug CreateThumbnail Process",
-        //     "program": "${workspaceFolder}/src-main/spawns/create-thumbnail.js",
-        //     "args":["D:/dog03.gif","D:/dog03_thumb.gif"]
-        // },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Current JS",
+            "program": "${file}"
+        },
         {
             //from: https://electronjs.org/docs/tutorial/debugging-main-process-vscode
 

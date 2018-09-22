@@ -5,7 +5,8 @@ const configurationDataProvider = require('./configuration-data-provider')
 const SiteService = require('./services/site/site-service')
 const WorkspaceService = require('./services/workspace/workspace-service')
 const siteSourceBuilderFactory = require('./site-sources/builders/site-source-builder-factory');
-const hugoDownloader = require('./hugo-downloader')
+const hugoDownloader = require('./hugo/hugo-downloader')
+const hugoThemes = require('./hugo/hugo-themes')
 const opn = require('opn');
 
 /*::
@@ -102,8 +103,10 @@ api.serveWorkspace = function({siteKey, workspaceKey}, context){
             if(err){
                 context.reject(err); return
             }
-            opn('http://localhost:1313');
-            context.resolve();
+            else{
+                opn('http://localhost:1313');
+                context.resolve();
+            }
         });
     });
 }
@@ -257,9 +260,12 @@ api.getThumbnailForCollectionItemImage = function({siteKey, workspaceKey, collec
 }
 
 api.createSite = (config/*: any*/, context)=>{
-    siteSourceBuilderFactory.get(config.sourceType).build(config);
-    configurationDataProvider.invalidateCache();
-    context.resolve();
+    siteSourceBuilderFactory.get(config.sourceType).build(config).then(() =>{
+        configurationDataProvider.invalidateCache();
+        context.resolve();
+    }, (err)=>{
+        context.reject(err);
+    });
 }
 
 module.exports = api;
