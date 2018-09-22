@@ -19,6 +19,7 @@ import muiThemeable from 'material-ui/styles/muiThemeable';
 import { Wrapper, InfoLine, InfoBlock, MessageBlock } from './components/shared';
 import Workspaces from './components/Workspaces';
 import CreateSiteDialog from './components/CreateSiteDialog/';
+import BlockDialog from './components/BlockDialog';
 
 import type { Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from './../../types';
 
@@ -66,14 +67,16 @@ type HomeState = {
     selectedSite?: SiteConfig,
     selectedSiteWorkspaces?: Array<any>,
     selectedWorkspace?: WorkspaceHeader,
-    createSiteDialog: bool
+    createSiteDialog: bool,
+    blockingOperation: ?string
 }
 
 class Home extends React.Component<HomeProps, HomeState>{
     constructor(props){
         super(props);
         this.state = {
-            createSiteDialog: false
+            createSiteDialog: false,
+            blockingOperation: null
         };
     }
     componentWillMount(){
@@ -183,10 +186,15 @@ class Home extends React.Component<HomeProps, HomeState>{
     }
 
     handleCreateSiteSubmit = (data)=>{
-        this.setState({createSiteDialog:false})
+        this.setState({createSiteDialog:false, blockingOperation:'Creating site...'})
         service.api.createSite(data).then(()=>{
-            service.getConfigurations(true)
-                .then((configurations)=>this.setState({configurations}));
+            return service.getConfigurations(true);
+        }).then(configurations=>{
+            this.setState({configurations});
+        }).catch((e)=>{
+            alert('Failed to create site');
+        }).then(()=>{
+            this.setState({ blockingOperation:null})
         });
     }
 
@@ -240,6 +248,7 @@ class Home extends React.Component<HomeProps, HomeState>{
                     onCancelClick={()=>this.setState({createSiteDialog:false})}
                     onSubmitClick={this.handleCreateSiteSubmit}
                 />
+                <BlockDialog open={this.state.blockingOperation!=null}>{this.state.blockingOperation}<span> </span></BlockDialog>
             </div>         
         );
     }
