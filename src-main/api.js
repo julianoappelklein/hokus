@@ -8,6 +8,7 @@ const siteSourceBuilderFactory = require('./site-sources/builders/site-source-bu
 const hugoDownloader = require('./hugo/hugo-downloader')
 const hugoThemes = require('./hugo/hugo-themes')
 const opn = require('opn');
+const pathHelper = require('./path-helper');
 
 /*::
 type APIContext = {
@@ -16,13 +17,14 @@ type APIContext = {
 }
 
 type Callback = (error: any, data: any)=>void
+type CallbackTyped<T> = (error: any, data: T)=>void
 */
 
 let api/*: { [key: string]: ( payload: any, context: APIContext ) => void }*/ = {};
 
-function getSiteService(siteKey, callback/*: Callback*/){
+function getSiteService(siteKey, callback/*: CallbackTyped<SiteService>*/){
     configurationDataProvider.get(function(err, configurations){
-        if(err){ callback(err); return; }
+        if(err){ callback(err, (null/*: any*/)); return; }
         let siteData = configurations.sites.find((x)=>x.key===siteKey);
         let siteService = new SiteService(siteData);
         callback(undefined, siteService);
@@ -40,11 +42,13 @@ function getSiteServicePromise(siteKey, callback)/*: Promise<SiteService>*/{
     });
 }
 
-function getWorkspaceService(siteKey, workspaceKey, callback/*: Callback*/){
+function getWorkspaceService(siteKey, workspaceKey, callback/*: CallbackTyped<{siteService: SiteService, workspaceService: WorkspaceService}>*/){
     getSiteService(siteKey, function(err, siteService){
-        if(err){ callback(err); return; }
+        if(err){ callback(err, (null/*: any*/)); return; }
         let workspaceHead = siteService.getWorkspaceHead(workspaceKey);
-        let workspaceService = new WorkspaceService(workspaceHead.path);
+        if(workspaceHead==null)
+            throw new Error('Could not find workspace.');
+        let workspaceService = new WorkspaceService(workspaceHead.path, workspaceHead.key);
         callback(undefined, {siteService, workspaceService});
     });
 }
@@ -55,7 +59,7 @@ function getWorkspaceServicePromise(siteKey, workspaceKey, callback){
         let workspaceHead = siteService.getWorkspaceHead(workspaceKey);
         if(workspaceHead==null) return Promise.reject(new Error('Could not find workspace.'));
         else{
-            let workspaceService = new WorkspaceService(workspaceHead.path);
+            let workspaceService = new WorkspaceService(workspaceHead.path, workspaceHead.key);
             return { siteService, workspaceService };
         }
     })
@@ -96,35 +100,30 @@ api.getWorkspaceDetails = function({siteKey, workspaceKey}, context){
     });
 }
 
-api.serveWorkspace = function({siteKey, workspaceKey}, context){
-    getSiteService(siteKey, function(err, siteService){
+api.serveWorkspace = function({siteKey, workspaceKey, serveKey}, context){
+    getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
         if(err){ context.reject(err); return; }
-        siteService.serveWorkspace(workspaceKey, function(err){
-            if(err){
-                context.reject(err); return
-            }
-            else{
-                opn('http://localhost:1313');
-                context.resolve();
-            }
+        workspaceService.serve(serveKey).then(()=>{
+            opn('http://localhost:1313');
+            context.resolve();
+        }, ()=>{
+            context.reject(err); return
         });
     });
 }
 
-api.publishWorkspace = function({siteKey, workspaceKey, publishKey}, context){
-    getSiteService(siteKey, function(err, siteService){
+api.publishWorkspace = function({siteKey, workspaceKey, buildKey, publishKey}, context){
+    getWorkspaceService(siteKey, workspaceKey, function(err, {siteService, workspaceService}){
         if(err){ context.reject(err); return; }
-        siteService.buildWorkspaceForPublish(workspaceKey, publishKey, function(err){
-            if(err){ context.reject(err); return }
-            else{
-                siteService.publishWorkspace(workspaceKey, publishKey, function(err){
-                    if(err){ context.reject(err); return }
-                    else{
-                        context.resolve();
-                    }
-                })
-            }
+        let buildDestination = pathHelper.getBuildDestination(this._config.key, workspaceKey);
+        workspaceService.build(buildKey, buildDestination).then(() =>{
+            return siteService.publish(publishKey);
+        }).then(()=>{
+            context.resolve();
         })
+        .catch((e)=>{
+            context.reject(e);
+        });
     });
 }
 

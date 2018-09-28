@@ -27,7 +27,15 @@ class WorkspaceConfigValidator {
             joi.object().keys({
                 hugover: joi.string().trim().required(),
                 collections: joi.array().required(),
-                singles: joi.array().required()
+                singles: joi.array().required(),
+                build: joi.array().items(joi.object().keys({
+                    key:joi.string(),
+                    config:joi.string().required()
+                })),
+                serve: joi.array().items(joi.object().keys({
+                    key:joi.string(),
+                    config:joi.string().required()
+                }))
             }).required()
         ).error;
 

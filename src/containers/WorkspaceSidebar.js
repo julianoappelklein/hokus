@@ -12,7 +12,9 @@ import IconMenu from 'material-ui/svg-icons/navigation/menu';
 import IconMore from 'material-ui/svg-icons/navigation/more-vert';
 import IconFileFolder from 'material-ui/svg-icons/file/folder';
 import Border from './../components/Border';
+import { TriggerWithOptions } from './../components/TriggerWithOptions';
 import service from './../services/service'
+import type { SiteConfig, WorkspaceConfig } from './../types'
 import * as Sidebar from './Sidebar';
 
 const Fragment = React.Fragment;
@@ -27,9 +29,8 @@ let MenuBorder = ({ children }) => {
 
 type WorkspaceWidgetProps = {
   onClick : ()=> void,
-  siteKey : ?string,
-  siteName : ?string,
-  workspaceKey : ?string
+  siteConfig : ?SiteConfig,
+  workspaceConfig : ?WorkspaceConfig
 }
 
 class WorkspaceWidget extends React.Component<WorkspaceWidgetProps,any> {
@@ -37,36 +38,48 @@ class WorkspaceWidget extends React.Component<WorkspaceWidgetProps,any> {
   render(){
     let {
       onClick,
-      siteName,
-      siteKey,
-      workspaceKey,
+      siteConfig,
+      workspaceConfig,
     } = this.props;    
 
-    return <MenuBorder>
+    let serverOptions = workspaceConfig!=null&&workspaceConfig.serve!=null?workspaceConfig.serve.map(x => x.key||'default') : [];
+
+    return (<MenuBorder>
     <List style={{padding: 0}}>
-      <ListItem
-        primaryText={siteName || 'Please'}
-        secondaryText={workspaceKey || 'select a workspace' }
+      { siteConfig!=null && workspaceConfig!=null ? (<ListItem
+        primaryText={siteConfig.name}
+        secondaryText={workspaceConfig.key}
         onClick={onClick}
         rightIcon={<IconActionSetting color={translucentColor} />}
-        />
-    </List >
-    { siteKey && workspaceKey ? 
+      />) : (<ListItem
+        primaryText={'Please'}
+        secondaryText={'select a workspace'}
+        rightIcon={<IconActionSetting color={translucentColor} />}
+      />) }
+    </List>
+    { siteConfig!=null && workspaceConfig!=null ? (
     <div style={{display:'flex'}}>
+      <TriggerWithOptions 
+        triggerType={FlatButton}
+        triggerProps={{
+            style: {flex:1, minWidth:40},
+            icon: (<IconPlay color="white" style={{opacity:.2}} />),
+            disabled: workspaceConfig==null||workspaceConfig.build==null||workspaceConfig.build.length==0
+        }}
+        menuProps={{ style:{ background:'rgb(22, 6, 47)' } }}
+        popoverProps={{ style:{ background:'rgb(22, 6, 47)' } }}
+        options={ serverOptions }
+        onOptionClick={(serve)=>{ service.serveWorkspace(siteConfig.key, workspaceConfig.key, serverOptions[serve]) }}
+      />
       <FlatButton
-        onClick={ function(){ service.serveWorkspace(siteKey, workspaceKey) } }
-        style={{flex:1, minWidth:40}}
-        icon={<IconPlay color="white" style={{opacity:.2}} />}
-        />
-      <FlatButton
-        onClick={function(){ service.openWorkspaceDir(siteKey, workspaceKey) }}
+        onClick={function(){ service.openWorkspaceDir(siteConfig.key, workspaceConfig.key) }}
         style={{flex:1, minWidth:40}}
         icon={<IconFileFolder color="white" style={{opacity:.2}} />} />
       {/* <FlatButton
         style={{flex:1, minWidth:40}}
         icon={<IconMore color="white"  style={{opacity:.2}} />} /> */}
-    </div> : undefined }
-  </MenuBorder>
+    </div>) : (null) }
+  </MenuBorder>);
   }
 }
 
@@ -112,9 +125,7 @@ class WorkspaceSidebar extends React.Component<WorkspaceSidebarProps,WorkspaceSi
       let stateUpdate = {};
       service.getSiteAndWorkspaceData(siteKey, workspaceKey).then((bundle)=>{
         stateUpdate.site = bundle.site;
-        return service.getWorkspaceDetails(siteKey, workspaceKey);
-      }).then((workspace : any )=>{
-        stateUpdate.workspace = workspace;
+        stateUpdate.workspace = bundle.workspaceDetails;
         this.setState(stateUpdate);
       });
     }
@@ -142,9 +153,8 @@ class WorkspaceSidebar extends React.Component<WorkspaceSidebarProps,WorkspaceSi
       title: 'Current Workspace',
       widget: (
         <WorkspaceWidget
-          siteKey={this.state.site?this.state.site.key:null}
-          siteName={this.state.site?this.state.site.name:null}
-          workspaceKey={this.props.workspaceKey}
+          siteConfig={this.state.site}
+          workspaceConfig={this.state.workspace}
           onClick={()=>{
             if(this.state.site!=null)
               history.push(basePath)            

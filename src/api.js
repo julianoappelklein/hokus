@@ -1,29 +1,32 @@
-//@ flow
+//@flow
 
-import mainProcessBridge from './utils/main-process-bridge'
+import mainProcessBridge from './utils/main-process-bridge';
+import type { AbortablePromise } from './utils/main-process-bridge';
+import type { Configurations, WorkspaceConfig } from './../global-types';
 
 export class API {
-    getConfigurations(options?: {invalidateCache: bool}){
+
+    getConfigurations(options?: {invalidateCache: bool}): AbortablePromise<Configurations>{
         return mainProcessBridge.request('getConfigurations', options);
     }
 
-    listWorkspaces(siteKey){
+    listWorkspaces(siteKey: string){
         return mainProcessBridge.request('listWorkspaces', {siteKey});
     }
 
-    getWorkspaceDetails(siteKey, workspaceKey){
+    getWorkspaceDetails(siteKey: string, workspaceKey: string): AbortablePromise<WorkspaceConfig>{
         return mainProcessBridge.request('getWorkspaceDetails', {siteKey, workspaceKey});
     }
     
-    publishWorkspace(siteKey, workspaceKey){
-        return mainProcessBridge.request('publishWorkspace', {siteKey, workspaceKey});
+    publishWorkspace(siteKey: string, workspaceKey: string, publishKey: string){
+        return mainProcessBridge.request('publishWorkspace', {siteKey, workspaceKey, publishKey});
     }
     
-    serveWorkspace(siteKey, workspaceKey){
-        return mainProcessBridge.request('serveWorkspace', {siteKey, workspaceKey});
+    serveWorkspace(siteKey: string, workspaceKey: string, serveKey: string){
+        return mainProcessBridge.request('serveWorkspace', {siteKey, workspaceKey, serveKey});
     }
     
-    saveSingle(siteKey, workspaceKey, singleKey, document){
+    saveSingle(siteKey: string, workspaceKey: string, singleKey: string, document: string){
         return mainProcessBridge.request('saveSingle', {siteKey, workspaceKey, singleKey, document});
     }
     
@@ -31,43 +34,44 @@ export class API {
         return mainProcessBridge.pendingCallbacks.length;
     }
     
-    getSingle(siteKey, workspaceKey, singleKey){    
+    getSingle(siteKey: string, workspaceKey: string, singleKey: string){    
         return mainProcessBridge.request('getSingle', {siteKey, workspaceKey, singleKey});
     }
     
-    updateSingle(siteKey, workspaceKey, singleKey, document){    
+    updateSingle(siteKey: string, workspaceKey: string, singleKey: string, document: any){    
         return mainProcessBridge.request('updateSingle', {siteKey, workspaceKey, singleKey, document});
     }
     
-    listCollectionItems(siteKey, workspaceKey, collectionKey){
+    listCollectionItems(siteKey: string, workspaceKey: string, collectionKey: string){
         return mainProcessBridge.request('listCollectionItems', {siteKey, workspaceKey, collectionKey});
     }
     
-    getCollectionItem(siteKey, workspaceKey, collectionKey, collectionItemKey){
+    getCollectionItem(siteKey: string, workspaceKey: string, collectionKey: string, collectionItemKey: string){
         return mainProcessBridge.request('getCollectionItem', {siteKey, workspaceKey, collectionKey, collectionItemKey});
     }
     
-    updateCollectionItem(siteKey, workspaceKey, collectionKey, collectionItemKey, document){    
+    updateCollectionItem(siteKey: string, workspaceKey: string, collectionKey: string, collectionItemKey: string, document: any){    
         return mainProcessBridge.request('updateCollectionItem', {siteKey, workspaceKey, collectionKey, collectionItemKey, document});
     }
     
-    createCollectionItemKey(siteKey, workspaceKey, collectionKey, collectionItemKey){
+    createCollectionItemKey(siteKey: string, workspaceKey: string, collectionKey: string, collectionItemKey: string){
         return mainProcessBridge.request('createCollectionItemKey', {siteKey, workspaceKey, collectionKey, collectionItemKey});
     }
     
-    deleteCollectionItem(siteKey, workspaceKey, collectionKey, collectionItemKey){
+    deleteCollectionItem(siteKey: string, workspaceKey: string, collectionKey: string, collectionItemKey: string){
         return mainProcessBridge.request('deleteCollectionItem', {siteKey, workspaceKey, collectionKey, collectionItemKey});
     }
     
-    renameCollectionItem(siteKey, workspaceKey, collectionKey, collectionItemKey, collectionItemNewKey){
+    renameCollectionItem(siteKey: string, workspaceKey: string, collectionKey: string, collectionItemKey: string, collectionItemNewKey: string){
         return mainProcessBridge.request('renameCollectionItem', {siteKey, workspaceKey, collectionKey, collectionItemKey, collectionItemNewKey});
     }
     
-    openFileExplorer(path){
+    openFileExplorer(path: string){
         mainProcessBridge.requestVoid('openFileExplorer', {path});
     }
     
-    openFileDialogForCollectionItem(siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath, { title, extensions }){
+    openFileDialogForCollectionItem(siteKey: string, workspaceKey: string, collectionKey: string, collectionItemKey: string,
+        targetPath: string, { title, extensions }:{title: string, extensions: Array<string>}){
         let remote= window.require('electron').remote;
         let openDialogOptions = {
             title:title||'Select Files',
@@ -86,7 +90,7 @@ export class API {
         });
     }
     
-    getThumbnailForCollectionItemImage(siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath){
+    getThumbnailForCollectionItemImage(siteKey: string, workspaceKey: string, collectionKey: string, collectionItemKey: string, targetPath: string){
         return mainProcessBridge.request('getThumbnailForCollectionItemImage', {siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath}, {timeout: 30000});
     }
 
@@ -99,8 +103,6 @@ export class API {
     }
 }
 
-const api : API = new API();
-
 //just to help debugging
 // for(let key in api){
 //     let wrappedFunction = api[key];
@@ -110,4 +112,5 @@ const api : API = new API();
 //     }
 // }
 
-export default api;
+
+export const instance = new API();

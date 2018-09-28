@@ -9,7 +9,6 @@ type S3PublisherConfig = {
     accessKeyId: string,
     secretAccessKey: string,
     region: string,
-    localDir: string,
     s3PutObjectParams: {[string]: string}
 };
 
@@ -35,11 +34,7 @@ class S3Publisher/*:: implements IPublisher*/{
         return input.replace(/\\/g, '/');
     }
 
-    winBackslashes (input/*: string*/){
-        return input.replace(/\//g,'\\');
-    }
-
-    publish(callback/*: (error: ?Error)=>void*/)/*: void*/{
+    publish(path/*: string*/, callback/*: (error: ?Error)=>void*/)/*: void*/{
         let clientConfig = {
             //maxAsyncS3: 20,     // this is the default 
             //s3RetryCount: 3,    // this is the default 
@@ -56,7 +51,7 @@ class S3Publisher/*:: implements IPublisher*/{
         var client = s3.createClient(clientConfig);
 
         var params = {
-            localDir: this.unixBackslashes(this._config.localDir),
+            localDir: this.unixBackslashes(path),
             deleteRemoved: true, // default false, whether to remove s3 objects that have no corresponding local file. 
             s3Params: this._config.s3PutObjectParams
             /*{

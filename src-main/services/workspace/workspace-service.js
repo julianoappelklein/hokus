@@ -6,60 +6,61 @@ const glob = require('glob');
 const { nativeImage } = require('electron');
 const formatProviderResolver = require('./../../format-provider-resolver');
 const WorkspaceConfigValidator = require('./workspace-config-validator'); 
+const InitialWorkspaceConfigBuilder = require('./initial-workspace-config-builder'); 
+
 const contentFormats = require('./../../content-formats'); 
 const { promisify } = require('util');
 const mainWindowManager = require('./../../main-window-manager');
 const Jimp = require("jimp");
 const { createThumbnailJob } = require('./../../jobs');
+const HugoBuilder = require('./../../hugo/hugo-builder');
+const HugoServer = require('./../../hugo/hugo-server');
+const pathHelper = require('./../../path-helper');
 /*:: import type { WorkspaceConfig } from './../../../global-types.js'; */
 
 class WorkspaceService{
-    constructor(workspacePath /* : string */){
+    constructor(workspacePath /* : string */, workspaceKey /*: string*/){
         this.workspacePath = workspacePath;
+        this.workspaceKey = workspaceKey;
     }
 
-    /*:: workspacePath : string; */
+    /*::
+        workspacePath : string;
+        workspaceKey : string;
+    */
 
     //Get the workspace configurations data to be used by the client
     getConfigurationsData()/*: WorkspaceConfig*/{
         let fileExp = path.join(this.workspacePath,'hokus.{'+formatProviderResolver.allFormatsExt().join(',')+'}');
         let filePath = glob.sync(fileExp)[0];
-        let parsedData/*: any*/ = {};
-        let formatProvider;
+        let returnData/*: any*/ = {};
         if(!filePath){
-            parsedData = require('./default-workspace-config.json');
-
-            let hugoConfigExp = path.join(this.workspacePath,'config.{'+formatProviderResolver.allFormatsExt().join(',')+'}');
-            let hugoConfigPath = glob.sync(hugoConfigExp)[0];
-            formatProvider = formatProviderResolver.resolveForFilePath(hugoConfigPath);
-            if(formatProvider!=null){
-                let ext = formatProvider.defaultExt();
-                parsedData.collections.forEach(x => x.dataformat = ext);
-                parsedData.singles.forEach(x => x.file=x.file.replace('config.yaml', 'config.'+ ext));
-            }
-            else
-                formatProvider = formatProviderResolver.getDefaultFormat();
-
-            let dump = formatProvider.dump(parsedData);
+            let configBuilder/*: any*/ = new InitialWorkspaceConfigBuilder(this.workspacePath);
+            let {data, formatProvider} = configBuilder.build();
+            returnData = data;
             fs.writeFileSync(
                 path.join(this.workspacePath,'hokus.'+formatProvider.defaultExt()), 
-                dump
+                formatProvider.dump(data)
             );
         }
         else{
             let strData = fs.readFileSync(filePath,'utf8');
-            formatProvider = formatProviderResolver.resolveForFilePath(filePath);
+            let formatProvider = formatProviderResolver.resolveForFilePath(filePath);
             if(formatProvider==null){
                 formatProvider = formatProviderResolver.getDefaultFormat();
             }
-            parsedData = formatProvider.parse(strData);
+            returnData = formatProvider.parse(strData);
         }
         
-        let result = (new WorkspaceConfigValidator()).validate(parsedData);
+        let validator = new WorkspaceConfigValidator();
+        let result = validator.validate(returnData);
         if(result)
             throw new Error(result);
 
-        return parsedData;
+        returnData.path = this.workspacePath;
+        returnData.key = this.workspaceKey;
+
+        return returnData;
     }
 
     async _smartResolveFormatProvider(filePath /* : string */, fallbacks /*: Array<string> */){
@@ -203,7 +204,7 @@ class WorkspaceService{
             return { unavailableReason:'already-exists' };
 
         await fs.ensureDir(path.dirname(filePath));
-        let stringData = await this._smartDump(filePath, [collection.dataformat], collection.protodata||{});
+        let stringData = await this._smartDump(filePath, [collection.dataformat], {});
         await fs.writeFile(filePath, stringData, {encoding:'utf8'});
 
         return { key: returnedKey.replace(/\\/g,'/') };
@@ -409,6 +410,80 @@ class WorkspaceService{
 
         return `data:${mime};base64,${base64}`;
         
+    }
+
+    _findFirstMatchOrDefault/*::<T: any>*/(arr/*: Array<T>*/, key/*: string*/)/*: T*/{
+        let result;
+        
+        if(key){
+            result = (arr||[]).find(x => x.key===key);
+            if(result) return result;
+        }
+
+        result = (arr||[]).find(x => x.key==='default'|| x.key==='' || x.key==null);
+        if(result) return result;
+
+        if(arr!==undefined && arr.length===1)
+            return arr[0];
+        
+        if(key){
+            throw new Error(`Could not find a config for key "${key}" and a default value was not available.`);
+        }
+        else{
+            throw new Error(`Could not find a default config.`);
+        }
+    }
+
+    async serve(serveKey/*:string*/)/*: Promise<void>*/{
+        return new Promise((resolve,reject)=>{
+            let workspaceDetails = this.getConfigurationsData();
+            
+            let serveConfig;
+            if(workspaceDetails.serve && workspaceDetails.serve.length){
+                serveConfig = this._findFirstMatchOrDefault(workspaceDetails.serve, '');
+            }
+            else serveConfig = {config:''};
+            
+            let hugoServerConfig = {
+                config: serveConfig.config,
+                workspacePath: this.workspacePath,
+                hugover: workspaceDetails.hugover,
+            }
+
+            let hugoServer = new HugoServer(JSON.parse(JSON.stringify(hugoServerConfig)));
+
+            hugoServer.serve(function(err, stdout, stderr){
+                if(err) reject(err);
+                else{ resolve(); }
+            });
+        });
+    }
+
+    build(buildKey/*: string*/, buildDestination/*: string*/) /*:Promise<void>*/{
+        return new Promise((resolve,reject)=>{
+
+            let workspaceDetails = this.getConfigurationsData();
+            
+            let buildConfig;
+            if(workspaceDetails.build && workspaceDetails.build.length){
+                buildConfig = this._findFirstMatchOrDefault(workspaceDetails.build, buildKey);
+            }
+            else buildConfig = {config:''};
+
+            let hugoBuilderConfig = {
+                config: buildConfig.config,
+                workspacePath: this.workspacePath,
+                hugover: workspaceDetails.hugover,
+                destination: buildDestination
+            }
+
+            let hugoBuilder = new HugoBuilder(hugoBuilderConfig);
+
+            hugoBuilder.build(function(err, stdout, stderr){
+                if(err) reject(err);
+                else{ resolve(); }
+            });
+        });
     }
 }
 

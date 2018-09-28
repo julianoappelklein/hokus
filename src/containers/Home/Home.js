@@ -1,5 +1,6 @@
 //@flow
 
+import invariant from 'assert'
 import { Route } from 'react-router-dom'
 import React from 'react';
 import service from './../../services/service'
@@ -17,8 +18,9 @@ import DangerButton from './../../components/DangerButton';
 import TextField from 'material-ui/TextField';
 import muiThemeable from 'material-ui/styles/muiThemeable';
 import { Wrapper, InfoLine, InfoBlock, MessageBlock } from './components/shared';
-import Workspaces from './components/Workspaces';
-import CreateSiteDialog from './components/CreateSiteDialog/';
+import { Workspaces } from './components/Workspaces';
+import CreateSiteDialog from './components/CreateSiteDialog';
+import PublishSiteDialog from './components/PublishSiteDialog';
 import BlockDialog from './components/BlockDialog';
 
 import type { Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from './../../types';
@@ -67,7 +69,9 @@ type HomeState = {
     selectedSite?: SiteConfig,
     selectedSiteWorkspaces?: Array<any>,
     selectedWorkspace?: WorkspaceHeader,
+    selectedWorkspaceDetails?: WorkspaceConfig,
     createSiteDialog: bool,
+    publishSiteDialog?: { workspace: WorkspaceConfig, workspaceHeader: WorkspaceHeader, open: bool },
     blockingOperation: ?string
 }
 
@@ -75,8 +79,9 @@ class Home extends React.Component<HomeProps, HomeState>{
     constructor(props){
         super(props);
         this.state = {
+            blockingOperation: null,
             createSiteDialog: false,
-            blockingOperation: null
+            publishSiteDialog: undefined
         };
     }
     componentWillMount(){
@@ -84,28 +89,28 @@ class Home extends React.Component<HomeProps, HomeState>{
     }
 
     componentDidMount(){
-        var stateUpdate  = {};
-        
-        var load;
+       
 
         var { siteKey, workspaceKey } = this.props;
         if(siteKey && workspaceKey){
-            load = service.getSiteAndWorkspaceData(siteKey, workspaceKey).then((bundle)=>{
+            service.getSiteAndWorkspaceData(siteKey, workspaceKey).then((bundle)=>{
+                var stateUpdate  = {};
                 stateUpdate.configurations = bundle.configurations;
                 stateUpdate.selectedSite = bundle.site;
                 stateUpdate.selectedSiteWorkspaces = bundle.siteWorkspaces;
                 stateUpdate.selectedWorkspace = bundle.workspace;
-            });
-        }
-        else{
-            load = service.getConfigurations().then((c)=>{
-                stateUpdate.configurations = c;
+                stateUpdate.selectedWorkspaceDetails = bundle.workspaceDetails;
+                this.setState(stateUpdate);
+                return service.getWorkspaceDetails(siteKey, workspaceKey);
             })
         }
-
-        load.then(()=>{
-            this.setState(stateUpdate);
-        })
+        else{
+            service.getConfigurations().then((c)=>{
+                var stateUpdate  = {};
+                stateUpdate.configurations = c;
+                this.setState(stateUpdate);
+            })
+        }
     }
 
     selectSite(site : SiteConfig ){
@@ -116,13 +121,18 @@ class Home extends React.Component<HomeProps, HomeState>{
     }
 
     selectWorkspace(workspace : WorkspaceHeader, history : any ){
-        let { selectedWorkspace } = this.state; let path;
-        let select = selectedWorkspace==null || selectedWorkspace.path!=workspace.path;
+        let { selectedWorkspace, selectedSite } = this.state; let path;
+        if(selectedSite==null) throw new Error('Invalid operation.');
+        let select = (selectedWorkspace==null || selectedWorkspace.path!=workspace.path);
         if(select)
-            //$FlowFixMe
-            history.push(`/sites/${decodeURIComponent(this.state.selectedSite.key)}/workspaces/${decodeURIComponent(workspace.key)}`);
+            history.push(`/sites/${decodeURIComponent(selectedSite.key)}/workspaces/${decodeURIComponent(workspace.key)}`);
         else
             history.push(`/`);
+    }
+
+    getWorkspaceDetails = (workspace: WorkspaceHeader)=> {
+        if(this.state.selectedSite==null) throw new Error('Invalid operation.');
+        return service.getWorkspaceDetails(this.state.selectedSite.key, workspace.key);
     }
 
     componentWillUnmount(){
@@ -135,6 +145,9 @@ class Home extends React.Component<HomeProps, HomeState>{
             <InfoLine label="Name">{site.name}</InfoLine>
             <InfoLine label="Key">{site.key}</InfoLine>
             <InfoLine label="Source Type">{site.source.type}</InfoLine>
+            <InfoLine label="Publish Options">
+                {site.publish && site.publish.length>0?(site.publish.map(x => x.key).join(', ')):('EMPTY')}
+            </InfoLine>
             { configurations.global.siteManagementEnabled? (
                 <InfoLine label="Config Location">
                     <TextField id="config-location" value={site.configPath} readOnly={true} /> 
@@ -160,21 +173,20 @@ class Home extends React.Component<HomeProps, HomeState>{
 
                 return (
                     <Workspaces
+                        getWorkspaceDetails={this.getWorkspaceDetails}
                         workspaces={workspaces}
                         activeWorkspaceKey={selectedSiteActive && this.state.selectedWorkspace ? this.state.selectedWorkspace.key : null }
                         onLocationClick={(location)=>{
                             service.api.openFileExplorer(location)
                         }}
-                        onPublishClick={(warn, workspace)=>{
-                            if(warn){
-                                snackMessageService.addSnackMessage('You are about to perform a irreversible operation.', { autoHideDuration: 2000});
-                            }
-                            else{
-                                service.api.publishWorkspace(site.key, workspace.key);
-                            }
+                        onPublishClick={(workspaceHeader, workspace)=>{
+                            //this will change a lot!
+                            this.setState({publishSiteDialog: {workspace, workspaceHeader, open: true}});
+                            // service.api.publishWorkspace(site.key, workspace.key, 'buildKey');
                         }}
-                        onStartServerClick={ (workspace)=> { service.api.serveWorkspace(site.key, workspace.key) } } 
+                        onStartServerClick={ (workspace, serveKey)=> { service.api.serveWorkspace(site.key, workspace.key, serveKey) } } 
                         onSelectWorkspaceClick={ (workspace)=> { this.selectWorkspace(workspace, history) } }
+                        site={site}
                     />
                 )
             }} />
@@ -198,10 +210,24 @@ class Home extends React.Component<HomeProps, HomeState>{
         });
     }
 
+    handlePublishSiteCancelClick = () => {
+        this.setState({publishSiteDialog: {...this.state.publishSiteDialog, open:false}});
+    }
+
+    handleBuildAndPublishClick = ({siteKey, workspaceKey, build, publish}) => {
+        this.setState({blockingOperation: 'Building site...', publishSiteDialog: undefined});
+        setTimeout(()=>{
+            this.setState({blockingOperation: 'Publishing site...'});
+            setTimeout(()=>{
+                this.setState({blockingOperation: null});
+            }, 2000);
+        },2000)
+    }
+
     render(){
 
         let { siteKey } = this.props;
-        let { selectedSite, configurations, createSiteDialog } = this.state;
+        let { selectedSite, selectedWorkspace, configurations, createSiteDialog, publishSiteDialog } = this.state;
 
         if(configurations==null){
             return <Wrapper title="Site Management"><MessageBlock>Loading configurations...</MessageBlock></Wrapper>
@@ -248,6 +274,18 @@ class Home extends React.Component<HomeProps, HomeState>{
                     onCancelClick={()=>this.setState({createSiteDialog:false})}
                     onSubmitClick={this.handleCreateSiteSubmit}
                 />
+                { selectedSite!=null && this.state.publishSiteDialog!=null ? (
+                    <PublishSiteDialog
+                        site={selectedSite}
+                        workspace={this.state.publishSiteDialog.workspace}
+                        workspaceHeader={this.state.publishSiteDialog.workspaceHeader}
+                        onCancelClick={this.handlePublishSiteCancelClick}
+                        onBuildAndPublishClick={this.handleBuildAndPublishClick}
+                        open={publishSiteDialog!=null&&publishSiteDialog.open}
+                    />
+                ):(null) }
+                
+                
                 <BlockDialog open={this.state.blockingOperation!=null}>{this.state.blockingOperation}<span> </span></BlockDialog>
             </div>         
         );

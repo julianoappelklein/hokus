@@ -4,6 +4,8 @@
     type MessageHandler = (eventData:any, arg:any) => void;
 */
 
+export type AbortablePromise<T> = Promise<T> & { forceAbort: ()=>void };
+
 class MainProcessBridge{
 
     /*::    
@@ -106,7 +108,7 @@ class MainProcessBridge{
         method /*: string */,
         data /*: any */ ,
         opts /* : {timeout:number} */ = {timeout:10000}
-    ) /*: Promise<any> & { forceAbort: ()=>void }*/ {
+    ) /*: AbortablePromise<*> */ {
         let _reject;
         let token = this._createToken();
         let promise/*:any*/ = new Promise(function(resolve, reject){

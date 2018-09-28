@@ -32,16 +32,14 @@ class FolderSiteSourceBuilder/*:: implements SiteSourceBuilder*/ {
         let siteConfig/*: RawSiteConfig*/ = {
             key: config.key,
             name: config.key,
-            source: { type: 'Folder', path: config.folderPath },
-            serve: [
+            source: { type: 'folder', path: config.folderPath },
+            publish: [
                 {
-                    "args": [],
-                    "env": {}
+                    key: 'default',
+                    type: 'folder', //will publish to a folder
+                    path: null //will use the default generated path
                 }
-            ],
-            build: [],
-            transform: [],
-            publish: []
+            ]
         };
 
         let configPath = `${pathHelper.getRoot()}config.${config.key}.json`;

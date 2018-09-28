@@ -205,7 +205,7 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
     }
 
     componentDidMount(){
-        var stateUpdate  = {};
+        var stateUpdate: any  = {};
         var { siteKey, workspaceKey, collectionKey } = this.props;
         if(siteKey && workspaceKey && collectionKey){
             Promise.all([

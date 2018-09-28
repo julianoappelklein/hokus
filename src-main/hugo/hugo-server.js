@@ -12,11 +12,9 @@ let currentServerProccess = undefined;
 
 /*::
 type HugoServerConfig = {
-    hugoArgs: Array<string>,
+    config: string,
     workspacePath: string,
-    hugover: string,
-    env: any,
-    destination: string
+    hugover: string
 }
 */
 
@@ -30,53 +28,6 @@ class HugoServer{
         this.config = config;
     }   
 
-    _validateHugoArgs(){
-
-        let {hugoArgs} = this.config;
-
-        //TODO: do some real validation do prevent damages!
-        // The validation should consider the Hugo version
-
-        const forbiddenFlags = [
-            '--cacheDir',
-            '--contentDir',
-            '-d',
-            '--destination',
-            '-h',
-            '--help',
-            '-l',
-            '--layoutDir',
-            '-s',
-            '--source',
-            '--themesDir',
-            '--watch'
-        ];
-
-        const relativeOnlyFlags = [
-        ];
-
-        let invalidMessage;
-        for(let i=0; i < hugoArgs.length; i++){
-            let arg = hugoArgs[i];
-            arg = arg.trim()
-            hugoArgs[i] = arg;
-            let isFlag = arg.startsWith('-');
-            if(isFlag){
-                for(let f=0; f < forbiddenFlags.length; f++){
-                    let flag = forbiddenFlags[f];
-                    if(arg === flag){
-                        invalidMessage = 'The hugo flag '+ flag + ' is forbidden.';
-                        break;
-                    }
-                    if(invalidMessage)
-                        break;
-                }
-            }
-        }
-        
-        return invalidMessage;
-    }
-
     emitLines (stream) {
         var backlog = ''
         stream.on('data', function (data) {
@@ -88,15 +39,14 @@ class HugoServer{
             backlog = backlog.substring(n + 1)
             n = backlog.indexOf('\n')
             }
-        })
+        });
         stream.on('end', function () {
             if (backlog) {
                 stream.emit('line', backlog)
             }
-        })
+        });
     }
     
-
     stopIfRunning(){
         if(currentServerProccess){
             currentServerProccess.kill();
@@ -106,60 +56,67 @@ class HugoServer{
 
     serve(callback/*: (error: ?Error)=>void*/){
 
-        let {hugoArgs, workspacePath, hugover, env, destination} = this.config;
+        let {config, workspacePath, hugover} = this.config;
 
         this.stopIfRunning();
 
-        let validateErrorMessage = this._validateHugoArgs();
-        if(validateErrorMessage){
-            callback(validateErrorMessage)
+        const exec = pathHelper.getHugoBinForVer(hugover);
+        
+        if(!fs.existsSync(exec)){
+            callback(new Error('Could not find hugo.exe for version '+ hugover));
             return;
         }
-        else{
-            hugoArgs.unshift('server');
 
-            const exec = pathHelper.getHugoBinForVer(hugover);
-            fs.exists(exec, (exists) => {
-                if(!exists){
-                    callback(new Error('Could not find hugo.exe for version '+ hugover));
+        let hugoArgs = [ 'server' ];
+        if(config){ 
+            hugoArgs.push('--config');
+            hugoArgs.push(config);
+        }
+        
+        try{
+            currentServerProccess = spawn(
+                exec,
+                hugoArgs,
+                {
+                    cwd: workspacePath,
+                    windowsHide: true,
+                    timeout: undefined,
+                    env: {}
+                }
+            );
+            let {stdout, stderr} = currentServerProccess;
+            this.emitLines(stdout);
+            
+            currentServerProccess.stderr.on('data', (data) => {
+                outputConsole.appendLine('Hugo Server Error: '+data);
+            });
+
+            currentServerProccess.on('close', (code) => {
+                outputConsole.appendLine('Hugo Server Closed: '+code);
+            });
+
+            stdout.setEncoding('utf8');
+            stdout.resume();
+
+            let isFirst = true;
+            stdout.on('line', function (line) {
+                if(isFirst){
+                    isFirst=false;
+                    outputConsole.appendLine('Starting Hugo Server...');
+                    outputConsole.appendLine('');
                     return;
                 }
-                try{
-                    
-                    currentServerProccess = spawn(
-                        exec,
-                        hugoArgs,
-                        {
-                            cwd: workspacePath,
-                            windowsHide: true,
-                            timeout: undefined,
-                            env: env
-                        }
-                    );
-                    let {stdout, stderr} = currentServerProccess;
-                    this.emitLines(stdout);
-                    stdout.setEncoding('utf8');
-                    stdout.resume();
-
-                    let isFirst = true;
-                    stdout.on('line', function (line) {
-                        if(isFirst){
-                            isFirst=false;
-                            outputConsole.appendLine('Starting Hugo Server...');
-                            outputConsole.appendLine('');
-                            return;
-                        }
-                        outputConsole.appendLine(line);
-                    });                        
-                    
-                }
-                catch(e){
-                    outputConsole.appendLine('Hugo Server failed to start.');
-                    outputConsole.appendLine(e.message);
-                    callback(e);
-                }
-            })
+                outputConsole.appendLine(line);
+            });
+            
+            
         }
+        catch(e){
+            outputConsole.appendLine('Hugo Server failed to start.');
+            outputConsole.appendLine(e.message);
+            callback(e);
+        }
+        callback(null);
     }
 }
 

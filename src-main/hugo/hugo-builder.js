@@ -1,93 +1,54 @@
+//@flow
+
 const { execFile } = require('child_process');
 const pathHelper = require('./../path-helper');
 const fs = require('fs-extra');
 
+/*::
+type HugoBuilderConfig = {
+    config: string,
+    destination: string,
+    workspacePath: string,
+    hugover: string
+}
+*/
+
 class HugoBuilder{
-    constructor({hugoArgs, workspacePath, hugover, env, destination}){
-        this.hugoArgs = hugoArgs;
-        this.workspacePath = workspacePath;
-        this.hugover = hugover;
-        this.env = env;
-        this.destination = destination;
+    /*::
+    config: HugoBuilderConfig;
+    */
+
+    constructor(config/*: HugoBuilderConfig*/){
+        this.config = config;
     }   
 
-    _validateHugoArgs(){
-
-        //TODO: do some real validation do prevent damages!
-        // The validation should consider the Hugo version
-
-        const forbiddenFlags = [
-            '--cacheDir',
-            '--contentDir',
-            '-d',
-            '--destination',
-            '-h',
-            '--help',
-            '-l',
-            '--layoutDir',
-            '-s',
-            '--source',
-            '--themesDir',
-            '--watch'
-        ];
-
-        const relativeOnlyFlags = [
-        ];
-
-        let invalidMessage;
-        for(let i=0; i < this.hugoArgs.length; i++){
-            let arg = this.hugoArgs[i];
-            arg = arg.trim()
-            this.hugoArgs[i] = arg;
-            let isFlag = arg.startsWith('-');
-            if(isFlag){
-                for(let f=0; f < forbiddenFlags.length; f++){
-                    let flag = forbiddenFlags[f];
-                    if(arg === flag){
-                        invalidMessage = 'The hugo flag '+ flag + ' is forbidden.';
-                        break;
-                    }
-                    if(invalidMessage)
-                        break;
-                }
-            }
-        }
+    build(callback/*: (error: any, stdout: any, stderr: any) => void*/){
         
-        return invalidMessage;
-    }
+        let hugoArgs = ['--publishDir', this.config.destination ];
+        if(this.config.config){ 
+            hugoArgs.push('--config');
+            hugoArgs.push(this.config.config);
+        }
 
-    build(callback){
-        let validateErrorMessage = this._validateHugoArgs();
-        if(validateErrorMessage){
-            callback(validateErrorMessage)
+        const exec = pathHelper.getHugoBinForVer(this.config.hugover+"/hugo");
+        if(!fs.existsSync(exec)){
+            callback('Could not find hugo.exe for version '+this.config.hugover);
             return;
         }
-        else{
-            this.hugoArgs.push('--destination');
-            this.hugoArgs.push(this.destination);
-
-            const exec = pathHelper.getHugoBinForVer(this.hugover+"/hugo");
-            fs.exists(exec, function(exists){
-                if(exists){
-                    execFile(
-                        exec,
-                        this.hugoArgs,
-                        {
-                            cwd: this.workspacePath,
-                            windowsHide: true,
-                            timeout: 60000, //1 minute
-                            env: this.env
-                        },
-                        (error, stdout, stderr) => {
-                            callback(error, stdout, stderr);
-                        }
-                    );
-                }
-                else{
-                    callback('Could not find hugo.exe for version '+this.hugover);
-                }
-            }.bind(this))
-        }
+   
+        execFile(
+            exec,
+            hugoArgs,
+            {
+                cwd: this.config.workspacePath,
+                windowsHide: true,
+                timeout: 60000, //1 minute
+            },
+            (error, stdout, stderr) => {
+                callback(error, stdout, stderr);
+                return;
+            }
+        );        
     }
 }
 

@@ -2,6 +2,6 @@
 
 /*::
 export interface IPublisher{
-    publish(callback: (error: ?Error)=>void): void;
+    publish(path: string, callback: (error: ?Error)=>void): void;
 }
 */

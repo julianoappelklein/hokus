@@ -1,21 +1,17 @@
 //@flow
 
-export type SiteServeConfig={
-    env: { [key: string]: string },
-    args: Array<string>
+export type ServeConfig={
+    key: string,
+    config: string
 };
 
-export type SiteBuildConfig={
-    env: string,
-    args: Array<string>
+export type BuildConfig={
+    key: string,
+    config: string
 };
-
-export type SiteTransformConfig<P>={
-    provider:string
-}
 
 export type SitePublishConfig<P>={
-    provider:string,
+    type:string,
     key: string
 } & P;
 
@@ -24,9 +20,7 @@ export type RawSiteConfig = {
     key: string,
     name: string,
     source: any,
-    serve: Array<SiteServeConfig>,
-    build: Array<SiteBuildConfig>,
-    transform: Array<SiteTransformConfig<*>>,
+    // transform: Array<SiteTransformConfig<*>>,
     publish: Array<SitePublishConfig<*>>
 }
 
@@ -34,10 +28,17 @@ export type SiteConfig = RawSiteConfig & {
     configPath: string
 }
 
-export type WorkspaceConfig = {
+export type WorkspaceConfigRaw = {
     hugover: string,
+    serve:Array<ServeConfig>,
+    build:Array<BuildConfig>,
     singles: Array<SingleConfig>,
     collections: Array<CollectionConfig>,
+}
+
+export type WorkspaceConfig = WorkspaceConfigRaw & {
+    key: string,
+    path: string
 }
 
 export type WorkspaceHeader = {
@@ -59,8 +60,7 @@ export type CollectionConfig = {
     fields: Array<any>,
     folder: string,
     extension: string,
-    dataformat: string,
-    protodata: any
+    dataformat: string
 }
 
 export type Configurations = {
