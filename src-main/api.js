@@ -48,7 +48,7 @@ function getWorkspaceService(siteKey, workspaceKey, callback/*: CallbackTyped<{s
         let workspaceHead = siteService.getWorkspaceHead(workspaceKey);
         if(workspaceHead==null)
             throw new Error('Could not find workspace.');
-        let workspaceService = new WorkspaceService(workspaceHead.path, workspaceHead.key);
+        let workspaceService = new WorkspaceService(workspaceHead.path, workspaceHead.key, siteKey);
         callback(undefined, {siteService, workspaceService});
     });
 }
@@ -59,7 +59,7 @@ function getWorkspaceServicePromise(siteKey, workspaceKey, callback){
         let workspaceHead = siteService.getWorkspaceHead(workspaceKey);
         if(workspaceHead==null) return Promise.reject(new Error('Could not find workspace.'));
         else{
-            let workspaceService = new WorkspaceService(workspaceHead.path, workspaceHead.key);
+            let workspaceService = new WorkspaceService(workspaceHead.path, workspaceHead.key, siteKey);
             return { siteService, workspaceService };
         }
     })
@@ -112,17 +112,13 @@ api.serveWorkspace = function({siteKey, workspaceKey, serveKey}, context){
     });
 }
 
-api.publishWorkspace = function({siteKey, workspaceKey, buildKey, publishKey}, context){
-    getWorkspaceService(siteKey, workspaceKey, function(err, {siteService, workspaceService}){
+api.buildWorkspace = function({siteKey, workspaceKey, buildKey}, context){
+    getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
         if(err){ context.reject(err); return; }
-        let buildDestination = pathHelper.getBuildDestination(this._config.key, workspaceKey);
-        workspaceService.build(buildKey, buildDestination).then(() =>{
-            return siteService.publish(publishKey);
-        }).then(()=>{
+        workspaceService.build(buildKey).then(()=>{
             context.resolve();
-        })
-        .catch((e)=>{
-            context.reject(e);
+        }, ()=>{
+            context.reject(err); return
         });
     });
 }
@@ -264,6 +260,17 @@ api.createSite = (config/*: any*/, context)=>{
         context.resolve();
     }, (err)=>{
         context.reject(err);
+    });
+}
+
+api.publishSite = function({siteKey, publishKey}, context){
+    getSiteService(siteKey, function(err, siteService){
+        if(err){ context.reject(err); return; }
+        siteService.publish(publishKey).then(()=>{
+            context.resolve();
+        }, ()=>{
+            context.reject(err);
+        });
     });
 }
 

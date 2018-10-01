@@ -17,13 +17,13 @@ export class API {
     getWorkspaceDetails(siteKey: string, workspaceKey: string): AbortablePromise<WorkspaceConfig>{
         return mainProcessBridge.request('getWorkspaceDetails', {siteKey, workspaceKey});
     }
-    
-    publishWorkspace(siteKey: string, workspaceKey: string, publishKey: string){
-        return mainProcessBridge.request('publishWorkspace', {siteKey, workspaceKey, publishKey});
-    }
-    
+        
     serveWorkspace(siteKey: string, workspaceKey: string, serveKey: string){
         return mainProcessBridge.request('serveWorkspace', {siteKey, workspaceKey, serveKey});
+    }
+
+    buildWorkspace(siteKey: string, workspaceKey: string, buildKey: string){
+        return mainProcessBridge.request('buildWorkspace', {siteKey, workspaceKey, buildKey});
     }
     
     saveSingle(siteKey: string, workspaceKey: string, singleKey: string, document: string){
@@ -96,6 +96,10 @@ export class API {
 
     createSite(siteConfig: any){
         return mainProcessBridge.request('createSite', siteConfig);
+    }
+
+    publishSite(siteKey: string, publishKey: string){
+        return mainProcessBridge.request('publishSite', {siteKey, publishKey});
     }
 
     getHugoTemplates(){

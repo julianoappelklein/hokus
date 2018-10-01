@@ -1,14 +1,14 @@
 //@flow
 
-import invariant from 'assert'
-import { Route } from 'react-router-dom'
+import invariant from 'assert';
+import { Route } from 'react-router-dom';
 import React from 'react';
-import service from './../../services/service'
-import { snackMessageService } from './../../services/ui-service'
-import FlatButton from 'material-ui/FlatButton'
-import RaisedButton from 'material-ui/RaisedButton'
-import Paper from 'material-ui/Paper'
-import {List, ListItem} from 'material-ui/List'
+import service from './../../services/service';
+import { snackMessageService } from './../../services/ui-service';
+import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import Paper from 'material-ui/Paper';
+import {List, ListItem} from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import IconNavigationCheck from 'material-ui/svg-icons/navigation/check';
 import IconAdd from 'material-ui/svg-icons/content/add';
@@ -72,7 +72,7 @@ type HomeState = {
     selectedWorkspaceDetails?: WorkspaceConfig,
     createSiteDialog: bool,
     publishSiteDialog?: { workspace: WorkspaceConfig, workspaceHeader: WorkspaceHeader, open: bool },
-    blockingOperation: ?string
+    blockingOperation: ?string //this should be moved to a UI service
 }
 
 class Home extends React.Component<HomeProps, HomeState>{
@@ -180,9 +180,7 @@ class Home extends React.Component<HomeProps, HomeState>{
                             service.api.openFileExplorer(location)
                         }}
                         onPublishClick={(workspaceHeader, workspace)=>{
-                            //this will change a lot!
-                            this.setState({publishSiteDialog: {workspace, workspaceHeader, open: true}});
-                            // service.api.publishWorkspace(site.key, workspace.key, 'buildKey');
+                            this.setState({publishSiteDialog: {workspace, workspaceHeader, open: true}});                            
                         }}
                         onStartServerClick={ (workspace, serveKey)=> { service.api.serveWorkspace(site.key, workspace.key, serveKey) } } 
                         onSelectWorkspaceClick={ (workspace)=> { this.selectWorkspace(workspace, history) } }
@@ -216,12 +214,16 @@ class Home extends React.Component<HomeProps, HomeState>{
 
     handleBuildAndPublishClick = ({siteKey, workspaceKey, build, publish}) => {
         this.setState({blockingOperation: 'Building site...', publishSiteDialog: undefined});
-        setTimeout(()=>{
+        service.api.buildWorkspace(siteKey, workspaceKey, build).then(()=>{
             this.setState({blockingOperation: 'Publishing site...'});
-            setTimeout(()=>{
-                this.setState({blockingOperation: null});
-            }, 2000);
-        },2000)
+            return service.api.publishSite(siteKey, publish);
+        }).then(()=>{
+            snackMessageService.addSnackMessage('Site successfully published.');
+        }).catch(()=>{
+            snackMessageService.addSnackMessage('Publish failed.');
+        }).then(()=>{
+            this.setState({blockingOperation: null});
+        })
     }
 
     render(){
@@ -285,7 +287,7 @@ class Home extends React.Component<HomeProps, HomeState>{
                     />
                 ):(null) }
                 
-                
+                {/*this should be moved to a UI service*/}
                 <BlockDialog open={this.state.blockingOperation!=null}>{this.state.blockingOperation}<span> </span></BlockDialog>
             </div>         
         );

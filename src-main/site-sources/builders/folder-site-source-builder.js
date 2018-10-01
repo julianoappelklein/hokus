@@ -36,8 +36,10 @@ class FolderSiteSourceBuilder/*:: implements SiteSourceBuilder*/ {
             publish: [
                 {
                     key: 'default',
-                    type: 'folder', //will publish to a folder
-                    path: null //will use the default generated path
+                    config: {
+                        type: 'folder', //will publish to a folder
+                        path: null //will use the default generated path
+                    }
                 }
             ]
         };

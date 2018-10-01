@@ -22,33 +22,40 @@ class HugoBuilder{
         this.config = config;
     }   
 
-    build(callback/*: (error: any, stdout: any, stderr: any) => void*/){
+    async build()/*: Promise<void>*/ {
         
-        let hugoArgs = ['--publishDir', this.config.destination ];
+        let hugoArgs = ['--destination', this.config.destination ];
         if(this.config.config){ 
             hugoArgs.push('--config');
             hugoArgs.push(this.config.config);
         }
 
-        const exec = pathHelper.getHugoBinForVer(this.config.hugover+"/hugo");
+        const exec = pathHelper.getHugoBinForVer(this.config.hugover);
         if(!fs.existsSync(exec)){
-            callback('Could not find hugo.exe for version '+this.config.hugover);
+            Promise.reject(new Error(`Could not find hugo.exe for version ${this.config.hugover}.`));
             return;
         }
-   
-        execFile(
-            exec,
-            hugoArgs,
-            {
-                cwd: this.config.workspacePath,
-                windowsHide: true,
-                timeout: 60000, //1 minute
-            },
-            (error, stdout, stderr) => {
-                callback(error, stdout, stderr);
-                return;
-            }
-        );        
+
+        await fs.ensureDir(this.config.destination);
+    
+        return new Promise((resolve, reject)=>{
+            execFile(
+                exec,
+                hugoArgs,
+                {
+                    cwd: this.config.workspacePath,
+                    windowsHide: true,
+                    timeout: 60000, //1 minute
+                },
+                (error, stdout, stderr) => {
+                    if(error){
+                        reject(error);
+                        return;
+                    }
+                    resolve();
+                }
+            );        
+        })
     }
 }
 

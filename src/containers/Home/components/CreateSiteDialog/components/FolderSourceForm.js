@@ -58,6 +58,7 @@ export default class FolderSourceForm extends React.Component<FolderSourceFormPr
                     value={model.theme||''}
                     onChange ={this.handleRepoURLChange}
                     fullWidth={true}
+                    placeholder='Only for empty site folders'
                     floatingLabelText={'Theme Repository URL'}
                 />
             </div>

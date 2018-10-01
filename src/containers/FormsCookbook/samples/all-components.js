@@ -69,12 +69,13 @@ let fields: Array<any> = [
             { key:'number', title:'Number Inside Section', type:'number' }
         ]}
     ]},
+    { key: 'select-section', title:'Select', type:'section', groupdata:false, fields:[
+        { key:'select', title:'Select', type:'select', options:[1,2,3,4,5].map((v)=>({text:`Option ${v}`, value:v.toString()})) },
+        { key:'select-multiple', title:'Select Multiple', type:'select', multiple:true, options:[1,2,3,4,5].map((v)=>({text:`Option ${v}`, value:v.toString()})) },
+    ]},
     { key: 'string-section', title:'String', type:'section', groupdata:false, fields:[
         { key:'string', title:'String', type:'string' },
         { key:'string-multiLine', title:'String MultiLine', type:'string', multiLine:true }
-    ]},
-    { key: 'select-section', title:'Select', type:'section', groupdata:false, fields:[
-        { key:'select', title:'Select', type:'select', options:[1,2,3,4,5].map((v)=>({value:v.toString(), text:v.toString()})) }
     ]},
 ];
 

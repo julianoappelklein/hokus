@@ -19,14 +19,16 @@ const pathHelper = require('./../../path-helper');
 /*:: import type { WorkspaceConfig } from './../../../global-types.js'; */
 
 class WorkspaceService{
-    constructor(workspacePath /* : string */, workspaceKey /*: string*/){
+    constructor(workspacePath/* : string */, workspaceKey/*: string*/, siteKey/*: string*/){
         this.workspacePath = workspacePath;
         this.workspaceKey = workspaceKey;
+        this.siteKey = siteKey;
     }
 
     /*::
         workspacePath : string;
         workspaceKey : string;
+        siteKey : string;
     */
 
     //Get the workspace configurations data to be used by the client
@@ -459,7 +461,7 @@ class WorkspaceService{
         });
     }
 
-    build(buildKey/*: string*/, buildDestination/*: string*/) /*:Promise<void>*/{
+    build(buildKey/*: string*/) /*:Promise<void>*/{
         return new Promise((resolve,reject)=>{
 
             let workspaceDetails = this.getConfigurationsData();
@@ -470,19 +472,21 @@ class WorkspaceService{
             }
             else buildConfig = {config:''};
 
+            let destination = pathHelper.getBuildDir(this.siteKey, this.workspaceKey, buildKey);
+
             let hugoBuilderConfig = {
                 config: buildConfig.config,
                 workspacePath: this.workspacePath,
                 hugover: workspaceDetails.hugover,
-                destination: buildDestination
+                destination: destination
             }
 
             let hugoBuilder = new HugoBuilder(hugoBuilderConfig);
 
-            hugoBuilder.build(function(err, stdout, stderr){
-                if(err) reject(err);
-                else{ resolve(); }
-            });
+            hugoBuilder.build().then(
+                ()=>resolve(),
+                (err)=>reject(err)
+            );
         });
     }
 }

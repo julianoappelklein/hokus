@@ -6,7 +6,7 @@ import { Popover, Menu, MenuItem } from 'material-ui/';
 
 type TriggerWithOptionsProps = {
     options: Array<string>,
-    onOptionClick: (index: number)=>void,
+    onOptionClick: (index: number)=>?bool,
     triggerType: any,
     triggerProps: any,
     menuProps?: any,
@@ -30,7 +30,6 @@ export class TriggerWithOptions extends React.Component<TriggerWithOptionsProps,
   }
 
   handleTriggerClick = (event: any) => {
-    // This prevents ghost click.
     event.preventDefault();
 
     this.setState({
@@ -46,7 +45,10 @@ export class TriggerWithOptions extends React.Component<TriggerWithOptionsProps,
   };
 
   handleMenuItemClick = (event: any, menuItem: any, index: number)=>{
-      this.props.onOptionClick(index);
+      let result = this.props.onOptionClick(index);
+      if(result!==false)
+        this.setState({open:false});
+      
   }
 
   render() {

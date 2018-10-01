@@ -104,7 +104,7 @@ export default class PublishSiteDialog extends React.Component<PublishSiteDialog
                         <MenuItem
                             key={`publish-${i}`} value={i}
                             primaryText={publish.key||'default'}
-                            secondaryText={publish.type}
+                            secondaryText={publish.config.type}
                         />
                     ))}
                 </SelectField>

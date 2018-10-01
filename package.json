@@ -6,7 +6,7 @@
     "email": "julianoaklein@gmail.com"
   },
   "description": "A simple UI for Hugo.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "7zip-bin": "3.1.0",

@@ -1,31 +1,42 @@
+//@flow
+
 const userHome = require('user-home');
 
 class PathHelper{
+
+    /*::
+    _lastBuildDir: ?string;
+    */
+
     getRoot(){
         return userHome +'/Hokus/';
     }
 
-    getSiteRoot(siteKey){
-        return this.getRoot()+ 'sites/' + siteKey + '/';
+    getSiteRoot(siteKey/*: string*/){
+        return this.getRoot()+ `sites/${siteKey}/`;
     }
 
-    getSiteWorkspacesRoot(siteKey){
-        return this.getSiteRoot(siteKey) + 'workspaces/'
+    getSiteWorkspacesRoot(siteKey/*: string*/){
+        return this.getSiteRoot(siteKey) + 'workspaces/';
     }
 
-    getSiteWorkspaceRoot(siteKey, workspaceKey){
+    getSiteWorkspaceRoot(siteKey/*: string*/, workspaceKey/*: string*/){
         return this.getSiteWorkspacesRoot(siteKey) + workspaceKey + '/';
+    }
+
+    getSiteDefaultPublishDir(siteKey/*: string*/, publishKey/*: string*/){
+        return this.getSiteRoot(siteKey) + `publish/${publishKey}/`;
     }
 
     getHugoBinRoot(){
         return this.getRoot() + 'tools/hugobin/';        
     }
 
-    getHugoBinDirForVer(version){
+    getHugoBinDirForVer(version/*: string*/){
         return this.getHugoBinRoot() + version + '/';
     }
 
-    getHugoBinForVer(version){
+    getHugoBinForVer(version/*: string*/){
         let platform = process.platform.toLowerCase();
         if(platform.startsWith('win')){
             return this.getHugoBinDirForVer(version) + 'hugo.exe';
@@ -36,8 +47,13 @@ class PathHelper{
         
     }
 
-    getBuildDestination(siteKey, workspaceKey){
-        return this.getSiteRoot(siteKey) + 'build/' + workspaceKey + '/';
+    getLastBuildDir() /*: ?string*/{
+        return this._lastBuildDir;
+    }
+
+    getBuildDir(siteKey/*: string*/, workspaceKey/*: string*/, buildKey/*: string*/){
+        this._lastBuildDir = this.getSiteRoot(siteKey) + `build/${workspaceKey}/${buildKey}/`;
+        return this._lastBuildDir;
     }
 
     getThemesDir(){

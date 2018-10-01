@@ -58,18 +58,42 @@ class SiteService{
         return this.listWorkspaces().find(x => x.key===workspaceKey);
     }
 
-    //publishWorkspace(workspaceKey/*: string*/, publishKey/*: string*/, callback/*: (error: ?Error)=>void*/){
-    publish(publishKey/*: string*/)/*: Promise<void>*/{
-        return Promise.resolve();
-        // let publishConfig = this._findFirstMatchOrDefault(this._config.publish, publishKey);
-        // let providerConfig = publishConfig.provider;
-        // let providerConfigExt = {
-        //     localDir: pathHelper.getBuildDestination(this._config.key, workspaceKey)
-        // }
-        // providerConfig = Object.assign(JSON.parse(JSON.stringify(providerConfig)), providerConfigExt);
-        // let publisher = publisherFactory.getPublisher(providerConfig);
-        // publisher.publish(callback);
+    _findFirstMatchOrDefault/*::<T: any>*/(arr/*: Array<T>*/, key/*: string*/)/*: T*/{
+        let result;
         
+        if(key){
+            result = (arr||[]).find(x => x.key===key);
+            if(result) return result;
+        }
+
+        result = (arr||[]).find(x => x.key==='default'|| x.key==='' || x.key==null);
+        if(result) return result;
+
+        if(arr!==undefined && arr.length===1)
+            return arr[0];
+        
+        if(key){
+            throw new Error(`Could not find a config for key "${key}" and a default value was not available.`);
+        }
+        else{
+            throw new Error(`Could not find a default config.`);
+        }
+    }
+
+    publish(publishKey/*: string*/)/*: Promise<void>*/{
+        
+        let publishConfig = this._findFirstMatchOrDefault(this._config.publish, publishKey);
+        if(publishConfig==null)
+            throw new Error(`Could not find a publisher config for key '${publishKey}'.`);
+        if(publishConfig.config==null)
+            throw new Error(`The matcher publisher config does not have a property config.`);
+
+        let from = pathHelper.getLastBuildDir();
+        if(from==null)
+            throw new Error('Could not resolve the last build directory.');
+
+        let publisher = publisherFactory.getPublisher(publishConfig.config);
+        return publisher.publish({siteKey: this._config.key, publishKey, from });
     }
 }
 

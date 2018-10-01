@@ -1,7 +1,14 @@
 //@flow
 
 /*::
+
+export type PublishContext = {
+    siteKey: string,
+    publishKey: string,
+    from: string
+}
+
 export interface IPublisher{
-    publish(path: string, callback: (error: ?Error)=>void): void;
+    publish(context: PublishContext): Promise<void>;
 }
 */

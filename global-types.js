@@ -10,16 +10,24 @@ export type BuildConfig={
     config: string
 };
 
-export type SitePublishConfig<P>={
-    type:string,
-    key: string
+export type PublisherConfig<P> = {
+    type: string,
 } & P;
+
+export type SitePublishConfig<P>={
+    config:PublisherConfig<P>,
+    key: string
+};
+
+export type SiteSource<S> = {
+    type: string
+} & S;
 
 
 export type RawSiteConfig = {
     key: string,
     name: string,
-    source: any,
+    source: SiteSource<*>,
     // transform: Array<SiteTransformConfig<*>>,
     publish: Array<SitePublishConfig<*>>
 }

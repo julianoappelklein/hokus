@@ -3,6 +3,7 @@
 /*::
 
     import type { IPublisher } from './types';
+    import type { PublisherConfig } from './../types';
 
     interface IPublisherConfig {
         +provider: string;
@@ -11,14 +12,22 @@
 
 //Not a real factory, yet!
 class PublisherFactory{
-    getPublisher(publisherConfig/*: IPublisherConfig*/) /*: IPublisher*/{
-        let provider = publisherConfig.provider;
+    getPublisher(publisherConfig/*: PublisherConfig<*>*/) /*: IPublisher*/{
+        let type = publisherConfig.type;
         let genericPublisherConfig = (publisherConfig/*: any*/);
-        if(provider==='s3'){
+        if(type==='folder'){
+            let FolderPublisher = require('./folder-publisher');
+            return new FolderPublisher(genericPublisherConfig);
+        }
+        if(type==='s3'){
             let S3Publisher = require('./s3-publisher');
             return new S3Publisher(genericPublisherConfig);
         }
-        throw new Error(`Publisher of type "${provider}" not implemented.`);
+        if(type==='void'){
+            let VoidPublisher = require('./void-publisher');
+            return new VoidPublisher();
+        }
+        throw new Error(`Publisher of type "${type}" not implemented.`);
     }
 }
 
