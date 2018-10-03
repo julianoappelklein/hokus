@@ -7,7 +7,7 @@ const pathHelper = require('./../path-helper');
 import type { IPublisher, PublishContext } from './types';
 
 type FolderPublisherConfig = {
-    dest: ?string,
+    path: ?string,
     clean: ?boolean
 };
 
@@ -22,9 +22,9 @@ class FolderPublisher/*:: implements IPublisher*/{
     }
 
     async publish(context/*: PublishContext*/)/*: Promise<void>*/{
-        let { dest, clean } = this._config;
+        let { path, clean } = this._config;
         
-        let resolvedDest = dest || pathHelper.getSiteDefaultPublishDir(context.siteKey, context.publishKey);
+        let resolvedDest = path || pathHelper.getSiteDefaultPublishDir(context.siteKey, context.publishKey);
         await fs.ensureDir(resolvedDest);
         let cleanDestBefore = clean===true;
         if(cleanDestBefore){

@@ -5,8 +5,8 @@
     "name": "Juliano Appel Klein",
     "email": "julianoaklein@gmail.com"
   },
-  "description": "A simple UI for Hugo.",
-  "version": "0.2.0",
+  "description": "A CMS for Hugo.",
+  "version": "0.2.1",
   "private": true,
   "dependencies": {
     "7zip-bin": "3.1.0",
@@ -70,6 +70,7 @@
   },
   "build": {
     "appId": "julianoaklein.hokus",
+    "productName":"Hokus CMS",
     "directories": {
       "buildResources": "public"
     },
