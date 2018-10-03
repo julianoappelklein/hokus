@@ -27,13 +27,13 @@ See our features and understand why Hokus is a great tool for your Hugo websites
 
 **You can use Hokus for some workflows right now**. It is fully ready to manage local Hugo websites (the folders can be shared in the same network or by a thiord party software, like Google Drive). Git integrations or AWS sync are not ready yet.
 
-Start today, [download our binaries for Windows 10 (x64)](https://s3.amazonaws.com/hokus.io/hokus-cms-win-x64.exe), install Hokus in your PC and set up a website within seconds by using our wizard.
+Start today, [download our binaries for Windows 10 (x64)](https://github.com/julianoappelklein/hokus/releases), install Hokus in your PC and set up a website within seconds by using our wizard.
 
 Just keep in mind that **Hokus will be much more** in the future.
 
 ## Getting Started
 
-* [Download the binaries - Windows 10 (x64)](https://s3.amazonaws.com/hokus.io/hokus-cms-win-x64.exe). To run in Linux or Mac, see next topic below.
+* [Download the binaries - Windows 10 (x64)](https://github.com/julianoappelklein/hokus/releases). To run in Linux or Mac, see next topic below.
 * Install it.
 * Open Hokus.
 * Configure a new website (at the moment, the only option is to point to a root of a local Hugo website - the Folder Source).
