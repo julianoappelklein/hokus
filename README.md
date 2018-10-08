@@ -59,10 +59,12 @@ A minimal website configuration looks like this:
     "type": "folder", /* every source has a type but for now we only have the folder type */
     "path": "D:/Projects/hokus-website/" /* an absolute path to your website folder */
   },
-  "serve": [ /* configurations used to server your workspaces to use with Hugo executable */
+  "publish": [ /* configurations used to server your workspaces to use with Hugo executable */
     {
-      "args": [],
-      "env": {
+      "key": "default",
+      "config": {
+        "type": "folder",
+        "path": "D:\\website-ouput-path\\"
       }
     }
   ]       
@@ -84,6 +86,14 @@ For a minimal configuration file, see the default workspace configuration (which
 ```
 {
   "hugover": "0.35",
+  "serve":[
+    "key":"default",
+    "config":"config.toml"
+  ],
+  "build":[
+    "key":"default",
+    "config":"config.toml"
+  ],
   "collections":[
     {
       "key": "posts", /* a unique key */
