@@ -38,7 +38,7 @@ Just keep in mind that **Hokus will be much more** in the future.
 * Open Hokus.
 * Configure a new website (at the moment, the only option is to point to a root of a local Hugo website - the Folder Source).
 * A default configuration (hokus.yaml) will be placed at the root of your website. After this, open your website workspace and try to create a post.
-* Tweek the config to sweet your needs. You can create more collections and singles.
+* Tweak the config to suit your needs. You can create more collections and singles.
 
 ## Basics
 
@@ -64,7 +64,7 @@ A minimal website configuration looks like this:
       "key": "default",
       "config": {
         "type": "folder",
-        "path": "D:\\website-ouput-path\\"
+        "path": "D:\\website-output-path\\"
       }
     }
   ]       
@@ -137,7 +137,7 @@ Note that your workspace configuration can be a JSON, YAML or a TOML file.
 
 ### Fields
 
-Collections and singles configurations have a property named "fields" where you must provide an array of field configurationss.
+Collections and singles configurations have a property named "fields" where you must provide an array of field configurations.
 
 Each field must use one of the available Hokus components by setting a "type" property. The current types list is below:
 
@@ -169,7 +169,7 @@ More concepts are yet to come, but with those already given, and looking into th
 
 ## Running In Linux or Mac
 
-You can download the source code and try to compile the project in your enviroment.
+You can download the source code and try to compile the project in your environment.
 
 Keep in mind that some errors may occur.
 
