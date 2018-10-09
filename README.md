@@ -16,7 +16,7 @@ See our features and understand why Hokus is a great tool for your Hugo websites
 * **Run in your computer.** Supported Platforms: Windows, Linux and macOS.
 * **Free for commercial use.** Download our binaries today and use it for your own commercial purposes.
 * **One click installer.** A breezy to install on your PC.
-* **Dozen of ready to use UI components.** Crafted to handle many use cases and complex data hierachy.
+* **Dozen of ready to use UI components.** Crafted to handle many use cases and complex data hierarchy.
 * **Clean UI.** Clearly understand what you are doing without any clutter or confusion. Open Source.
 * **MIT license.** Copy, edit, share, redistribute.
 * **Build User Interfaces Easily.** Just create a small configuration file (JSON, TOML and YAML are supported).
