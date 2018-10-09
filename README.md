@@ -25,7 +25,7 @@ See our features and understand why Hokus is a great tool for your Hugo websites
 
 ## Current State
 
-**You can use Hokus for some workflows right now**. It is fully ready to manage local Hugo websites (the folders can be shared in the same network or by a thiord party software, like Google Drive). Git integrations or AWS sync are not ready yet.
+**You can use Hokus for some workflows right now**. It is fully ready to manage local Hugo websites (the folders can be shared in the same network or by a third party software, like Google Drive). Git integrations or AWS sync are not ready yet.
 
 Start today, [download our binaries for Windows 10 (x64)](https://github.com/julianoappelklein/hokus/releases), install Hokus in your PC and set up a website within seconds by using our wizard.
 
