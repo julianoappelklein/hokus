@@ -86,10 +86,20 @@ class InitialWorkspaceConfigBuilder{
     build(){
         let hugoConfigExp = path.join(this.workspacePath,'config.{'+formatProviderResolver.allFormatsExt().join(',')+'}');
         let hugoConfigPath = glob.sync(hugoConfigExp)[0];
-        if(!hugoConfigPath)
-            hugoConfigPath = path.join(this.workspacePath, 'config.'+formatProviderResolver.getDefaultFormatExt());
         
-        let formatProvider = formatProviderResolver.resolveForFilePath(hugoConfigPath) || formatProviderResolver.getDefaultFormat();        
+        let formatProvider;
+        if(hugoConfigPath==null){
+            hugoConfigPath = path.join(this.workspacePath, 'config.'+formatProviderResolver.getDefaultFormatExt());        
+            formatProvider = formatProviderResolver.getDefaultFormat();
+            let minimalConfigStr = formatProvider.dump({title:'New Site Title', baseURL: 'http://newsite.com'});
+            fs.writeFileSync(hugoConfigPath, minimalConfigStr, 'utf-8');
+        }
+        else{
+            formatProvider = formatProviderResolver.resolveForFilePath(hugoConfigPath);
+        }
+        if(formatProvider==null)
+            throw new Error('Could not resolve a FormatProvider.');
+         
         let hugoConfigData = formatProvider.parse(fs.readFileSync(hugoConfigPath, 'utf-8'));
 
         let relHugoConfigPath = path.relative(this.workspacePath, hugoConfigPath);
