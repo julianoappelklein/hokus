@@ -16,7 +16,7 @@ See our features and understand why Hokus is a great tool for your Hugo websites
 * **Run in your computer.** Supported Platforms: Windows, Linux and macOS.
 * **Free for commercial use.** Download our binaries today and use it for your own commercial purposes.
 * **One click installer.** A breezy to install on your PC.
-* **Dozen of ready to use UI components.** Crafted to handle many use cases and complex data hierachy.
+* **Dozen of ready to use UI components.** Crafted to handle many use cases and complex data hierarchy.
 * **Clean UI.** Clearly understand what you are doing without any clutter or confusion. Open Source.
 * **MIT license.** Copy, edit, share, redistribute.
 * **Build User Interfaces Easily.** Just create a small configuration file (JSON, TOML and YAML are supported).
@@ -25,7 +25,7 @@ See our features and understand why Hokus is a great tool for your Hugo websites
 
 ## Current State
 
-**You can use Hokus for some workflows right now**. It is fully ready to manage local Hugo websites (the folders can be shared in the same network or by a thiord party software, like Google Drive). Git integrations or AWS sync are not ready yet.
+**You can use Hokus for some workflows right now**. It is fully ready to manage local Hugo websites (the folders can be shared in the same network or by a third party software, like Google Drive). Git integrations or AWS sync are not ready yet.
 
 Start today, [download our binaries for Windows 10 (x64)](https://github.com/julianoappelklein/hokus/releases), install Hokus in your PC and set up a website within seconds by using our wizard.
 
@@ -38,7 +38,7 @@ Just keep in mind that **Hokus will be much more** in the future.
 * Open Hokus.
 * Configure a new website (at the moment, the only option is to point to a root of a local Hugo website - the Folder Source).
 * A default configuration (hokus.yaml) will be placed at the root of your website. After this, open your website workspace and try to create a post.
-* Tweek the config to sweet your needs. You can create more collections and singles.
+* Tweak the config to suit your needs. You can create more collections and singles.
 
 ## Basics
 
@@ -59,10 +59,12 @@ A minimal website configuration looks like this:
     "type": "folder", /* every source has a type but for now we only have the folder type */
     "path": "D:/Projects/hokus-website/" /* an absolute path to your website folder */
   },
-  "serve": [ /* configurations used to server your workspaces to use with Hugo executable */
+  "publish": [ /* configurations used to server your workspaces to use with Hugo executable */
     {
-      "args": [],
-      "env": {
+      "key": "default",
+      "config": {
+        "type": "folder",
+        "path": "D:\\website-output-path\\"
       }
     }
   ]       
@@ -84,6 +86,14 @@ For a minimal configuration file, see the default workspace configuration (which
 ```
 {
   "hugover": "0.35",
+  "serve":[
+    "key":"default",
+    "config":"config.toml"
+  ],
+  "build":[
+    "key":"default",
+    "config":"config.toml"
+  ],
   "collections":[
     {
       "key": "posts", /* a unique key */
@@ -127,7 +137,7 @@ Note that your workspace configuration can be a JSON, YAML or a TOML file.
 
 ### Fields
 
-Collections and singles configurations have a property named "fields" where you must provide an array of field configurationss.
+Collections and singles configurations have a property named "fields" where you must provide an array of field configurations.
 
 Each field must use one of the available Hokus components by setting a "type" property. The current types list is below:
 
@@ -159,7 +169,7 @@ More concepts are yet to come, but with those already given, and looking into th
 
 ## Running In Linux or Mac
 
-You can download the source code and try to compile the project in your enviroment.
+You can download the source code and try to compile the project in your environment.
 
 Keep in mind that some errors may occur.
 
