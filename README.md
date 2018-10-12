@@ -172,11 +172,24 @@ You can also refer to the source code to see all available properties for each c
 
 More concepts are yet to come, but with those already given, and by looking into the Forms Cookbook, you should now be ready to use Hokus CMS.
 
-## Running On Linux or Mac
+## Building on Linux
 
-You can download the source code and try to compile the project in your environment.
+There isn't an official release for Linux yet, but you can download the source code and try to compile the project in your environment.
 
 Keep in mind that some errors may occur.
+
+The following steps were reported to work on Ubuntu 18.04:
+
+- Install NodeJS: ```sudo apt-get nodejs```
+- Install NPM: ```sudo apt-get npm```
+- Install libssl-dev: ```sudo apt-get install libssl-dev```
+- Set the current directory to the root directory. ```cd hokus```
+- Run: ```sudo npm install```
+- Run: ```npm run dist-linux```
+
+## Building on macOS
+
+We are looking for candidates to help with that. Be the first!
 
 ## Help Wanted
 
