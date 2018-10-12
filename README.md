@@ -1,55 +1,59 @@
 # Hokus CMS
 
-A CMS for Hugo to run in your computer. **No hosting fees are required**.
+<img src="https://www.hokus.io/img/logo-dark.svg" alt="Hokus CMS" width="120"/>
+
+A CMS for Hugo to run on your computer. **No hosting fees are required**.
 
 [![screenshot](https://www.hokus.io/img/home-video-placeholder.jpg)](https://www.hokus.io/)
 
 For a quick preview, access our website and look for our **preview video**:
 https://www.hokus.io/
 
-**Alpha Warning**: Hokus is still a work in progress and some awesome features are not ready. 
+**Alpha Warning**: Hokus is still a work in progress and some awesome features are not yet ready. 
 
 ## Features
 
-See our features and understand why Hokus is a great tool for your Hugo websites:
+Take a look at our features and understand why Hokus is a great tool for your Hugo websites:
 
-* **Run in your computer.** Supported Platforms: Windows, Linux and macOS.
+* **Runs on your computer.** Supported Platforms: Windows, Linux and macOS.
 * **Free for commercial use.** Download our binaries today and use it for your own commercial purposes.
-* **One click installer.** A breezy to install on your PC.
+* **One click installer.** It's a breeze to install on your PC.
 * **Dozen of ready to use UI components.** Crafted to handle many use cases and complex data hierarchy.
-* **Clean UI.** Clearly understand what you are doing without any clutter or confusion. Open Source.
+* **Clean UI.** Clearly see what you are doing without any clutter or confusion. Open Source.
 * **MIT license.** Copy, edit, share, redistribute.
 * **Build User Interfaces Easily.** Just create a small configuration file (JSON, TOML and YAML are supported).
 
-*Some of the features may be under development.*
+*Some features may be under development.*
 
 ## Current State
 
-**You can use Hokus for some workflows right now**. It is fully ready to manage local Hugo websites (the folders can be shared in the same network or by a third party software, like Google Drive). Git integrations or AWS sync are not ready yet.
+**You can use Hokus for some workflows right now**. It is fully ready to manage local Hugo websites (the folders can be shared in the same network or by third party software like Google Drive). Git integrations or AWS sync are not ready yet.
 
-Start today, [download our binaries for Windows 10 (x64)](https://github.com/julianoappelklein/hokus/releases), install Hokus in your PC and set up a website within seconds by using our wizard.
+Start today, [download our binaries for Windows 10 (x64)](https://github.com/julianoappelklein/hokus/releases), install Hokus on your PC and set up a website within seconds by using our wizard.
 
 Just keep in mind that **Hokus will be much more** in the future.
 
 ## Getting Started
 
-* [Download the binaries - Windows 10 (x64)](https://github.com/julianoappelklein/hokus/releases). To run in Linux or Mac, see next topic below.
-* Install it.
+*To run on Linux or Mac, see topic below.*
+
+* [Download the binaries - Windows 10 (x64)](https://github.com/julianoappelklein/hokus/releases). 
+* Install by running the executable file _\(hokus-cms-setup-0.2.1-winx64.exe\)_
 * Open Hokus.
-* Configure a new website (at the moment, the only option is to point to a root of a local Hugo website - the Folder Source).
-* A default configuration (hokus.yaml) will be placed at the root of your website. After this, open your website workspace and try to create a post.
-* Tweak the config to suit your needs. You can create more collections and singles.
+* Configure a new website _(at the moment, the only option is to point to a root of a local Hugo website - the Folder Source)_.
+* A default configuration file (hokus.yaml) will be placed at the root of your website. After this, open your website workspace and try to create a post.
+* Tweak the configuration file to suit your needs. You can create multiple collections and singles.
 
 ## Basics
 
-You'll have to learn some concepts before deep diving in Hokus. But don't worry, they are very easy to master.
+You'll have to learn some concepts before diving deep into Hokus. But don't worry, they are very easy to master.
 
 ### Website Configuration File
 
-The website configuration file live under your *home/username/Hokus* folder.
-You can have many websites, each having their own file. Like config.websiteone1.json, config.websiteone2.json...
+The website configuration files are stored in your *home/username/Hokus* folder.
+You can have multiple websites, each having their own configuration file. _\(Like config.websiteone1.json, config.websiteone2.json...\)_
 
-A minimal website configuration looks like this:
+A minimal website configuration file looks like this:
 
 ```
 {   
@@ -71,13 +75,14 @@ A minimal website configuration looks like this:
 }
 ```
 
-Note that your website configuration can be a JSON, YAML or a TOML file.
-
-All the UI configuration and binding is set in another file: the workspace configuration file.
+Note that your website configuration can be stored as a JSON, YAML or TOML file.
 
 ### Workspace Configuration File
 
-The workspace configuration file must be placed at the root of your Hugo website. It should be versioned under the same version control system of your website.
+All the UI configurations and bindings are set in the workspace configuration file.
+
+* The workspace configuration file must be placed at the root of your Hugo website.
+* It should be versioned under the same vcs _\(version control system\)_ as your website.
 
 Here is where the UI configuration happens.
 
@@ -133,7 +138,7 @@ For a minimal configuration file, see the default workspace configuration (which
 }
 ```
 
-Note that your workspace configuration can be a JSON, YAML or a TOML file.
+Note that your workspace configuration can be stored as a JSON, YAML or TOML file.
 
 ### Fields
 
@@ -157,17 +162,17 @@ Each field must use one of the available Hokus components by setting a "type" pr
 * select
 * string
 
-Some components have a property "fields" also (or just "field") allowing nesting and composition.
+Some components have a "field" or "fields" property, allowing for nesting and composition.
 
-To see the components in action, you can access our [Forms Cookbook](http://formscookbook.hokus.io.s3-website-us-east-1.amazonaws.com/). For quick references, the Forms Cookbook is also included in the desktop app.
+To see the components in action, you can access our [Forms Cookbook](http://formscookbook.hokus.io.s3-website-us-east-1.amazonaws.com/). For quick reference. _\(the Forms Cookbook is also included in the desktop app.\)_
 
-You can also refer to the source code to see all available properties in each component type.
+You can also refer to the source code to see all available properties for each component type.
 
 ### More Concepts
 
-More concepts are yet to come, but with those already given, and looking into the Forms Cookbook, you are ready to use Hokus CMS.
+More concepts are yet to come, but with those already given, and by looking into the Forms Cookbook, you should now be ready to use Hokus CMS.
 
-## Running In Linux or Mac
+## Running On Linux or Mac
 
 You can download the source code and try to compile the project in your environment.
 
@@ -188,7 +193,7 @@ The desired workflow for Hokus is:
 * Someone installs Hokus and opens it.
 * A list of existent Hugo website templates ("Hokus-ready") are listed for selection.
 * The user select the desired template and the website is downloaded.
-* Right away, the user starts to create posts.
+* Right from the start, the user can create posts without hassle.
 * The user selects a way to version the content and a place to publish it, just providing minimal configurations.
 
 ## Development Stack
