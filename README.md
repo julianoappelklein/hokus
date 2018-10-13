@@ -184,7 +184,7 @@ The following steps were reported to work on Ubuntu 18.04:
 - Install NPM: ```sudo apt-get install npm```
 - Install libssl-dev: ```sudo apt-get install libssl-dev```
 - Set the current directory to the root directory. ```cd hokus```
-- Run: ```sudo npm install```
+- Run: ```sudo npm install --build-from-source```
 - Run: ```npm run dist-linux```
 
 ## Building on macOS
