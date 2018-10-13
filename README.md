@@ -189,7 +189,7 @@ The following steps were reported to work on Ubuntu 18.04:
 
 ## Building on macOS
 
-We are looking for candidates to help with that. Be the first!
+We are looking for candidates to help with that. Be the first.
 
 ## Help Wanted
 
@@ -197,7 +197,7 @@ Right now, Hokus is almost a one-man project. When I (Juliano Appel Klein) start
 
 I believe Hokus can become a great project. The Hugo community is large and there is a lack os simple tools to use.
 
-If you want to contribute, please let me know.
+If you want to contribute, please let me know. You can [create an issue](https://github.com/julianoappelklein/hokus/issues) or reach me through the website [contact page](https://www.hokus.io/contact/).
 
 ## Vision
 
