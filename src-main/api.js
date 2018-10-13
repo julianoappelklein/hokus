@@ -9,6 +9,7 @@ const hugoDownloader = require('./hugo/hugo-downloader')
 const hugoThemes = require('./hugo/hugo-themes')
 const opn = require('opn');
 const pathHelper = require('./path-helper');
+const fs = require('fs-extra');
 
 /*::
 type APIContext = {
@@ -77,9 +78,15 @@ api.getConfigurations = function(options, promise){
     }, options);
 }
 
-api.openFileExplorer = function({path}, promise){   
-    
-    require('child_process').exec('start "" "'+path+'"');
+api.openFileExplorer = function({path}, promise){
+    try{
+        let lstat = fs.lstatSync(path);
+        if(lstat.isDirectory()){
+            opn(path);
+        }
+    }
+    catch(e){
+    }
 }
 
 api.listWorkspaces = function({siteKey}, context){

@@ -32,27 +32,29 @@ class OfficialHugoSourceUrlBuilder{
 
 class OfficialHugoUnpacker{
 
-    _unpackLinuxMac(packagePath){
+    _unpackLinux(packagePath){
         packagePath = path.normalize(packagePath);
         let output = path.dirname(packagePath);
         return new Promise((resolve,reject)=>{
-            execFile(path7za, ['e', packagePath, '-o'+output, '*.tar', '-r', '-y' ], (error, stdout, stderr)=>{
+            execFile(path7za, ['e', packagePath, '-o'+output, '*', '-r', '-y' ], (error, stdout, stderr)=>{
                 if(error) reject(error);
                 else resolve();
             });
         }).then(()=>{
             return new Promise((resolve, reject)=>{
-                glob('*.tar', (err, matches)=>{
+                let globExpression = packagePath.replace('download.partial','download');
+                glob(globExpression, (err, matches)=>{
                     if(err){reject(err); return; }
                     if(matches.length!==1){ reject(new Error(`Expecting one "tar" file, found ${matches.length}.`)); }
                     resolve(matches[0]);
-                })
+                });
             });
         }).then((tarFile)=>{
             return new Promise((resolve, reject)=>{
                 execFile(path7za, ['e', tarFile, '-o'+output, 'hugo*', '-r', '-y' ], (error, stdout, stderr)=>{
-                    if(error) reject(error);
-                    else resolve();
+                    if(error){ reject(error); return; }
+                    fs.chmodSync(packagePath.replace('download.partial','hugo'),722);
+                    resolve();
                 });
             });
         });
@@ -74,8 +76,8 @@ class OfficialHugoUnpacker{
     unpack(packagePath, enviromnent){
         switch(enviromnent.platform){
             case PLATFORMS.linux:
-            case PLATFORMS.macOS:
-                return this._unpackLinuxMac(packagePath);
+            case PLATFORMS.macOS: //don't know if this will work
+                return this._unpackLinux(packagePath);
             case PLATFORMS.windows:
                 return this._unpackWindows(packagePath);
             default:
@@ -134,16 +136,19 @@ class HugoDownloader{
                 await fs.unlink(tempDest)
             }
             
-            outputConsole.appendLine(`Hugo download started. Downloading from ${url}.`);
+            outputConsole.appendLine(`Hugo installation started. Downloading package from ${url}...`);
 
             await this._downloadToFile(url, tempDest);
+            
+            outputConsole.appendLine(`Unpacking....`);
             await unpacker.unpack(tempDest, enviromnent);
             await fs.unlink(tempDest);
 
-            outputConsole.appendLine(`Hugo download completed.`);
+            outputConsole.appendLine(`Hugo installation completed.`);
             this._isRunning = false;
         }
         catch(e){
+            outputConsole.appendLine(`Hugo installation failed.`);
             this._isRunning = false;
             return e;
         }
