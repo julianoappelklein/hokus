@@ -180,8 +180,8 @@ Keep in mind that some errors may occur.
 
 The following steps were reported to work on Ubuntu 18.04:
 
-- Install NodeJS: ```sudo apt-get nodejs```
-- Install NPM: ```sudo apt-get npm```
+- Install NodeJS: ```sudo apt-get install nodejs```
+- Install NPM: ```sudo apt-get install npm```
 - Install libssl-dev: ```sudo apt-get install libssl-dev```
 - Set the current directory to the root directory. ```cd hokus```
 - Run: ```sudo npm install```
