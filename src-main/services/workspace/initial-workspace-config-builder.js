@@ -56,7 +56,7 @@ class InitialWorkspaceConfigBuilder{
                         { "type":"info", "content":"# Info\nYou can write custom instructions here." },
                         { "key":"title", "title":"Title", "type":"string" },
                         { "key":"mainContent", "title":"Content", "type":"markdown" },
-                        { "key":"pubdate", "title":"Pub Date", "type":"date" },
+                        { "key":"pubdate", "title":"Pub Date", "type":"date", "default":"now" },
                         { "key":"draft", "title":"Draft", "type":"boolean" },
                         { "key":"bundle-manager", "type":"bundle-manager", "resourcetype":"img", "path":"imgs", "extensions":["png","jpg","gif"], "fields":[
                             { "key":"title", "title":"Title", "type":"string" },
