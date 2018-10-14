@@ -1,15 +1,13 @@
 /* @flow */
 
-let {dialog, remote} = require('electron');
 const configurationDataProvider = require('./configuration-data-provider')
 const SiteService = require('./services/site/site-service')
 const WorkspaceService = require('./services/workspace/workspace-service')
 const siteSourceBuilderFactory = require('./site-sources/builders/site-source-builder-factory');
 const hugoDownloader = require('./hugo/hugo-downloader')
-const hugoThemes = require('./hugo/hugo-themes')
-const opn = require('opn');
-const pathHelper = require('./path-helper');
 const fs = require('fs-extra');
+const {dirname} = require('path');
+const {shell} = require('electron');
 
 /*::
 type APIContext = {
@@ -82,7 +80,10 @@ api.openFileExplorer = function({path}, promise){
     try{
         let lstat = fs.lstatSync(path);
         if(lstat.isDirectory()){
-            opn(path);
+            shell.openItem(path);
+        }
+        else{
+            shell.openItem(dirname(path));
         }
     }
     catch(e){
@@ -111,7 +112,7 @@ api.serveWorkspace = function({siteKey, workspaceKey, serveKey}, context){
     getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
         if(err){ context.reject(err); return; }
         workspaceService.serve(serveKey).then(()=>{
-            opn('http://localhost:1313');
+            shell.openItem('http://localhost:1313');
             context.resolve();
         }, ()=>{
             context.reject(err); return

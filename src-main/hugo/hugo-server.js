@@ -4,8 +4,6 @@ const { spawn } = require('child_process');
 const pathHelper = require('./../path-helper');
 const fs = require('fs-extra');
 const outputConsole = require('./../output-console');
-var readline = require('readline');
-let {ipcMain} = require('electron');
 
 
 let currentServerProccess = undefined;
