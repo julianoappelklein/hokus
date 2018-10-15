@@ -1,6 +1,6 @@
 # Hokus CMS
 
-<img src="https://www.hokus.io/img/logo-dark.svg" alt="Hokus CMS" width="120"/>
+<img src="https://www.hokus.io/img/logo-dark.svg" alt="Hokus CMS" width="90"/>
 
 A CMS for Hugo to run on your computer. **No hosting fees are required**.
 
@@ -19,30 +19,27 @@ Take a look at our features and understand why Hokus is a great tool for your Hu
 * **Free for commercial use.** Download our binaries today and use it for your own commercial purposes.
 * **One click installer.** It's a breeze to install on your PC.
 * **Dozen of ready to use UI components.** Crafted to handle many use cases and complex data hierarchy.
-* **Clean UI.** Clearly see what you are doing without any clutter or confusion. Open Source.
-* **MIT license.** Copy, edit, share, redistribute.
+* **Clean UI.** Clearly see what you are doing without any clutter or confusion.
+* **Open Source.** MIT license. Copy, edit, share, redistribute.
 * **Build User Interfaces Easily.** Just create a small configuration file (JSON, TOML and YAML are supported).
 
 *Some features may be under development.*
 
 ## Current State
 
-**You can use Hokus for some workflows right now**. It is fully ready to manage local Hugo websites (the folders can be shared in the same network or by third party software like Google Drive). Git integrations or AWS sync are not ready yet.
+**You can use Hokus for some workflows right now**. It is fully ready to manage local Hugo websites.
 
-Start today, [download our binaries for Windows 10 (x64)](https://github.com/julianoappelklein/hokus/releases), install Hokus on your PC and set up a website within seconds by using our wizard.
+Start today, [download our installer (Windows or Linux)](https://github.com/julianoappelklein/hokus/releases), install Hokus on your PC and set up a website within seconds by using our wizard.
 
 Just keep in mind that **Hokus will be much more** in the future.
 
 ## Getting Started
 
-*To run on Linux or Mac, see topic below.*
-
-* [Download the binaries - Windows 10 (x64)](https://github.com/julianoappelklein/hokus/releases). 
-* Install by running the executable file _\(hokus-cms-setup-0.2.1-winx64.exe\)_
-* Open Hokus.
-* Configure a new website _(at the moment, the only option is to point to a root of a local Hugo website - the Folder Source)_.
+* [Download](https://github.com/julianoappelklein/hokus/releases) and install. 
+* Open the application.
+* In the home screen, add a new website and choose a Site Source _(at the moment, the only option is the Folder Source)_ and complete the form.
 * A default configuration file (hokus.yaml) will be placed at the root of your website. After this, open your website workspace and try to create a post.
-* Tweak the configuration file to suit your needs. You can create multiple collections and singles.
+* Tweak the configuration file to suit your needs. You can create multiple collections and singles and set many build and serve configurations.
 
 ## Basics
 
@@ -51,7 +48,7 @@ You'll have to learn some concepts before diving deep into Hokus. But don't worr
 ### Website Configuration File
 
 The website configuration files are stored in your *home/username/Hokus* folder.
-You can have multiple websites, each having their own configuration file. _\(Like config.websiteone1.json, config.websiteone2.json...\)_
+You can have multiple websites, each having their own configuration file. _\(e.g. config.website-1.json, config.website-2.json\)_
 
 A minimal website configuration file looks like this:
 
@@ -75,16 +72,14 @@ A minimal website configuration file looks like this:
 }
 ```
 
-Note that your website configuration can be stored as a JSON, YAML or TOML file.
+Note that your website configuration can be a JSON, YAML or TOML file.
 
 ### Workspace Configuration File
 
 All the UI configurations and bindings are set in the workspace configuration file.
 
 * The workspace configuration file must be placed at the root of your Hugo website.
-* It should be versioned under the same vcs _\(version control system\)_ as your website.
-
-Here is where the UI configuration happens.
+* It should be versioned under the same _version control system_ as your website.
 
 For a minimal configuration file, see the default workspace configuration (which is auto created when you open a workspace without configuration), slightly changed:
 
@@ -138,7 +133,7 @@ For a minimal configuration file, see the default workspace configuration (which
 }
 ```
 
-Note that your workspace configuration can be stored as a JSON, YAML or TOML file.
+Note that your workspace configuration can be a JSON, YAML or TOML file.
 
 ### Fields
 
@@ -172,24 +167,41 @@ You can also refer to the source code to see all available properties for each c
 
 More concepts are yet to come, but with those already given, and by looking into the Forms Cookbook, you should now be ready to use Hokus CMS.
 
-## Building on Linux
+## Building
 
-There isn't an official release for Linux yet, but you can download the source code and try to compile the project in your environment.
+###  Building on Windows
 
-Keep in mind that some errors may occur.
+* Install the required tools:
+  * [Git (optional)](https://nodejs.org/en/download/)
+  * [Node + NPM](https://nodejs.org/en/download/)
+  * [Visual Studio 2017 (c++ tools)](//docs.microsoft.com/pt-br/visualstudio/)
+* Clone or download the source code.
+* Open the terminal in the project's root directory.
+* Run ```npm install --only=dev & npm run _rebuild-native & npm run dist-linux```
 
-The following steps were reported to work on Ubuntu 18.04:
+###  Building on Linux
 
-- Install NodeJS: ```sudo apt-get install nodejs```
-- Install NPM: ```sudo apt-get install npm```
-- Install libssl-dev: ```sudo apt-get install libssl-dev```
-- Set the current directory to the root directory. ```cd hokus```
-- Run: ```sudo npm install --build-from-source```
-- Run: ```npm run dist-linux```
 
-## Building on macOS
+Install the required tools:
 
-We are looking for candidates to help with that. Be the first.
+```
+sudo apt-get install nodejs
+sudo apt-get install npm
+sudo apt-get install libssl-dev
+apt-get install git-core
+```
+
+Clone the repository and set the current directory to the root:
+
+```git clone https://github.com/julianoappelklein/hokus.git & cd hokus```
+
+Install NPM dependencies and build:
+
+```npm install --only=dev & npm run _rebuild-native & npm run dist-win```
+
+### Building on macOS
+
+We are looking for candidates to help with that.
 
 ## Help Wanted
 
@@ -214,5 +226,5 @@ The desired workflow for Hokus is:
 * Node JS
 * Electron
 * React (using create-react-app)
+* Material UI for React JS
 * Flow
-* Material UI for react
