@@ -177,7 +177,8 @@ More concepts are yet to come, but with those already given, and by looking into
   * [Visual Studio 2017 (c++ tools)](//docs.microsoft.com/pt-br/visualstudio/)
 * Clone or download the source code.
 * Open the terminal in the project's root directory.
-* Run ```npm install & npm run _rebuild-native & npm run dist-linux```
+* Run ```npm install & npm run _rebuild-native & npm run dist-win```
+
 
 ###  Building on Linux
 
@@ -197,7 +198,8 @@ Clone the repository and set the current directory to the root:
 
 Install NPM dependencies and build:
 
-```npm install & npm run _rebuild-native & npm run dist-win```
+```npm install & npm run _rebuild-native & npm run dist-linux```
+
 
 ### Building on macOS
 
