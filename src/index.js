@@ -10,29 +10,10 @@ import './css/bootstrap-grid.css';
 
 const isDev = window.require('electron-is-dev');
 if(isDev){
-
-    document.bridge = bridge;
-
-    (function addRightClickInspect(){
-        if(window.require){
-            const {remote} = window.require('electron')
-            const {Menu, MenuItem} = remote
-            
-            const menu = new Menu()
-
-            let rightClickPosition = null
-            
-            menu.append(new MenuItem({ label: 'Inspect Element', click: () => {
-                remote.getCurrentWindow().inspectElement(rightClickPosition.x, rightClickPosition.y)
-            }}))
-
-            window.addEventListener('contextmenu', (e) => {
-                e.preventDefault()
-                rightClickPosition = {x: e.x, y: e.y}
-                menu.popup(remote.getCurrentWindow())
-            }, false);
-        }
-    })();
+    console.log('Running in development');
+}
+else{
+    console.log('Running in production');
 }
 
 
