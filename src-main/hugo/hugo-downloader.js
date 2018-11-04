@@ -26,7 +26,7 @@ class OfficialHugoSourceUrlBuilder{
             default:{ throw new Error('Not implemented.') }
         }
         version = version.replace(/^v/i,'');
-        return `https://github.com/gohugoio/hugo/releases/download/v${version}/hugo_${version}_${platform}-${arch}.${format}`;
+        return `https://github.com/gohugoio/hugo/releases/download/v${version.replace('extended_','')}/hugo_${version}_${platform}-${arch}.${format}`;
     }
 }
 

@@ -104,7 +104,7 @@ class InitialWorkspaceConfigBuilder{
 
         let relHugoConfigPath = path.relative(this.workspacePath, hugoConfigPath);
         
-        let data = this.getConfig({configFile: relHugoConfigPath, ext: formatProvider.defaultExt(), hugover:'0.45', hugoConfigData});
+        let data = this.getConfig({configFile: relHugoConfigPath, ext: formatProvider.defaultExt(), hugover:'0.50', hugoConfigData});
 
         return {formatProvider, data};
     }
