@@ -177,7 +177,7 @@ More concepts are yet to come, but with those already given, and by looking into
   * [Visual Studio 2017 (c++ tools)](//docs.microsoft.com/pt-br/visualstudio/)
 * Clone or download the source code.
 * Open the terminal in the project's root directory.
-* Run ```npm install & npm run _rebuild-native & npm run dist-win```
+* Run ```npm install && npm run _rebuild-native && npm run dist-win```
 
 
 ###  Building on Linux
@@ -188,17 +188,17 @@ Install the required tools:
 ```
 sudo apt-get install nodejs
 sudo apt-get install npm
+sudo apt-get install git-core
 sudo apt-get install libssl-dev
-apt-get install git-core
 ```
 
 Clone the repository and set the current directory to the root:
 
-```git clone https://github.com/julianoappelklein/hokus.git & cd hokus```
+```git clone https://github.com/julianoappelklein/hokus.git && cd hokus```
 
 Install NPM dependencies and build:
 
-```npm install & npm run _rebuild-native & npm run dist-linux```
+```npm install && npm run _rebuild-native && npm run dist-linux```
 
 
 ### Building on macOS
