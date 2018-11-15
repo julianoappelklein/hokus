@@ -1,6 +1,6 @@
 //@flow
 
-import React from 'react';
+import * as React from 'react';
 import { Breadcumb, BreadcumbItem } from './../components/Breadcumb';
 import { Route } from 'react-router-dom';
 import service from './../services/service'
@@ -16,8 +16,11 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
+import { Debounce } from './../utils/debounce';
 
 const Fragment = React.Fragment;
+
+const MAX_RECORDS = 100;
 
 type DeleteItemKeyDialogProps = {
     busy: bool,
@@ -105,23 +108,22 @@ class EditItemKeyDialog extends React.Component<EditItemKeyDialogProps,EditItemK
     }
 
     handleConfirm(){
-        if(this.state.valid && this.props.handleConfirm)
+        if(this.validate() && this.props.handleConfirm)
             this.props.handleConfirm(this.state.value, this.state.initialValue);
     }
 
-    validateValue(value){
-        value = value||'';
-        return /^[a-zA-Z0-9_-]+$/.test(value) && value.length>0;
+    validate(){
+        let value = this.state.value||'';
+        return /^[a-zA-Z0-9_-]+([/][a-zA-Z0-9_-]+)*$/.test(value) && value.length>0;
     }
 
     handleChange(e){
-        let value = e.target.value;
-        let valid = this.validateValue(value);
-        this.setState({value, valid});
+        this.setState({value: e.target.value});
     }
 
     render(){
         let { busy, confirmLabel } = this.props;
+        let valid = this.validate();
 
         return (
             <Dialog
@@ -131,7 +133,7 @@ class EditItemKeyDialog extends React.Component<EditItemKeyDialogProps,EditItemK
                 onRequestClose={this.handleClose}
                 actions={[
                   <FlatButton disabled={busy} primary={true} label="Cancel" onClick={this.handleClose.bind(this)} />,
-                  <FlatButton disabled={busy} primary={true} label={confirmLabel} onClick={this.handleConfirm.bind(this)}  />
+                  <FlatButton disabled={busy||!valid} primary={true} label={confirmLabel} onClick={this.handleConfirm.bind(this)}  />
                 ]}
             >
                 <TextField
@@ -163,41 +165,81 @@ type CollectionState = {
     selectedWorkspaceDetails: null,
     filter: string,
     items: ?Array<{key:string, label:string}>,
+    filteredItems: Array<{key:string, label:string}>,
+    filteredItemsTrunked: bool,
     view: ?{ key: ?string, item: any },
     modalBusy: bool
 }
 
+class CollectionListItems extends React.PureComponent<{
+    filteredItems: Array<any>,
+    onItemClick: (item: any)=>void,
+    onRenameItemClick: (item: any)=>void,
+    onDeleteItemClick: (item: any)=>void,
+}> {
+    render(){
+        let { filteredItems, onItemClick, onRenameItemClick, onDeleteItemClick } = this.props;
+        return (<React.Fragment>
+            { filteredItems.map((item, index) => {  
+
+                let iconButtonElement = (
+                    <IconButton touch={true}>
+                        <MoreVertIcon/>
+                    </IconButton>
+                );
+                
+                let rightIconMenu = (
+                    <IconMenu iconButtonElement={iconButtonElement}>
+                        <MenuItem onClick={()=> onRenameItemClick(item) }>Rename</MenuItem>
+                        <MenuItem onClick={()=> onDeleteItemClick(item) }>Delete</MenuItem>
+                    </IconMenu>
+                );
+
+                return (<Fragment key={item.key}>
+                    {index!==0?<Divider />:undefined}
+                    <ListItem
+                        primaryText={item.label||item.key}
+                        onClick={ ()=>{ onItemClick(item) }}
+                        rightIconButton={rightIconMenu}
+                    />
+                </Fragment>)
+            }) }
+        </React.Fragment>
+        )
+    }
+}
+
 class Collection extends React.Component<CollectionProps,CollectionState>{
+
+    filterDebounce = new Debounce(200);
+    history: any;
+
     constructor(props : CollectionProps){
         super(props);
         this.state = {
             selectedWorkspaceDetails: null,
-            items:null,
+            items: null,
             filter: '',
+            filteredItems: [],
             view: null,
             modalBusy: false
         };
     }
 
-    setStateWithLog(data : any){
-        console.log(JSON.stringify(data))
-        this.setState(data);
-    }
-
     setCreateItemView(){
-        this.setStateWithLog({view:{key:'createItem'}, modalBusy:false});
+        this.setState({view:{key:'createItem'}, modalBusy:false});
     }
 
     setRenameItemView(item: any){
-        this.setStateWithLog({view:{key:'renameItem', item}, modalBusy:false});
+        this.setState({view:{key:'renameItem', item}, modalBusy:false});
     }
 
     setDeleteItemView(item: any){
-        this.setStateWithLog({view:{key:'deleteItem', item }, modalBusy:false});
+        this.setState({view:{key:'deleteItem', item }, modalBusy:false});
     }
 
     setRootView(){
-        this.setStateWithLog({view:undefined, modalBusy:false});
+        this.setState({view:undefined, modalBusy:false});
     }
 
     componentWillMount(){
@@ -211,6 +253,8 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
             Promise.all([
                 service.api.listCollectionItems(siteKey, workspaceKey, collectionKey).then((items)=>{
                     stateUpdate.items = items;
+                    stateUpdate = { ...stateUpdate, ...(this.resolveFilteredItems(items)) };
+
                 }),
                 service.api.getWorkspaceDetails(siteKey, workspaceKey).then((workspaceDetails)=>{
                     stateUpdate.selectedWorkspaceDetails = workspaceDetails;
@@ -224,7 +268,7 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
     refreshItems(){
         var { siteKey, workspaceKey, collectionKey } = this.props;
         service.api.listCollectionItems(siteKey, workspaceKey, collectionKey).then((items)=>{
-            this.setState({items});
+            this.setState(this.resolveFilteredItems(items));
         })
     }
 
@@ -241,7 +285,7 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
                 let itemsCopy : Array<any> = (this.state.items||[]).slice(0);
                 let itemIndex = itemsCopy.findIndex(x=>x.key === view.item.key);
                 itemsCopy.splice(itemIndex,1);
-                this.setStateWithLog({items:itemsCopy, modalBusy:false, view: undefined});
+                this.setState({items:itemsCopy, modalBusy:false, view: undefined, ...(this.resolveFilteredItems(itemsCopy)) });
             },()=>{
                 this.setState({modalBusy:false, view: undefined});
             });
@@ -257,41 +301,73 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
                     let itemsCopy : Array<any> = (this.state.items||[]).slice(0);
                     let itemIndex = itemsCopy.findIndex(x=>x.label === itemOldKey);
                     itemsCopy[itemIndex] = result.item;
-                    this.setStateWithLog({items:itemsCopy, modalBusy:false, view: undefined});
+                    this.setState({items:itemsCopy, modalBusy:false, view: undefined, ...(this.resolveFilteredItems(itemsCopy))});
                 }
                 else{
                     //TODO: warn someone!
-                    this.setStateWithLog({modalBusy:false, view: undefined});
+                    this.setState({modalBusy:false, view: undefined});
                 }
             },()=>{
                 //TODO: warn someone!
-                this.setStateWithLog({modalBusy:false, view: undefined});
+                this.setState({modalBusy:false, view: undefined});
             });
     }
 
     createCollectionItemKey(itemKey : string){
-        this.setStateWithLog({modalBusy:true});
+        this.setState({modalBusy:true});
         let { siteKey, workspaceKey, collectionKey } = this.props;
         service.api.createCollectionItemKey(siteKey, workspaceKey, collectionKey, itemKey)
             .then(({unavailableReason, key})=>{
                 if(unavailableReason){
                     //TODO: display some warning
-                    this.setStateWithLog({modalBusy:false});
+                    this.setState({modalBusy:false});
                 }
                 else{
                     //refresh
                     this.refreshItems();
                 }
             }, (e)=>{
-                this.setStateWithLog({modalBusy:false});
+                this.setState({modalBusy:false});
             }).then(()=>{
                 this.setRootView();
             });
     }
 
+    resolveFilteredItems = (items: any) => {
+        let trunked = false;
+        let filteredItems = (items||[]).filter((item)=> { return item.key.startsWith(this.state.filter) });
+        if(filteredItems.length > MAX_RECORDS){
+            filteredItems = filteredItems.slice(0,MAX_RECORDS);
+            trunked = true;
+        }
+        return { filteredItems, trunked };
+    }
+
+    handleFilterChange = (e, value)=>{
+        this.setState({filter:value});
+        this.filterDebounce.run(()=>{
+            this.setState(this.resolveFilteredItems(this.state.items));
+        });
+    }
+
+    handleItemClick = (item: any)=>{
+        let { siteKey, workspaceKey, collectionKey } = this.props;
+        let path = `/sites/${encodeURIComponent(siteKey)}/workspaces/${encodeURIComponent(workspaceKey)}/collections/${encodeURIComponent(collectionKey)}/${encodeURIComponent(item.key)}`
+        this.history.push(path);
+    }
+
+    handleDeleteItemClick = (item: any)=>{
+        this.setDeleteItemView(item)
+    }
+
+    handleRenameItemClick = (item: any)=>{
+        this.setRenameItemView(item)
+    }
+
     render(){
         
         let { siteKey, workspaceKey, collectionKey } = this.props;
+        let { filteredItems, trunked } = this.state;
         let dialog = undefined;
 
         if(this.state.view){
@@ -334,7 +410,9 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
         if(collection==null)
             return null;
 
-        return(<Route render={ ({history}) => (
+        return(<Route render={ ({history}) => {
+            this.history = history;
+            return (
             <div style={{padding:'20px'}}>
                 <Breadcumb items={[<BreadcumbItem label={collection.title} />]} />
                 <br />
@@ -349,45 +427,31 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
                     <Fragment>
                         <TextField
                             floatingLabelText="Filter"
-                            onChange={(e,value)=>{ this.setState({filter:value}) }}
+                            onChange={this.handleFilterChange}
                             fullWidth={true}
                             value={this.state.filter}
                             hintText="Item name" />
                         <Paper>
                             <List>
-                                { (this.state.items||[]).filter((item)=> { return item.key.startsWith(this.state.filter) }).map((item, index) => {  
-
-                                    let iconButtonElement = (
-                                        <IconButton touch={true}>
-                                            <MoreVertIcon/>
-                                        </IconButton>
-                                    );
-                                    
-                                    let rightIconMenu = (
-                                        <IconMenu iconButtonElement={iconButtonElement}>
-                                            <MenuItem onClick={()=> this.setRenameItemView(item) }>Rename</MenuItem>
-                                            <MenuItem onClick={()=> this.setDeleteItemView(item) }>Delete</MenuItem>
-                                        </IconMenu>
-                                    );
-
-                                    return (<Fragment key={item.key}>
-                                        {index!==0?<Divider />:undefined}
-                                        <ListItem
-                                            primaryText={item.label||item.key}
-                                            onClick={ ()=>{
-                                                let path = `/sites/${encodeURIComponent(siteKey)}/workspaces/${encodeURIComponent(workspaceKey)}/collections/${encodeURIComponent(collectionKey)}/${encodeURIComponent(item.key)}`
-                                                history.push(path);
-                                            }}
-                                            rightIconButton={rightIconMenu}
-                                        />
-                                    </Fragment>)
-                                }) }
+                                <CollectionListItems
+                                    filteredItems={filteredItems}
+                                    onItemClick={this.handleItemClick}
+                                    onRenameItemClick={this.handleRenameItemClick}
+                                    onDeleteItemClick={this.handleDeleteItemClick}
+                                />
+                                { trunked ? (
+                                    <React.Fragment>
+                                        <Divider />
+                                        <ListItem disabled primaryText={`Max records limit reached (${MAX_RECORDS})`} style={{color:'rgba(0,0,0,.3)'}} />
+                                    </React.Fragment>
+                                ) : (null) }
                             </List>
                         </Paper>
                     </Fragment>
                 { dialog }
-            </div>)
-        } />);        
+            </div>
+            );
+        }} />);        
     }
 }
 

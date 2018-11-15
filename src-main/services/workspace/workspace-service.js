@@ -89,6 +89,7 @@ class WorkspaceService{
         
         return undefined;
     }
+
     async _smartDump(filePath /* : string */, formatFallbacks  /*: Array<string> */, obj /* : any */){
         let formatProvider = await this._smartResolveFormatProvider(filePath, formatFallbacks);
         if(formatProvider===undefined)
@@ -218,10 +219,12 @@ class WorkspaceService{
             throw new Error('Could not find collection.');
         let folder = path.join(this.workspacePath, collection.folder).replace(/\\/g,'/');
         
-        //TODO: make it more flexible! This should not be handled with IF ELSE.  But is good enough for now.
+        // TODO: make it more flexible! This should not be handled with IF ELSE.
+        //  But is good enough for now.
 
-        if(collection.folder.startsWith('content')){
-            let globExpression = path.join(folder, "*/index.{md,html,markdown}");
+        let supportedContentExt = ['md','html','markdown'];
+        if(collection.folder.startsWith('content') || supportedContentExt.indexOf(collection.extension)!==-1){
+            let globExpression = path.join(folder, `**/index.{${supportedContentExt.join(',')}}`);
             return new Promise((resolve)=>{
                 glob(globExpression, {}, (er, files)=>{
                     let result = files.map(function(item){
@@ -234,7 +237,7 @@ class WorkspaceService{
             });
         }
         else{ //data folder and everything else
-            let globExpression = path.join(folder, "**/*.{json,yaml}");
+            let globExpression = path.join(folder, `**/*.{${formatProviderResolver.allFormatsExt().join(',')}}`);
             return glob.sync(globExpression).map(function(item){
                 let key = item.replace(folder,'');
                 return {key, label:key};
@@ -338,10 +341,6 @@ class WorkspaceService{
             document.resources = document.resources.filter(x => x.__deleted!==true);
         }
         return document;
-    }
-
-    async removeFileFromCollectionItem(collectionKey /* : string */, collectionItemKey /* : string */, file /* : string */){
-
     }
 
     async copyFilesIntoCollectionItem(collectionKey /* : string */, collectionItemKey /* : string */, targetPath /* : string */, files /* : Array<string> */){
