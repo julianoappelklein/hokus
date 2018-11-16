@@ -4,18 +4,9 @@ import * as React from 'react';
 import { Breadcumb, BreadcumbItem } from './../components/Breadcumb';
 import { Route } from 'react-router-dom';
 import service from './../services/service'
-import Paper from 'material-ui/Paper'
-import Divider from 'material-ui/Divider'
-import RaisedButton from 'material-ui/RaisedButton'
-import FlatButton from 'material-ui/FlatButton'
-import TextField from 'material-ui/TextField'
-import {List, ListItem} from 'material-ui/List'
 import Spinner from './../components/Spinner'
-import Dialog from 'material-ui/Dialog'
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import IconButton from 'material-ui/IconButton';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
+import { Chip, Divider, Dialog, FlatButton, IconButton, IconMenu, List, ListItem, MenuItem, Paper, RaisedButton, TextField } from 'material-ui';
 import { Debounce } from './../utils/debounce';
 
 const Fragment = React.Fragment;
@@ -146,7 +137,7 @@ class EditItemKeyDialog extends React.Component<EditItemKeyDialogProps,EditItemK
                     fullWidth={true}
                 />
 
-                {this.state.valid? undefined : <p>Please, use alphanumeric values, '_' and '-'.</p>}
+                {this.state.valid? undefined : <p>Allowed characters: alphanumeric, dash, underline and slash.</p>}
 
                 { busy? <Spinner style={{margin:'0 auto'}} /> : undefined }
                 
@@ -168,7 +159,8 @@ type CollectionState = {
     filteredItems: Array<{key:string, label:string}>,
     trunked: bool,
     view: ?{ key: ?string, item: any },
-    modalBusy: bool
+    modalBusy: bool,
+    dirs: Array<string>
 }
 
 class CollectionListItems extends React.PureComponent<{
@@ -223,7 +215,8 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
             filteredItems: [],
             view: null,
             trunked: false,
-            modalBusy: false
+            modalBusy: false,
+            dirs: []
         };
     }
 
@@ -336,12 +329,21 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
 
     resolveFilteredItems = (items: Array<any>) => {
         let trunked = false;
-        let filteredItems: Array<any> = (items||[]).filter((item)=> { return item.key.startsWith(this.state.filter) });
+        let dirs = {'':true};
+        let filteredItems: Array<any> = (items||[]).filter((item)=> {
+            
+            let parts = item.label.split('/');
+            let c = '';
+            for(let i = 0; i < parts.length-1; i++){ c = c+parts[i] + '/'; dirs[c] = true; }
+            
+            return item.key.startsWith(this.state.filter);
+        });
         if(filteredItems.length > MAX_RECORDS){
             filteredItems = filteredItems.slice(0,MAX_RECORDS);
             trunked = true;
         }
-        return { filteredItems, trunked };
+        console.log(dirs);
+        return { filteredItems, trunked, dirs: Object.keys(dirs) };
     }
 
     handleFilterChange = (e: any, value: string)=>{
@@ -363,6 +365,13 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
 
     handleRenameItemClick = (item: any)=>{
         this.setRenameItemView(item)
+    }
+
+    handleDirClick = (e) => {
+        this.setState({filter:e.currentTarget.dataset.dir});
+        this.filterDebounce.run(()=>{
+            this.setState(this.resolveFilteredItems(this.state.items||[]));
+        });
     }
 
     render(){
@@ -423,32 +432,34 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
                     <RaisedButton label='New Section' onClick={ this.setCreateSectionView.bind(this) } /> */}
                 </div>
                 <br />
-                
-
-                    <Fragment>
-                        <TextField
-                            floatingLabelText="Filter"
-                            onChange={this.handleFilterChange}
-                            fullWidth={true}
-                            value={this.state.filter}
-                            hintText="Item name" />
-                        <Paper>
-                            <List>
-                                <CollectionListItems
-                                    filteredItems={filteredItems}
-                                    onItemClick={this.handleItemClick}
-                                    onRenameItemClick={this.handleRenameItemClick}
-                                    onDeleteItemClick={this.handleDeleteItemClick}
-                                />
-                                { trunked ? (
-                                    <React.Fragment>
-                                        <Divider />
-                                        <ListItem disabled primaryText={`Max records limit reached (${MAX_RECORDS})`} style={{color:'rgba(0,0,0,.3)'}} />
-                                    </React.Fragment>
-                                ) : (null) }
-                            </List>
-                        </Paper>
-                    </Fragment>
+                <TextField
+                    floatingLabelText="Filter"
+                    onChange={this.handleFilterChange}
+                    fullWidth={true}
+                    value={this.state.filter}
+                    hintText="Item name" />
+                <div style={{display: 'flex', flexWrap: 'wrap', padding: '10px 0'}}>
+                    { this.state.dirs.map((dir)=>{
+                        return (<Chip style={{marginRight:'5px'}} onClick={this.handleDirClick} data-dir={dir}>/{dir}</Chip>);
+                    }) }
+                </div>
+                <Paper>
+                    <List>
+                        <CollectionListItems
+                            filteredItems={filteredItems}
+                            onItemClick={this.handleItemClick}
+                            onRenameItemClick={this.handleRenameItemClick}
+                            onDeleteItemClick={this.handleDeleteItemClick}
+                        />
+                        { trunked ? (
+                            <React.Fragment>
+                                <Divider />
+                                <ListItem disabled primaryText={`Max records limit reached (${MAX_RECORDS})`} style={{color:'rgba(0,0,0,.3)'}} />
+                            </React.Fragment>
+                        ) : (null) }
+                    </List>
+                </Paper>
+                    
                 { dialog }
             </div>
             );
