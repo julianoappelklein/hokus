@@ -3,6 +3,7 @@
 export class Debounce{
     
     timeout: any;
+    duration: number;
 
     constructor(duration: number){
         this.duration = duration;

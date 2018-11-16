@@ -166,7 +166,7 @@ type CollectionState = {
     filter: string,
     items: ?Array<{key:string, label:string}>,
     filteredItems: Array<{key:string, label:string}>,
-    filteredItemsTrunked: bool,
+    trunked: bool,
     view: ?{ key: ?string, item: any },
     modalBusy: bool
 }
@@ -222,12 +222,13 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
             filter: '',
             filteredItems: [],
             view: null,
+            trunked: false,
             modalBusy: false
         };
     }
 
     setCreateItemView(){
-        this.setState({view:{key:'createItem'}, modalBusy:false});
+        this.setState({view:{key:'createItem', item: null}, modalBusy:false});
     }
 
     setRenameItemView(item: any){
@@ -333,9 +334,9 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
             });
     }
 
-    resolveFilteredItems = (items: any) => {
+    resolveFilteredItems = (items: Array<any>) => {
         let trunked = false;
-        let filteredItems = (items||[]).filter((item)=> { return item.key.startsWith(this.state.filter) });
+        let filteredItems: Array<any> = (items||[]).filter((item)=> { return item.key.startsWith(this.state.filter) });
         if(filteredItems.length > MAX_RECORDS){
             filteredItems = filteredItems.slice(0,MAX_RECORDS);
             trunked = true;
@@ -343,10 +344,10 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
         return { filteredItems, trunked };
     }
 
-    handleFilterChange = (e, value)=>{
+    handleFilterChange = (e: any, value: string)=>{
         this.setState({filter:value});
         this.filterDebounce.run(()=>{
-            this.setState(this.resolveFilteredItems(this.state.items));
+            this.setState(this.resolveFilteredItems(this.state.items||[]));
         });
     }
 
