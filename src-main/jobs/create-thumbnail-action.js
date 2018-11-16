@@ -4,7 +4,7 @@ const fs = require('fs-extra');
 const jimp = require('jimp');
 const path = require('path');
 
-const action = async ({src , dest} /* : { src: string, dest: string } */ ) /* : Promise<void> */ => {
+const action /* : ( params: { src: string, dest: string }) => Promise<void> */ = async ({src , dest}) => {
     await fs.ensureDir(path.dirname(dest));
 
     let resizePromise = new Promise((resolve, reject)=>{

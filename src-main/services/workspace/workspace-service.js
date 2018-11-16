@@ -12,7 +12,7 @@ const contentFormats = require('./../../content-formats');
 const { promisify } = require('util');
 const mainWindowManager = require('./../../main-window-manager');
 const Jimp = require("jimp");
-const { createThumbnailJob } = require('./../../jobs');
+const { createThumbnailJob, globJob } = require('./../../jobs');
 const HugoBuilder = require('./../../hugo/hugo-builder');
 const HugoServer = require('./../../hugo/hugo-server');
 const pathHelper = require('./../../path-helper');
@@ -225,20 +225,17 @@ class WorkspaceService{
         let supportedContentExt = ['md','html','markdown'];
         if(collection.folder.startsWith('content') || supportedContentExt.indexOf(collection.extension)!==-1){
             let globExpression = path.join(folder, `**/index.{${supportedContentExt.join(',')}}`);
-            return new Promise((resolve)=>{
-                glob(globExpression, {}, (er, files)=>{
-                    let result = files.map(function(item){
-                        let key = item.replace(folder,'');
-                        let label = key.replace(/^\/?(.+)\/[^\/]+$/,'$1');
-                        return {key, label};
-                    });
-                    resolve(result);
-                });
+            let files = await globJob(globExpression, {}).run();
+            return files.map(function(item){
+                let key = item.replace(folder,'');
+                let label = key.replace(/^\/?(.+)\/[^\/]+$/,'$1');
+                return {key, label};
             });
         }
         else{ //data folder and everything else
             let globExpression = path.join(folder, `**/*.{${formatProviderResolver.allFormatsExt().join(',')}}`);
-            return glob.sync(globExpression).map(function(item){
+            let files = await globJob(globExpression, {}).run();
+            return files.map(function(item){
                 let key = item.replace(folder,'');
                 return {key, label:key};
             });

@@ -1,6 +1,7 @@
 /* @flow */
 
-const { BrowserWindow } = require('electron');
+const { BrowserWindow, ipcMain } = require('electron');
+const crypto = require("crypto");
 
 class ActionRunner{
     constructor(action /*: string */, params /*: any */){
@@ -11,33 +12,34 @@ class ActionRunner{
     /*:: action : string ; */
     /*:: params : any ; */
 
-    run(){
-        let actionWindow = new BrowserWindow({
-            show: false,
-            backgroundColor:"#ffffff"
-        });
-        let html = `<html><body><p>Running Action.</p></body></html>`;
-        actionWindow.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(html));
-        actionWindow.webContents.executeJavaScript(`
-const remote = require('electron').remote;
-const action = require('${this.action}');
-
-try{
-    action(${JSON.stringify(this.params)}).then(()=>{
-        remote.getCurrentWindow().close();
-    }, ()=>{
-        remote.getCurrentWindow().close();
-    });
-}
-catch(e){
-    remote.getCurrentWindow().close();
-}
-`);
-        
+    run() /*: Promise<any> */{
         return new Promise((resolve, reject)=>{
-            actionWindow.on('close', function(){
-                resolve();
+            let actionWindow = new BrowserWindow({
+                show: false,
+                backgroundColor:"#ffffff"
             });
+            let html = `<html><body><p>Running Action.</p></body></html>`;
+            actionWindow.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(html));
+            
+            let channel = crypto.randomBytes(16).toString("hex");
+            ipcMain.once(channel, (event, {response, e})=>{
+                actionWindow.close();
+                if(e==null)
+                    resolve(response);
+                else
+                    reject(e);
+            });
+
+            actionWindow.webContents.executeJavaScript(`
+const action = require('${this.action}');
+const { ipcRenderer } = require('electron');
+
+action(${JSON.stringify(this.params)}).then((response)=>{
+    ipcRenderer.send('${channel}', {response,e:null});
+},(e)=>{
+    ipcRenderer.send('${channel}', {response:null,e});
+});
+`);
         });
     }
 }

@@ -2,11 +2,12 @@
 
 let ActionRunner = require('./action-runner');
 
-let factories = {};
-
-factories.createThumbnailJob = (src /* : string */, dest /* : string */)=> {
+module.exports.createThumbnailJob = (src /* : string */, dest /* : string */)=> {
     var pathToModule = require.resolve('./create-thumbnail-action');
     return new ActionRunner(pathToModule, {src, dest});
 }
 
-module.exports = factories;
+module.exports.globJob = (expression /* : string */, options /* : any */) => {
+    var pathToModule = require.resolve('./glob-action');
+    return new ActionRunner(pathToModule, {expression, options});
+}
