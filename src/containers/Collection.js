@@ -342,8 +342,8 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
             filteredItems = filteredItems.slice(0,MAX_RECORDS);
             trunked = true;
         }
-        console.log(dirs);
-        return { filteredItems, trunked, dirs: Object.keys(dirs) };
+        let dirsArr: Array<string> = Object.keys(dirs)
+        return { filteredItems, trunked, dirs: dirsArr };
     }
 
     handleFilterChange = (e: any, value: string)=>{
@@ -367,7 +367,7 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
         this.setRenameItemView(item)
     }
 
-    handleDirClick = (e) => {
+    handleDirClick = (e: any) => {
         this.setState({filter:e.currentTarget.dataset.dir});
         this.filterDebounce.run(()=>{
             this.setState(this.resolveFilteredItems(this.state.items||[]));
