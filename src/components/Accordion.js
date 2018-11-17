@@ -49,6 +49,7 @@ class AccordionItem extends React.Component{
             padding: '16px',
             display:'block',
             cursor:'pointer',
+            marginTop:8,
             position:'relative'
         }, headStyle);
         

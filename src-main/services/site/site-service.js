@@ -22,40 +22,14 @@ class SiteService{
     }
 
     //List all workspaces
-    listWorkspaces()/*: Array<WorkspaceHeader>*/{
-
-        let sourceProvider = siteSourceFactory.get(this._config.source);
-
-        if(!sourceProvider.canCreateLocal()){
-            return [{ 'key': 'source', 'path': this._config.source.path }];
-        }
-
-        let path = pathHelper.getSiteWorkspacesRoot(this._config.key);
-        return fs.readdirSync(path)
-            .filter((f) => fs.statSync(f).isDirectory())
-            .map((f)=> { return {
-                key: f.replace(/^.*[\\\/]/, ''),
-                path:f
-            }});
+    async listWorkspaces()/*: Promise<Array<WorkspaceHeader>>*/{
+        let sourceProvider = siteSourceFactory.get(this._config.key, this._config.source);
+        return sourceProvider.listWorkspaces();
     }
 
-    //Create a workspace
-    createWorkspace(workspaceKey/*: any*/){
-        //TODO: later
-    }
-
-    //Remove a workspace
-    deleteWorkspace(workspaceKey/*: any*/){
-        //TODO: later
-    }
-
-    //Push workspace to origin
-    pushWorkspace(workspaceKey/*: any*/){
-        //TODO: later
-    }
-
-    getWorkspaceHead(workspaceKey/*: string*/){
-        return this.listWorkspaces().find(x => x.key===workspaceKey);
+    async getWorkspaceHead(workspaceKey/*: string*/)/*: Promise<?WorkspaceHeader>*/{
+        return (await this.listWorkspaces())
+            .find(x => x.key===workspaceKey);
     }
 
     _findFirstMatchOrDefault/*::<T: any>*/(arr/*: Array<T>*/, key/*: string*/)/*: T*/{

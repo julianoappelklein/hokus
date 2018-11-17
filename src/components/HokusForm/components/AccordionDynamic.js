@@ -170,7 +170,7 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
                 return (
                     <AccordionItem key={componentKey}
                         label={label}
-                        style={{marginTop:8, background}}
+                        style={{background}}
                         bodyStyle={{padding:'16px 16px 0px 16px'}}
                         body={ context.renderLevel(newNode) }
                         wrapperProps={{

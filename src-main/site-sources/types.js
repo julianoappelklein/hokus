@@ -1,17 +1,18 @@
 // @flow
 /*::
 
+import type { WorkspaceHeader } from './../../global-types';
+
 export interface SiteSource {
     
-    fetchFromSource(): void;
+    listWorkspaces(): Promise<Array<WorkspaceHeader>>;
 
-    updateFromSource(): void;
+    mountWorkspace(key: string): Promise<bool>;
 
-    localIsUpdated(): bool;
+    unmountWorkspace(key: string): Promise<bool>;
 
-    pushLocalToSource(): void;
-    
-    canCreateLocal(): bool;
+    update(): Promise<void>;
+
 }
 
 */

@@ -1,33 +1,36 @@
 // @flow
 /*::
 import { SiteSource } from './types';
+import type { WorkspaceHeader } from './../../global-types';
+
+type FolderSiteSourceConfig = {
+    key: string,
+    path: string
+}
 */
 
 class FolderSiteSource/*:: implements SiteSource*/ {
+
+    /*:: config: FolderSiteSourceConfig;*/ 
     
-    constructor(config/*: any*/){
-        
+    constructor(config/*: FolderSiteSourceConfig*/){
+        this.config = config;
     }
 
-    fetchFromSource(){
-        //The workspace and the source are the same. We don't need to fetch the workspace.
+    listWorkspaces()/*: Promise<Array<WorkspaceHeader>>*/{
+        return Promise.resolve([{ 'key': 'source', 'path': this.config.path, 'state':'mounted' }]);
     }
 
-    updateFromSource(){
-        //The workspace and the source are the same. We don't need to update the workspace.
+    mountWorkspace(key/*: string*/)/*: Promise<bool>*/{
+        return Promise.resolve(false);
     }
 
-    localIsUpdated(){
-        //Yeah, always true
-        return true;
+    unmountWorkspace(key/*: string*/)/*: Promise<bool>*/{
+        return Promise.resolve(false);
     }
 
-    pushLocalToSource(){
-        //The workspace and the source are the same. We don't need to update the source.
-    }
-    
-    canCreateLocal(){
-        return false; //the source is the local! Duh
+    update()/*: Promise<void> */{
+        return Promise.resolve();
     }
 }
 

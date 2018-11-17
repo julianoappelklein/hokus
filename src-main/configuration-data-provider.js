@@ -127,5 +127,13 @@ function get(callback/*: (err: ?Error, data: any)=>void*/, {invalidateCache}/*: 
     }
     
 }
+function getPromise(options/*::?:{invalidateCache?: bool}*/){
+    return new Promise((resolve, reject)=>{
+        get((err, data)=>{
+            if(err) reject(err);
+            else resolve(data);
+        }, options);
+    });
+}
 
-module.exports = { get, invalidateCache }
+module.exports = { get, getPromise, invalidateCache }

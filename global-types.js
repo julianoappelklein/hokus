@@ -51,7 +51,8 @@ export type WorkspaceConfig = WorkspaceConfigRaw & {
 
 export type WorkspaceHeader = {
     key: string,
-    path: string
+    path: string,
+    state: 'mounted'|'unmounted'
 }
 
 export type SingleConfig = {
