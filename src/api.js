@@ -105,6 +105,10 @@ export class API {
     getHugoTemplates(){
         return mainProcessBridge.request('getHugoTemplates', null, {timeout: 30000});
     }
+
+    mountWorkspace(siteKey: string, workspaceKey: string){
+        return mainProcessBridge.request('mountWorkspace', {siteKey, workspaceKey});
+    }
 }
 
 //just to help debugging

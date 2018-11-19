@@ -21,6 +21,14 @@ type CallbackTyped<T> = (error: any, data: T)=>void
 
 let api/*: { [key: string]: ( payload: any, context: APIContext ) => (void|Promise<void>) }*/ = {};
 
+function bindResponseToContext(promise/*: Promise<any>*/, context/*: any*/){
+    promise.then((result)=>{
+        context.resolve(result);
+    }, (error)=>{
+        context.reject(error);
+    })
+}
+
 function getSiteService(siteKey/*: string*/, callback/*: CallbackTyped<SiteService>*/){
     return getSiteServicePromise(siteKey).then((data)=>{
         callback(null, data);
@@ -102,7 +110,10 @@ api.getWorkspaceDetails = function({siteKey, workspaceKey}/*: any*/, context/*: 
 
 api.mountWorkspace = async function({siteKey, workspaceKey}/*: any*/, context/*: any*/){
     let siteService = await getSiteServicePromise(siteKey);
-    await siteService.mountWorkspace(workspaceKey);
+    bindResponseToContext(
+        siteService.mountWorkspace(workspaceKey),
+        context
+    );
 }
 
 api.serveWorkspace = function({siteKey, workspaceKey, serveKey}/*: any*/, context/*: any*/){

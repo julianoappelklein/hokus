@@ -3,16 +3,9 @@
 const { BrowserWindow, ipcMain } = require('electron');
 const crypto = require("crypto");
 
-class ActionRunner{
-    constructor(action /*: string */, params /*: any */){
-        this.action = action.replace(/\\/g,'/');
-        this.params = params;
-    }
+class BackgroundJobRunner{
 
-    /*:: action : string ; */
-    /*:: params : any ; */
-
-    run() /*: Promise<any> */{
+    run(action /*: string */, params /*: any */) /*: Promise<any> */{
         return new Promise((resolve, reject)=>{
             let actionWindow = new BrowserWindow({
                 show: false,
@@ -31,10 +24,10 @@ class ActionRunner{
             });
 
             actionWindow.webContents.executeJavaScript(`
-const action = require('${this.action}');
+const action = require('${action}');
 const { ipcRenderer } = require('electron');
 
-action(${JSON.stringify(this.params)}).then((response)=>{
+action(${JSON.stringify(params)}).then((response)=>{
     ipcRenderer.send('${channel}', {response,e:null});
 },(e)=>{
     ipcRenderer.send('${channel}', {response:null,e});
@@ -44,4 +37,4 @@ action(${JSON.stringify(this.params)}).then((response)=>{
     }
 }
 
-module.exports = ActionRunner;
+module.exports = BackgroundJobRunner;

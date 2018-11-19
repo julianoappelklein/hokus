@@ -22,6 +22,7 @@ import { Workspaces } from './components/Workspaces';
 import CreateSiteDialog from './components/CreateSiteDialog';
 import PublishSiteDialog from './components/PublishSiteDialog';
 import BlockDialog from './components/BlockDialog';
+import Spinner from './../../components/Spinner';
 
 import type { Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from './../../types';
 
@@ -76,6 +77,9 @@ type HomeState = {
 }
 
 class Home extends React.Component<HomeProps, HomeState>{
+
+    history: any;
+
     constructor(props){
         super(props);
         this.state = {
@@ -118,26 +122,10 @@ class Home extends React.Component<HomeProps, HomeState>{
     }
 
     selectSite(site : SiteConfig ){
-        this.setState({selectedSite: site});
+        this.setState({selectedSite: site, selectedSiteWorkspaces:[]});
         service.api.listWorkspaces(site.key).then((workspaces)=>{
             this.setState({selectedSiteWorkspaces: workspaces});
         });
-    }
-
-    selectWorkspace(workspace : WorkspaceHeader, history : any ){
-        let { selectedWorkspace, selectedSite } = this.state;
-        let { workspaceKey } = this.props;
-        
-        if(selectedSite==null) throw new Error('Invalid operation.');
-
-        let select = (workspaceKey==null || workspaceKey!=workspace.key);
-        if(select){
-            history.push(`/sites/${decodeURIComponent(selectedSite.key)}/workspaces/${decodeURIComponent(workspace.key)}`);
-        }
-        else{
-            history.push(`/`);
-        }
-        console.log(window.location.toString());
     }
 
     getWorkspaceDetails = (workspace: WorkspaceHeader)=> {
@@ -174,9 +162,33 @@ class Home extends React.Component<HomeProps, HomeState>{
         </Wrapper>);
     }
 
+    handleSelectWorkspaceClick = (e, workspace)=> {
+        e.stopPropagation();
+        this.selectWorkspace(workspace);
+    };
+
+    async selectWorkspace(workspace : WorkspaceHeader ){
+        let { selectedWorkspace, selectedSite } = this.state;
+        let { workspaceKey } = this.props;
+        
+        if(selectedSite==null) throw new Error('Invalid operation.');
+
+        let select = (workspaceKey==null || workspaceKey!=workspace.key);
+        if(select){
+            await service.api.mountWorkspace(selectedSite.key, workspace.key);
+            this.history.push(`/sites/${decodeURIComponent(selectedSite.key)}/workspaces/${decodeURIComponent(workspace.key)}`);
+        }
+        else{
+            this.history.push(`/`);
+        }
+        console.log(window.location.toString());
+    }
+
     renderWorkspaces(site: SiteConfig, selectedSiteActive : bool , workspaces : ?Array<WorkspaceHeader>){
         return (
             <Route render={({history})=>{
+                
+                this.history = history; //ugly
 
                 if(workspaces==null)
                     return (<Wrapper></Wrapper>);
@@ -193,7 +205,7 @@ class Home extends React.Component<HomeProps, HomeState>{
                             this.setState({publishSiteDialog: {workspace, workspaceHeader, open: true}});                            
                         }}
                         onStartServerClick={ (workspace, serveKey)=> { service.api.serveWorkspace(site.key, workspace.key, serveKey) } } 
-                        onSelectWorkspaceClick={ (e, workspace)=> { e.stopPropagation(); this.selectWorkspace(workspace, history) } }
+                        onSelectWorkspaceClick={ this.handleSelectWorkspaceClick }
                         site={site}
                     />
                 )
@@ -242,7 +254,7 @@ class Home extends React.Component<HomeProps, HomeState>{
         let { selectedSite, selectedWorkspace, configurations, createSiteDialog, publishSiteDialog } = this.state;
 
         if(configurations==null){
-            return <Wrapper title="Site Management"><MessageBlock>Loading configurations...</MessageBlock></Wrapper>
+            return <Spinner />
         }
    
         return (

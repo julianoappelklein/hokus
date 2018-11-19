@@ -7,9 +7,9 @@ export interface SiteSource {
     
     listWorkspaces(): Promise<Array<WorkspaceHeader>>;
 
-    mountWorkspace(key: string): Promise<bool>;
+    mountWorkspace(key: string): Promise<void>;
 
-    unmountWorkspace(key: string): Promise<bool>;
+    unmountWorkspace(key: string): Promise<void>;
 
     update(): Promise<void>;
 

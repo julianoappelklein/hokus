@@ -1,5 +1,5 @@
 //@flow
-const Git = require('nodegit');
+const NodeGit = require('nodegit');
 const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
@@ -27,7 +27,7 @@ class ThemeInstaller{
         await fs.ensureDir(themePath);
         
 
-        await Git.Clone(repoUrl, themePath);
+        await NodeGit.Clone(repoUrl, themePath);
         
         //copy "sample" or "example" site to dest
         let sampleSitesPath = ['exampleSite','sampleSite'].map(x => path.join(themePath, x));

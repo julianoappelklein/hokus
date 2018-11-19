@@ -1,13 +1,19 @@
 /* @flow */
 
-let ActionRunner = require('./action-runner');
+let jobsManager = require('./job-manager');
 
 module.exports.createThumbnailJob = (src /* : string */, dest /* : string */)=> {
-    var pathToModule = require.resolve('./create-thumbnail-action');
-    return new ActionRunner(pathToModule, {src, dest});
+    return jobsManager.runSharedBackgroundJob(
+        `create-thumbnail-job:${src}->${dest}`,
+        require.resolve('./create-thumbnail-job'),
+        {src, dest}
+    );
 }
 
 module.exports.globJob = (expression /* : string */, options /* : any */) => {
-    var pathToModule = require.resolve('./glob-action');
-    return new ActionRunner(pathToModule, {expression, options});
+    return jobsManager.runSharedBackgroundJob(
+        `glob-job:${expression}(${JSON.stringify(options)})`,
+        require.resolve('./glob-job'),
+        {expression, options}
+    );
 }

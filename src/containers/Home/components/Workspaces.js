@@ -41,7 +41,7 @@ export class Workspace extends React.Component<WorkspaceProps,WorkspaceState> {
         
     }
     handleOpenLocation = ()=>{ this.props.onLocationClick(this.props.header.path); }
-    handleWorkspaceSelect = (e)=>{ this.props.onSelectWorkspaceClick(e, this.props.header); }
+    handleWorkspaceSelect = (e: any)=>{ this.props.onSelectWorkspaceClick(e, this.props.header); }
     handlePublishClick = ()=>{ if(this.state.config!=null) this.props.onPublishClick(this.props.header, this.state.config); }
 
     componentDidMount = ()=>{

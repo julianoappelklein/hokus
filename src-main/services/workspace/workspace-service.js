@@ -225,7 +225,7 @@ class WorkspaceService{
         let supportedContentExt = ['md','html','markdown'];
         if(collection.folder.startsWith('content') || supportedContentExt.indexOf(collection.extension)!==-1){
             let globExpression = path.join(folder, `**/index.{${supportedContentExt.join(',')}}`);
-            let files = await globJob(globExpression, {}).run();
+            let files = await globJob(globExpression, {});
             return files.map(function(item){
                 let key = item.replace(folder,'');
                 let label = key.replace(/^\/?(.+)\/[^\/]+$/,'$1');
@@ -234,7 +234,7 @@ class WorkspaceService{
         }
         else{ //data folder and everything else
             let globExpression = path.join(folder, `**/*.{${formatProviderResolver.allFormatsExt().join(',')}}`);
-            let files = await globJob(globExpression, {}).run();
+            let files = await globJob(globExpression, {});
             return files.map(function(item){
                 let key = item.replace(folder,'');
                 return {key, label:key};
@@ -393,8 +393,7 @@ class WorkspaceService{
         let thumbSrcExists = await this.existsPromise(thumbSrc);
         if(!thumbSrcExists){
             try{
-                let job = createThumbnailJob(src, thumbSrc);
-                await job.run();
+                await createThumbnailJob(src, thumbSrc);
             }
             catch(e){
                 return 'NOT_FOUND';

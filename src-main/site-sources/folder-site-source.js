@@ -21,12 +21,12 @@ class FolderSiteSource/*:: implements SiteSource*/ {
         return Promise.resolve([{ 'key': 'source', 'path': this.config.path, 'state':'mounted' }]);
     }
 
-    mountWorkspace(key/*: string*/)/*: Promise<bool>*/{
-        return Promise.resolve(false);
+    mountWorkspace(key/*: string*/)/*: Promise<void>*/{
+        return Promise.resolve(undefined);
     }
 
-    unmountWorkspace(key/*: string*/)/*: Promise<bool>*/{
-        return Promise.resolve(false);
+    unmountWorkspace(key/*: string*/)/*: Promise<void>*/{
+        return Promise.resolve(undefined);
     }
 
     update()/*: Promise<void> */{
