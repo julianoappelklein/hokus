@@ -40,6 +40,7 @@ function getSiteServicePromise(siteKey/*: string*/)/*: Promise<SiteService>*/{
     });
 }
 
+
 function getWorkspaceService(siteKey/*: string*/, workspaceKey/*: string*/, callback/*: CallbackTyped<{siteService: SiteService, workspaceService: WorkspaceService}>*/){
     return getWorkspaceServicePromise(siteKey, workspaceKey).then((data)=>{
         callback(null, data);
@@ -97,6 +98,11 @@ api.getWorkspaceDetails = function({siteKey, workspaceKey}/*: any*/, context/*: 
         hugoDownloader.downloader.download(configuration.hugover);
         context.resolve(configuration);
     });
+}
+
+api.mountWorkspace = async function({siteKey, workspaceKey}/*: any*/, context/*: any*/){
+    let siteService = await getSiteServicePromise(siteKey);
+    await siteService.mountWorkspace(workspaceKey);
 }
 
 api.serveWorkspace = function({siteKey, workspaceKey, serveKey}/*: any*/, context/*: any*/){

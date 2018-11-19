@@ -34,10 +34,10 @@ class MainProcessBridge{
             let callback = this._getCallback(token);
             if(callback){
                 callback(response);
-                console.log('Returned response:', JSON.stringify(response), key);
+                //console.log('Returned response:', JSON.stringify(response), key);
             }
             else{
-                console.log('Response without callback.', key);
+                //console.log('Response without callback.', key);
             }
         });
 

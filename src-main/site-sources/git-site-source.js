@@ -40,9 +40,10 @@ class GitSiteSource/*:: implements SiteSource*/ {
     async _getRepo()/*: Promise<any>*/{
 
         let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
-        await fs.ensureDir(pathHelper.getSiteRoot(this.config.key));
+        let siteRootPath = pathHelper.getSiteRoot(this.config.key);
+        fs.ensureDir(siteRootPath);
 
-        if(await this._isEmptyDir(repositoryPath)){
+        if(await this._isEmptyDir(siteRootPath)){
             return Git.Clone(this.config.url, repositoryPath, {
                 fetchOpts: {
                     callbacks: {
@@ -50,7 +51,7 @@ class GitSiteSource/*:: implements SiteSource*/ {
                             return 1;
                         },
                         credentials: (url, userName) => {
-                            let { username, sshPrivateKey, sshPublicKey } = this.config.credentials;
+                            let { sshPrivateKey, sshPublicKey } = this.config.credentials;
                             return Git.Cred.sshKeyMemoryNew(userName, sshPublicKey, sshPrivateKey, "");
                         }
                     }

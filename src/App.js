@@ -171,11 +171,11 @@ class App extends React.Component<AppProps,AppState>{
   getContentSwitch(){
     return (<Switch>
       <Route path='/' exact render={ () => {
-        return <Home />
+        return <Home key={ 'home' } />
       }} />
       <Route path='/sites/:site/workspaces/:workspace' exact render={ ({match})=> {
         //$FlowFixMe
-        return <Home key={ match.url } siteKey={ decodeURIComponent(match.params.site) } workspaceKey={ decodeURIComponent(match.params.workspace) } />
+        return <Home key={ 'home' } siteKey={ decodeURIComponent(match.params.site) } workspaceKey={ decodeURIComponent(match.params.workspace) } />
       }} />
       <Route path='/sites/:site/workspaces/:workspace/collections/:collection' exact render={ ({match})=> {
         //$FlowFixMe

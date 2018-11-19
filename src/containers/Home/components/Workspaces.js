@@ -18,7 +18,7 @@ type WorkspaceProps = {
     active: bool,
     onLocationClick: (location: string)=>void,
     onStartServerClick: (workspace: WorkspaceHeader, serveKey: string)=> void,
-    onSelectWorkspaceClick: (workspace: WorkspaceHeader)=> void,
+    onSelectWorkspaceClick: (e: any, workspace: WorkspaceHeader)=> void,
     onPublishClick: (workspaceHeader: WorkspaceHeader, workspace: WorkspaceConfig)=> void,
     getWorkspaceDetails: (workspace: WorkspaceHeader) => Promise<WorkspaceConfig>
 }
@@ -41,7 +41,7 @@ export class Workspace extends React.Component<WorkspaceProps,WorkspaceState> {
         
     }
     handleOpenLocation = ()=>{ this.props.onLocationClick(this.props.header.path); }
-    handleWorkspaceSelect = ()=>{ this.props.onSelectWorkspaceClick(this.props.header); }
+    handleWorkspaceSelect = (e)=>{ this.props.onSelectWorkspaceClick(e, this.props.header); }
     handlePublishClick = ()=>{ if(this.state.config!=null) this.props.onPublishClick(this.props.header, this.state.config); }
 
     componentDidMount = ()=>{
@@ -97,7 +97,7 @@ export function Workspaces(
         onLocationClick: (location: string)=>void,
         onPublishClick: (workspaceHeader: WorkspaceHeader, workspace: WorkspaceConfig)=>void,
         onStartServerClick: (workspace: WorkspaceHeader, config: string)=>void,
-        onSelectWorkspaceClick: (workspace: WorkspaceHeader)=>void,
+        onSelectWorkspaceClick: (e:any, workspace: WorkspaceHeader)=>void,
         getWorkspaceDetails: (workspace: WorkspaceHeader) => Promise<WorkspaceConfig>
     }
 ){
@@ -117,7 +117,7 @@ export function Workspaces(
                             style={{minWidth: '40px'}}
                             icon={<IconNavigationCheck />}
                             primary={active}
-                            onClick={ ()=>onSelectWorkspaceClick(workspace) }
+                            onClick={ (e)=>onSelectWorkspaceClick(e, workspace) }
                             />
                     ]}
                     body={(<Workspace

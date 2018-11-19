@@ -21,15 +21,22 @@ class SiteService{
         this._config = config;
     }
 
+    _getSiteSource(){
+        return siteSourceFactory.get(this._config.key, this._config.source);
+    }
+
     //List all workspaces
     async listWorkspaces()/*: Promise<Array<WorkspaceHeader>>*/{
-        let sourceProvider = siteSourceFactory.get(this._config.key, this._config.source);
-        return sourceProvider.listWorkspaces();
+        return this._getSiteSource().listWorkspaces();
     }
 
     async getWorkspaceHead(workspaceKey/*: string*/)/*: Promise<?WorkspaceHeader>*/{
         return (await this.listWorkspaces())
             .find(x => x.key===workspaceKey);
+    }
+
+    async mountWorkspace(workspaceKey/*: string*/)/*: Promise<void>*/{
+        await this._getSiteSource().mountWorkspace(workspaceKey);
     }
 
     _findFirstMatchOrDefault/*::<T: any>*/(arr/*: Array<T>*/, key/*: string*/)/*: T*/{

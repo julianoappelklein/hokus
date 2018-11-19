@@ -84,12 +84,16 @@ class Home extends React.Component<HomeProps, HomeState>{
             publishSiteDialog: undefined
         };
     }
+
+    componentDidUpdate(preProps: HomeProps){
+    }
+
     componentWillMount(){
         service.registerListener(this);
     }
 
     componentDidMount(){
-       
+        console.log('HOME MOUNTED');
 
         var { siteKey, workspaceKey } = this.props;
         if(siteKey && workspaceKey){
@@ -121,13 +125,19 @@ class Home extends React.Component<HomeProps, HomeState>{
     }
 
     selectWorkspace(workspace : WorkspaceHeader, history : any ){
-        let { selectedWorkspace, selectedSite } = this.state; let path;
+        let { selectedWorkspace, selectedSite } = this.state;
+        let { workspaceKey } = this.props;
+        
         if(selectedSite==null) throw new Error('Invalid operation.');
-        let select = (selectedWorkspace==null || selectedWorkspace.path!=workspace.path);
-        if(select)
+
+        let select = (workspaceKey==null || workspaceKey!=workspace.key);
+        if(select){
             history.push(`/sites/${decodeURIComponent(selectedSite.key)}/workspaces/${decodeURIComponent(workspace.key)}`);
-        else
+        }
+        else{
             history.push(`/`);
+        }
+        console.log(window.location.toString());
     }
 
     getWorkspaceDetails = (workspace: WorkspaceHeader)=> {
@@ -175,7 +185,7 @@ class Home extends React.Component<HomeProps, HomeState>{
                     <Workspaces
                         getWorkspaceDetails={this.getWorkspaceDetails}
                         workspaces={workspaces}
-                        activeWorkspaceKey={selectedSiteActive && this.state.selectedWorkspace ? this.state.selectedWorkspace.key : null }
+                        activeWorkspaceKey={this.props.workspaceKey}
                         onLocationClick={(location)=>{
                             service.api.openFileExplorer(location)
                         }}
@@ -183,7 +193,7 @@ class Home extends React.Component<HomeProps, HomeState>{
                             this.setState({publishSiteDialog: {workspace, workspaceHeader, open: true}});                            
                         }}
                         onStartServerClick={ (workspace, serveKey)=> { service.api.serveWorkspace(site.key, workspace.key, serveKey) } } 
-                        onSelectWorkspaceClick={ (workspace)=> { this.selectWorkspace(workspace, history) } }
+                        onSelectWorkspaceClick={ (e, workspace)=> { e.stopPropagation(); this.selectWorkspace(workspace, history) } }
                         site={site}
                     />
                 )

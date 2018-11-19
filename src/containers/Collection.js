@@ -440,7 +440,7 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
                     hintText="Item name" />
                 <div style={{display: 'flex', flexWrap: 'wrap', padding: '10px 0'}}>
                     { this.state.dirs.map((dir)=>{
-                        return (<Chip style={{marginRight:'5px'}} onClick={this.handleDirClick} data-dir={dir}>/{dir}</Chip>);
+                        return (<Chip key={dir} style={{marginRight:'5px'}} onClick={this.handleDirClick} data-dir={dir}>/{dir}</Chip>);
                     }) }
                 </div>
                 <Paper>
