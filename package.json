@@ -1,5 +1,5 @@
 {
-  "homepage": "./",
+  "homepage": "https://www.hokus.io/",
   "name": "hokus-cms",
   "author": {
     "name": "Juliano Appel Klein",
@@ -60,11 +60,13 @@
     "_electron-dist-win": "npm run _copy-electron-code && electron-builder",
     "_electron-dist-linux-deb": "npm run _copy-electron-code && electron-builder --linux deb",
     "_electron-dist-linux": "npm run _copy-electron-code && electron-builder",
+    "_electron-dist-mac": "npm run _copy-electron-code && electron-builder",
     "_flow-kill": "taskkill /F /IM flow.exe",
     "_flow": "flow",
     "dev": "npm run _copy-ace && concurrently --kill-others \"npm run _react-dev\" \"npm run _electron-dev\"",
     "dist-win": "npm run _copy-ace && rimraf dist && rimraf build && npm run _react-build && npm run _electron-dist-win",
     "dist-linux": "npm run _copy-ace && rimraf dist && rimraf build && npm run _react-build && npm run _electron-dist-linux",
+    "dist-mac": "npm run _copy-ace && rimraf dist && rimraf build && npm run _react-build && npm run _electron-dist-mac",
     "test": "./node_modules/.bin/mocha",
     "flow-restart": "concurrently \"taskkill /F /IM flow.exe\" \"flow\""
   },
@@ -76,6 +78,9 @@
     },
     "win": {
       "icon": "public/icon"
+    },
+    "mac": {
+      "icon": "public/icon"
     }
   },
   "browserslist": [
@@ -84,4 +89,3 @@
     "not ie <= 11",
     "not op_mini all"
   ]
-}
