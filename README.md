@@ -29,7 +29,7 @@ Take a look at our features and understand why Hokus is a great tool for your Hu
 
 **You can use Hokus for some workflows right now**. It is fully ready to manage local Hugo websites.
 
-Start today, [download our installer (Windows or Linux or Mac)](https://github.com/julianoappelklein/hokus/releases), install Hokus on your PC and set up a website within seconds by using our wizard.
+Start today, [download our installer (Windows or Linux, Mac very soon)](https://github.com/julianoappelklein/hokus/releases), install Hokus on your PC and set up a website within seconds by using our wizard.
 
 Just keep in mind that **Hokus will be much more** in the future.
 
