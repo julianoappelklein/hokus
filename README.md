@@ -87,12 +87,16 @@ For a minimal configuration file, see the default workspace configuration (which
 {
   "hugover": "0.35",
   "serve":[
-    "key":"default",
-    "config":"config.toml"
+    {
+      "key":"default",
+      "config":"config.toml"
+    }
   ],
   "build":[
-    "key":"default",
-    "config":"config.toml"
+    {
+      "key":"default",
+      "config":"config.toml"
+    }
   ],
   "collections":[
     {
