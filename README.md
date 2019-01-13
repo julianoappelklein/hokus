@@ -113,7 +113,7 @@ For a minimal configuration file, see the default workspace configuration (which
         { "key":"mainContent", "title":"Content", "type":"markdown" },
         { "key":"pubdate", "title":"Pub Date", "type":"date" },
         { "key":"draft", "title":"Draft", "type":"boolean" },
-        { "key":"bundle-manager", "type":"bundle-manager", "resourcetype":"img", "path":"imgs", "extensions: ["png","jpg","gif"], "fields":[
+        { "key":"bundle-manager", "type":"bundle-manager", "resourcetype":"img", "path":"imgs", "extensions": ["png","jpg","gif"], "fields":[
             { "key":"title", "title":"Title", "type":"string" },
             { "key":"description", "title":"Description", "type":"string", "multiLine":true }
           ]
@@ -127,8 +127,8 @@ For a minimal configuration file, see the default workspace configuration (which
       "title": "Main Config", /* a friendly title for your menu item */
       "file": "config.yaml", /* a relative path to your file. "somePath/yourfilename.(md|html|json|toml|yaml)" */
       "fields":[
-        { "key":"title", "title":"Site Title", "type":"string" }
-        { "key":"params", "title":"Params", "type":"nest", fields: [
+        { "key":"title", "title":"Site Title", "type":"string" },
+        { "key":"params", "title":"Params", "type":"nest", "fields": [
           //... more fields
         ]}
       ]
