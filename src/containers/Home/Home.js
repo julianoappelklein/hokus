@@ -24,7 +24,7 @@ import PublishSiteDialog from './components/PublishSiteDialog';
 import BlockDialog from './components/BlockDialog';
 import Spinner from './../../components/Spinner';
 
-import type { Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from './../../types';
+import type { EmptyConfigurations, Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from './../../types';
 
 //$FlowFixMe
 const Fragment = React.Fragment;
@@ -66,7 +66,7 @@ type HomeProps = {
 }
 
 type HomeState = {
-    configurations?: Configurations,
+    configurations?: Configurations | EmptyConfigurations,
     selectedSite?: SiteConfig,
     selectedSiteWorkspaces?: Array<any>,
     selectedWorkspace?: WorkspaceHeader,
@@ -252,6 +252,8 @@ class Home extends React.Component<HomeProps, HomeState>{
 
         let { siteKey } = this.props;
         let { selectedSite, selectedWorkspace, configurations, createSiteDialog, publishSiteDialog } = this.state;
+        
+        let _configurations = ((configurations: any): Configurations);
 
         if(configurations==null){
             return <Spinner />
@@ -262,7 +264,7 @@ class Home extends React.Component<HomeProps, HomeState>{
                 <div style={ styles.sitesCol }>
                     <List>
                         <Subheader>All Sites</Subheader>
-                        { (configurations.sites||[]).map((item, index)=>{
+                        { (_configurations.sites||[]).map((item, index)=>{
                             let selected = item===selectedSite;
                             let active = selectedSite && siteKey===item.key;
                             return (<ListItem
@@ -273,7 +275,7 @@ class Home extends React.Component<HomeProps, HomeState>{
                                 primaryText={ item.name }
                             />);
                         })}
-                        { configurations.empty || configurations.global.siteManagementEnabled ? (
+                        { configurations.empty || _configurations.global.siteManagementEnabled ? (
                             <ListItem
                                 key="add-site"
                                 style={ styles.siteInactiveStyle }
@@ -290,7 +292,7 @@ class Home extends React.Component<HomeProps, HomeState>{
                             <MessageBlock>Please, select a site.</MessageBlock>
                         </Wrapper>
                     ) : (
-                        this.renderSelectedSiteContent(configurations, selectedSite)
+                        this.renderSelectedSiteContent(_configurations, selectedSite)
                     ) }
                 </div>
                 <CreateSiteDialog

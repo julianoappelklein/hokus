@@ -50,6 +50,7 @@
   "peerDependencies": {},
   "main": "src-main/electron.js",
   "scripts": {
+    "start": "npm run _copy-ace && concurrently --kill-others \"npm run _react-dev\" \"npm run _electron-dev\"",
     "_copy-electron-code": "copyfiles -u 1 -V \"./src-main/**/*\" \"./build/electron/\"",
     "_copy-ace": "copyfiles -u 3 -V \"./node_modules/ace-editor-builds/src-min-noconflict/**/*.*\" \"./public/ace-editor-min-noconflict/\"",
     "_copy_ace_extras": "copyfiles -u 2 -V \"./extras/ace-editor/**/*.*\" \"./public/ace-editor-min-noconflict/\"",
@@ -63,7 +64,6 @@
     "_electron-dist-mac": "npm run _copy-electron-code && electron-builder",
     "_flow-kill": "taskkill /F /IM flow.exe",
     "_flow": "flow",
-    "dev": "npm run _copy-ace && concurrently --kill-others \"npm run _react-dev\" \"npm run _electron-dev\"",
     "dist-win": "npm run _copy-ace && rimraf dist && rimraf build && npm run _react-build && npm run _electron-dist-win",
     "dist-linux": "npm run _copy-ace && rimraf dist && rimraf build && npm run _react-build && npm run _electron-dist-linux",
     "dist-mac": "npm run _copy-ace && rimraf dist && rimraf build && npm run _react-build && npm run _electron-dist-mac",

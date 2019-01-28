@@ -72,13 +72,16 @@ export type CollectionConfig = {
     dataformat: string
 }
 
+export type EmptyConfigurations = {
+    empty:true,
+    fileSearchPatterns: Array<string>
+}
+
 export type Configurations = {
-    empty? : bool,
-    fileSearchPatterns? : Array<string>,
-    sites? : Array<SiteConfig>,
-    global:{
+    sites: Array<SiteConfig>,
+    global: {
         siteManagementEnabled: bool,
         debugEnabled: bool,
         cookbookEnabled: bool
     }
-}
+};

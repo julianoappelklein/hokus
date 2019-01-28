@@ -8,14 +8,14 @@ const formatProviderResolver = require('./format-provider-resolver');
 const outputConsole = require('./output-console');
 const Joi = require('joi');
 
-let configurationCache = undefined;
+let configurationCache /*? : Configurations */ = undefined;
 
 const supportedFormats = formatProviderResolver.allFormatsExt().join(',');
 const defaultPathSearchPattern = (pathHelper.getRoot() + 'config.{'+supportedFormats+'}').replace(/\\/gi,'/');
 const namespacedPathSearchPattern = (pathHelper.getRoot() + 'config.*.{'+supportedFormats+'}').replace(/\\/gi,'/');
 const globalConfigPattern = (pathHelper.getRoot() + 'config.{'+supportedFormats+'}').replace(/\\/gi,'/');
 /*::
-    import type { SiteConfig } from './../global-types';
+    import type { EmptyConfigurations, SiteConfig, Configurations } from './../global-types';
 */
 
 
@@ -62,7 +62,7 @@ function invalidateCache(){
     configurationCache = undefined;
 }
 
-function get(callback/*: (err: ?Error, data: any)=>void*/, {invalidateCache}/*: {invalidateCache?: bool}*/ = {}){
+function get(callback/*: (err: ?Error, data: Configurations | EmptyConfigurations )=>void*/, {invalidateCache}/*: {invalidateCache?: bool}*/ = {}){
 
     if(invalidateCache===true)
         configurationCache = undefined;
@@ -76,7 +76,7 @@ function get(callback/*: (err: ?Error, data: any)=>void*/, {invalidateCache}/*: 
         .concat(glob.sync(namespacedPathSearchPattern))
         .map(x=>path.normalize(x));
         
-    let configurations/*: { sites: Array<{}>, global: {} }*/ = {sites:[], global: GLOBAL_DEFAULTS};
+    let configurations/*: Configurations */ = {sites:[], global: GLOBAL_DEFAULTS};
 
     for(let i = 0; i < files.length; i++){
         let file = files[i];
@@ -127,7 +127,7 @@ function get(callback/*: (err: ?Error, data: any)=>void*/, {invalidateCache}/*: 
     }
     
 }
-function getPromise(options/*::?:{invalidateCache?: bool}*/){
+function getPromise(options/*::?:{invalidateCache?: bool}*/)/*: Promise<Configurations | EmptyConfigurations> */{
     return new Promise((resolve, reject)=>{
         get((err, data)=>{
             if(err) reject(err);
