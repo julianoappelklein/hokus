@@ -2,10 +2,10 @@
 
 import React from 'react';
 import Border from '../../Border';
-import Spinner from '../../Spinner';
 import IconBroken from 'material-ui/svg-icons/image/broken-image';
 import type { ComponentContext, DynamicFormNode, ComponentProps, FieldBase } from '../../HoForm';
 import { BaseDynamic } from '../../HoForm';
+import { CircularProgress } from 'material-ui';
 
 type BundleImgThumbDynamicField = {
     key: string,
@@ -33,7 +33,7 @@ class BundleImgThumbDynamic extends BaseDynamic<BundleImgThumbDynamicField, Bund
         return (
         <div style={{ width:'64px', height:'64px', marginBottom:'16px', overflow:'hidden', background:'#16062f' }}>
             {
-                this.state.src === undefined ? (<Spinner size={32} margin={16} color={ 'RGBA(255,255,255,.3)' } />)
+                this.state.src === undefined ? (<CircularProgress />)
                 : this.state.src === 'NOT_FOUND'? (<IconBroken className="fadeIn animated" style={{width:32, height:32, margin:16, color:'#e84b92'}} />)
                 : (<img src={this.state.src} className="fadeIn animated" style={{width:'64xp', height:'64px'}} /> )
             }

@@ -162,21 +162,25 @@ class Home extends React.Component<HomeProps, HomeState>{
         </Wrapper>);
     }
 
-    handleSelectWorkspaceClick = (e, workspace)=> {
+    handleSelectWorkspaceClick = (e, siteKey, workspace)=> {
         e.stopPropagation();
-        this.selectWorkspace(workspace);
+        this.selectWorkspace(siteKey, workspace);
     };
 
-    async selectWorkspace(workspace : WorkspaceHeader ){
-        let { selectedWorkspace, selectedSite } = this.state;
-        let { workspaceKey } = this.props;
-        
-        if(selectedSite==null) throw new Error('Invalid operation.');
+    async selectWorkspace(siteKey: string, workspace : WorkspaceHeader ){
+        let activeWorkspaceKey = this.props.workspaceKey;
+        let activeSiteKey = this.props.siteKey;
 
-        let select = (workspaceKey==null || workspaceKey!=workspace.key);
+        let select = (
+            activeWorkspaceKey==null ||
+            activeSiteKey==null ||
+            activeWorkspaceKey!=workspace.key ||
+            activeSiteKey!=siteKey
+        );
+
         if(select){
-            await service.api.mountWorkspace(selectedSite.key, workspace.key);
-            this.history.push(`/sites/${decodeURIComponent(selectedSite.key)}/workspaces/${decodeURIComponent(workspace.key)}`);
+            await service.api.mountWorkspace(siteKey, workspace.key);
+            this.history.push(`/sites/${decodeURIComponent(siteKey)}/workspaces/${decodeURIComponent(workspace.key)}`);
         }
         else{
             this.history.push(`/`);
@@ -197,6 +201,7 @@ class Home extends React.Component<HomeProps, HomeState>{
                     <Workspaces
                         getWorkspaceDetails={this.getWorkspaceDetails}
                         workspaces={workspaces}
+                        activeSiteKey={this.props.siteKey}
                         activeWorkspaceKey={this.props.workspaceKey}
                         onLocationClick={(location)=>{
                             service.api.openFileExplorer(location)

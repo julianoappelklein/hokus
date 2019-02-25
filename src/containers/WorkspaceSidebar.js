@@ -54,6 +54,7 @@ class WorkspaceWidget extends React.Component<WorkspaceWidgetProps,any> {
       />) : (<ListItem
         primaryText={'Please'}
         secondaryText={'select a workspace'}
+        onClick={onClick}
         rightIcon={<IconActionSetting color={translucentColor} />}
       />) }
     </List>
@@ -102,7 +103,8 @@ type WorkspaceSidebarProps = {
 
 type WorkspaceSidebarState = {
   site : any,
-  workspace : any
+  workspace : any,
+  error: any
 }
 
 
@@ -112,24 +114,28 @@ class WorkspaceSidebar extends React.Component<WorkspaceSidebarProps,WorkspaceSi
     super(props);
     this.state = {
       site: null,
-      workspace: null
+      workspace: null,
+      error: null
     };
   }
 
   componentWillMount(){
     service.registerListener(this);
-    
-    let {siteKey, workspaceKey } = this.props;
+    this.refresh();
+  }
 
+  refresh = ()=>{
+    let {siteKey, workspaceKey } = this.props;
     if(siteKey && workspaceKey){
       let stateUpdate = {};
       service.getSiteAndWorkspaceData(siteKey, workspaceKey).then((bundle)=>{
         stateUpdate.site = bundle.site;
         stateUpdate.workspace = bundle.workspaceDetails;
         this.setState(stateUpdate);
+      }).catch(e=>{
+        this.setState({site: null, workspace: null, error: e});
       });
     }
-
   }
 
   componentWillUnmount(){
@@ -156,8 +162,14 @@ class WorkspaceSidebar extends React.Component<WorkspaceSidebarProps,WorkspaceSi
           siteConfig={this.state.site}
           workspaceConfig={this.state.workspace}
           onClick={()=>{
-            if(this.state.site!=null)
-              history.push(basePath)            
+            if(this.state.error!=null){
+              history.push('/');
+              this.refresh();
+            }
+            else if(this.state.site!=null){
+              history.push(basePath);
+              this.refresh();
+            }
           }} />
       )
     });
@@ -169,7 +181,10 @@ class WorkspaceSidebar extends React.Component<WorkspaceSidebarProps,WorkspaceSi
         items: this.state.workspace.collections.map((collection, index) => {
           return {
             label: collection.title,
-            onClick: function(){ history.push(`${basePath}/collections/${encodeURIComponent(collection.key)}`) },
+            onClick: () => {
+              history.push(`${basePath}/collections/${encodeURIComponent(collection.key)}`);
+              this.refresh();
+            },
             active: false
           }
         })
@@ -181,7 +196,10 @@ class WorkspaceSidebar extends React.Component<WorkspaceSidebarProps,WorkspaceSi
         items: this.state.workspace.singles.map((collection, index) => {
           return {
             label: collection.title,
-            onClick: function(){ history.push(`${basePath}/singles/${encodeURIComponent(collection.key)}`) },
+            onClick: () => {
+              history.push(`${basePath}/singles/${encodeURIComponent(collection.key)}`)
+              this.refresh();
+            },
             active: false
           }
         })
@@ -190,7 +208,7 @@ class WorkspaceSidebar extends React.Component<WorkspaceSidebarProps,WorkspaceSi
 
     
 
-    return (
+    return (<React.Fragment>
       <Sidebar.Sidebar
         hideItems={this.props.hideItems}
         menuIsLocked={this.props.menuIsLocked}
@@ -198,6 +216,12 @@ class WorkspaceSidebar extends React.Component<WorkspaceSidebarProps,WorkspaceSi
         onLockMenuClicked={this.props.onLockMenuClicked}
         onToggleItemVisibility={this.props.onToggleItemVisibility}
       />
+      { this.state.error && (<p style={{
+        color: '#EC407A', padding: '10px', margin: '16px',
+        fontSize:'14px', border: 'solid 1px #EC407A',
+        borderRadius:3
+        }}>{this.state.error}</p>) }
+      </React.Fragment>
     )
   }
 }

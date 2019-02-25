@@ -49,26 +49,29 @@ class Service extends BaseService {
         
         var bundle = {};
 
-        if(this._siteAndWorkspaceDataPromise == null){            
+        if(this._siteAndWorkspaceDataPromise == null){
             
-            this._siteAndWorkspaceDataPromise = Promise.all([
-                this.getConfigurations().then((configurations)=>{
-                    bundle.configurations = configurations;
-                    //$FlowFixMe
-                    bundle.site = configurations.sites.find(site => { return site.key === siteKey });
-                    //$FlowFixMe
-                    return this.api.listWorkspaces(siteKey);        
-                }).then((workspaces)=>{
-                    bundle.siteWorkspaces = workspaces;
-                    bundle.workspace = workspaces.find((workspace) => { return workspace.key === workspaceKey });               
-                }),
-                this.api.getWorkspaceDetails(siteKey, workspaceKey).then(workspaceDetails =>{
-                    bundle.workspaceDetails = workspaceDetails;
-                })
-            ]).then(()=>{
+            let errors = [];
+            this._siteAndWorkspaceDataPromise = this.getConfigurations()
+            .then((configurations)=>{
+                bundle.configurations = configurations;
+                //$FlowFixMe
+                bundle.site = configurations.sites.find(site => { return site.key === siteKey });
+                //$FlowFixMe
+                return this.api.listWorkspaces(siteKey);        
+            }).then((workspaces)=>{
+                bundle.siteWorkspaces = workspaces;
+                bundle.workspace = workspaces.find((workspace) => { return workspace.key === workspaceKey });               
+            }).then(()=>{
+                return this.api.getWorkspaceDetails(siteKey, workspaceKey);
+            }).then((workspaceDetails)=>{
+                bundle.workspaceDetails = workspaceDetails;
                 this._siteAndWorkspaceDataPromise = null;
                 return bundle;
-            })
+            }).catch(error=>{
+                this._siteAndWorkspaceDataPromise = null;
+                return Promise.reject(error);
+            });
         }
 
         //$FlowFixMe

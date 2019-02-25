@@ -60,7 +60,7 @@ class DeleteItemKeyDialog extends React.Component<DeleteItemKeyDialogProps,Delet
             >
                 {this.state.valid? undefined : <p>Do you really want to delete the item <b>"{itemLabel}"</b>?</p>}
 
-                { busy? <Spinner style={{margin:'0 auto'}} /> : undefined }
+                { busy? <Spinner /> : undefined }
                 
             </Dialog>
         );
@@ -139,7 +139,7 @@ class EditItemKeyDialog extends React.Component<EditItemKeyDialogProps,EditItemK
 
                 {this.state.valid? undefined : <p>Allowed characters: alphanumeric, dash, underline and slash.</p>}
 
-                { busy? <Spinner style={{margin:'0 auto'}} /> : undefined }
+                { busy? <Spinner /> : undefined }
                 
             </Dialog>
         );
@@ -241,6 +241,10 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
     }
 
     componentDidMount(){
+        this.refreshItems();
+    }
+
+    refreshItems(){
         var stateUpdate: any  = {};
         var { siteKey, workspaceKey, collectionKey } = this.props;
         if(siteKey && workspaceKey && collectionKey){
@@ -255,15 +259,10 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
                 })
             ]).then(()=>{
                 this.setState(stateUpdate);
+            }).catch((e)=>{
+
             });
         }
-    }
-
-    refreshItems(){
-        var { siteKey, workspaceKey, collectionKey } = this.props;
-        service.api.listCollectionItems(siteKey, workspaceKey, collectionKey).then((items)=>{
-            this.setState(this.resolveFilteredItems(items));
-        })
     }
 
     componentWillUnmount(){
@@ -413,7 +412,7 @@ class Collection extends React.Component<CollectionProps,CollectionState>{
         }
 
         if(this.state.selectedWorkspaceDetails==null){
-            return (<div style={{padding:'20px'}}><Spinner /></div>);
+            return (<Spinner />);
         }
 
         let collection = this.state.selectedWorkspaceDetails.collections.find(x => x.key == collectionKey);

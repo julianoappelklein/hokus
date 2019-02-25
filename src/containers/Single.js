@@ -49,6 +49,8 @@ class Single extends React.Component<SingleProps,SingleState>{
             })
         ]).then(()=>{
             this.setState(stateUpdate);
+        }).catch((e)=>{
+                
         });
         
     }
@@ -70,11 +72,9 @@ class Single extends React.Component<SingleProps,SingleState>{
     }
  
     render(){
-        if(this.state.singleValues===undefined){
+        if(this.state.singleValues===undefined || this.state.selectedWorkspaceDetails==null){
             return <Spinner />;
         }       
-
-        if(this.state.selectedWorkspaceDetails==null) return null;
         let single = this.state.selectedWorkspaceDetails.singles.find(x => x.key === this.props.singleKey);
         if(single==null) return null;
 

@@ -61,10 +61,10 @@ class WorkspaceConfigValidator {
             const field = fields[i];
             const key = field.key;
             if(key==null){
-                throw new Error(error+ ` Field without a key found.`);
+                throw new Error(error+ ` Field without a key is not allowed.`);
             }
             if(typeof(key)!=='string'){
-                throw new Error(error+ ' Non string key found.');
+                throw new Error(error+ ' Field key must be a string.');
             }
             else if(keys.indexOf(key)!==-1){
                 throw new Error(error+ ` The key "${key}" is duplicated.`);

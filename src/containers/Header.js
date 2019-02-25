@@ -17,7 +17,7 @@ const Header = ({minimizeHandler, toggleMaximizeHandler, closeHandler, isMaximiz
                 className="App-logo"
                 alt="logo" />
         }></Route>
-        <h1 className="App-title">Hokus - a CMS for Hugo</h1>
+        <h1 className="App-title">Hokus - a CMS for Hugo }</h1>
         <div style={{position:'absolute', right:'10px', top:'-3px', WebkitAppRegion: 'no-drag'}}>
         <IconButton onClick={ minimizeHandler }>
             <IconMinimize color={'#ffffff'} />

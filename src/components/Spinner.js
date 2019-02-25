@@ -34,7 +34,7 @@ class Spinner extends React.Component {
         let borderWidth = Math.max(1, parseInt(size/10,10));
         let borderStyle = `${borderWidth}em solid ${color}`
         let style = {
-            margin: margin||'60em auto',
+            margin: margin||'40em',
             fontSize: '1px',
             position: 'relative',
             borderTop: borderStyle,

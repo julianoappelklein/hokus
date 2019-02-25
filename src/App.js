@@ -116,7 +116,7 @@ class App extends React.Component<AppProps,AppState>{
       menuIsLocked={this.state.menuIsLocked}
       onToggleItemVisibility={()=>{this.toggleForceShowMenu()}}
       onLockMenuClicked={()=>{this.toggleMenuIsLocked()}} />
-  }   
+  }
 
   getExtraOptionsSwitch(){
     return (<Switch>

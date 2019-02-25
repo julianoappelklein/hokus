@@ -111,14 +111,18 @@ export class API {
     }
 }
 
-//just to help debugging
-// for(let key in api){
-//     let wrappedFunction = api[key];
-//     api[key] = function(){
-//         console.log('Invoking '+key, JSON.stringify(arguments));
-//         return wrappedFunction.apply(undefined, arguments);
-//     }
-// }
-
-
 export const instance = new API();
+
+// (()=>{
+//     // just to help debugging
+//     const api:any = instance;
+//     const methods = Object.getOwnPropertyNames( API.prototype );
+//     for(let i = 0; i < methods.length; i++){
+//         const key = methods[i];
+//         let wrappedFunction = api[key];
+//         api[key] = function(){
+//             console.log('Invoking '+key, JSON.stringify(arguments));
+//             return wrappedFunction.apply(undefined, arguments);
+//         }
+//     }
+// })()

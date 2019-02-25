@@ -53,7 +53,7 @@ class InitialWorkspaceConfigBuilder{
                     "dataformat": opts.ext,
                     "itemtitle": "Post",
                     "fields":[
-                        { "type":"info", "content":"# Info\nYou can write custom instructions here." },
+                        { "key":"info", "type":"info", "content":"# Info\nYou can write custom instructions here." },
                         { "key":"title", "title":"Title", "type":"string" },
                         { "key":"mainContent", "title":"Content", "type":"markdown" },
                         { "key":"pubdate", "title":"Pub Date", "type":"date", "default":"now" },

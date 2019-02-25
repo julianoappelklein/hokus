@@ -140,6 +140,9 @@ api.serveWorkspace = function({siteKey, workspaceKey, serveKey}/*: any*/, contex
             context.resolve();
         }, ()=>{
             context.reject(err); return
+        })
+        .catch((error)=>{
+            context.reject(error);
         });
     });
 }
@@ -151,6 +154,9 @@ api.buildWorkspace = function({siteKey, workspaceKey, buildKey}/*: any*/, contex
             context.resolve();
         }, ()=>{
             context.reject(err); return
+        })
+        .catch((error)=>{
+            context.reject(error);
         });
     });
 }
@@ -160,6 +166,9 @@ api.getSingle = function({siteKey, workspaceKey, singleKey}/*: any*/, context/*:
         if(err){ context.reject(err); return; }
         workspaceService.getSingle(singleKey).then(r=>{
             context.resolve(r);
+        })
+        .catch((error)=>{
+            context.reject(error);
         });
     });
 }
@@ -170,6 +179,9 @@ api.updateSingle = function({siteKey, workspaceKey, singleKey, document}/*: any*
         workspaceService.updateSingle(singleKey, document).then(r=>{
             context.resolve(r);
         })
+        .catch((error)=>{
+            context.reject(error);
+        });
     });
 }
 
