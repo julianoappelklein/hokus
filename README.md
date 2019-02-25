@@ -1,13 +1,13 @@
 # Hokus CMS
 
-<img src="https://www.hokus.io/img/logo-dark.svg" alt="Hokus CMS" width="90"/>
+<img src="https://hokus.netlify.com/img/logo-dark.svg" alt="Hokus CMS" width="90"/>
 
 A CMS for Hugo to run on your computer. **No hosting fees are required**.
 
-[![screenshot](https://www.hokus.io/img/home-video-placeholder.jpg)](https://www.hokus.io/)
+[![screenshot](https://hokus.netlify.com/img/home-video-placeholder.jpg)](https://hokus.netlify.com/)
 
 For a quick preview, access our website and look for our **preview video**:
-https://www.hokus.io/
+https://hokus.netlify.com/
 
 **Alpha Warning**: Hokus is still a work in progress and some awesome features are not yet ready. 
 
@@ -227,7 +227,7 @@ Right now, Hokus is almost a one-man project. When I (Juliano Appel Klein) start
 
 I believe Hokus can become a great project. The Hugo community is large and there is a lack os simple tools to use.
 
-If you want to contribute, please let me know. You can [create an issue](https://github.com/julianoappelklein/hokus/issues) or reach me through the website [contact page](https://www.hokus.io/contact/).
+If you want to contribute, please let me know. You can [create an issue](https://github.com/julianoappelklein/hokus/issues) or reach me through the website [contact page](https://hokus.netlify.com/contact/).
 
 ## Vision
 

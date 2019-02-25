@@ -54,7 +54,7 @@ I accept the challange to port your document data structure to Hokus Forms.
 
 To throw me a challenge, just create an issue: [https://github.com/julianoappelklein/hokus/issues](https://github.com/julianoappelklein/hokus/issues)
 
-For more informations, access our website [https://www.hokus.io](https://www.hokus.io) or our repository: [https://github.com/julianoappelklein/hokus](https://github.com/julianoappelklein/hokus).
+For more informations, access our website [https://hokus.netlify.com](https://hokus.netlify.com) or our repository: [https://github.com/julianoappelklein/hokus](https://github.com/julianoappelklein/hokus).
 
 If you have any doubts, please, reach me by using the website contact form or from our repo.
 
