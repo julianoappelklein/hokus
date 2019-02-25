@@ -123,6 +123,7 @@ class Home extends React.Component<HomeProps, HomeState>{
 
     selectSite(site : SiteConfig ){
         this.setState({selectedSite: site, selectedSiteWorkspaces:[]});
+        //load all site configuration to enforce validation
         service.api.listWorkspaces(site.key).then((workspaces)=>{
             this.setState({selectedSiteWorkspaces: workspaces});
         });
@@ -136,7 +137,6 @@ class Home extends React.Component<HomeProps, HomeState>{
     componentWillUnmount(){
         service.unregisterListener(this);
     }
-    
     
     renderSelectedSiteContent(configurations: Configurations, site: SiteConfig ){
         return (<Wrapper style={{maxWidth:'1000px'}} key={site.key} title="Site Management">

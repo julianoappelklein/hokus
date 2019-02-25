@@ -106,8 +106,20 @@ api.listWorkspaces = async function({siteKey}/*: any*/, context/*: any*/){
 api.getWorkspaceDetails = function({siteKey, workspaceKey}/*: any*/, context/*: any*/){
     getWorkspaceService(siteKey, workspaceKey, function(err, {workspaceService}){
         if(err){ context.reject(err); return; }
-        let configuration = workspaceService.getConfigurationsData();
-        hugoDownloader.downloader.download(configuration.hugover);
+        let configuration /*: any */;
+        try{
+            configuration = workspaceService.getConfigurationsData();
+        }
+        catch(e){
+            context.resolve({error: `Could not load workspace configuration (website: ${siteKey}, workspace: ${workspaceKey}). ${e.message}`});
+            return;
+        }
+        try{
+            hugoDownloader.downloader.download(configuration.hugover);
+        }
+        catch(e){
+            // warn?
+        }
         context.resolve(configuration);
     });
 }

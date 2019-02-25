@@ -1,3 +1,4 @@
+//@flow
 const formatProviderResolver = require('./../../format-provider-resolver');
 const joi = require('joi');
 const path = require('path');
@@ -12,14 +13,14 @@ let validationUtils= {
 
 class WorkspaceConfigValidator {
 
-    normalizeConfig(config){
+    normalizeConfig(config/*: any*/){
         if(config){
             if(!config.collections) config.collections = [];
             if(!config.singles) config.singles = [];
         }
     }
 
-    validate(config){
+    validate(config/*: any*/){
 
         this.normalizeConfig(config);
 
@@ -52,7 +53,30 @@ class WorkspaceConfigValidator {
         return null;
     }
 
-    validateCollection(collection){
+    checkFieldsKeys(fields/*: Array<any> | null*/, hintPath /*: string*/){
+        if(fields==null){ return; }
+        let keys /*Array<string>*/ = [];
+        const error =  `${hintPath}: Each field must have an unique key and the key must be a string.`;
+        for(let i = 0; i < fields.length; i ++){
+            const field = fields[i];
+            const key = field.key;
+            if(key==null){
+                throw new Error(error+ ` Field without a key found.`);
+            }
+            if(typeof(key)!=='string'){
+                throw new Error(error+ ' Non string key found.');
+            }
+            else if(keys.indexOf(key)!==-1){
+                throw new Error(error+ ` The key "${key}" is duplicated.`);
+            }
+            else{
+                keys.push(key);
+                this.checkFieldsKeys(field.fields, `${hintPath} > Field[key=${key}]`);
+            }
+        }
+    }
+
+    validateCollection(collection/*: any*/){
 
         let validationError = null;
 
@@ -87,11 +111,14 @@ class WorkspaceConfigValidator {
             if(collection.dataformat && collection.dataformat != collection.extension){
                 return 'The dataformat value does not match the extension value.';
             }
-        }        
+        }
+
+        this.checkFieldsKeys(collection.fields, `Collection[key=${collection.key}]`);
+
         return null;
     }
 
-    validateSingle(single){
+    validateSingle(single/*: any*/){
 
         let validationError = null;
 
@@ -126,6 +153,8 @@ class WorkspaceConfigValidator {
                 return 'The dataformat value does not match the file value.';
 
         }
+
+        this.checkFieldsKeys(single.fields, `Single[key=${single.key}]`);
 
         return null;
     }

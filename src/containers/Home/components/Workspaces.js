@@ -24,14 +24,15 @@ type WorkspaceProps = {
 }
 
 type WorkspaceState = {
-    config: ?WorkspaceConfig
+    config: ?WorkspaceConfig,
+    error: null
 }
 
 export class Workspace extends React.Component<WorkspaceProps,WorkspaceState> {
     
     constructor(props: WorkspaceProps){
         super(props);
-        this.state = { config: null };
+        this.state = { config: null, error: null };
     }
 
     handleOnStartServerOptionClick = (index: number)=>{
@@ -43,16 +44,25 @@ export class Workspace extends React.Component<WorkspaceProps,WorkspaceState> {
     handleOpenLocation = ()=>{ this.props.onLocationClick(this.props.header.path); }
     handleWorkspaceSelect = (e: any)=>{ this.props.onSelectWorkspaceClick(e, this.props.header); }
     handlePublishClick = ()=>{ if(this.state.config!=null) this.props.onPublishClick(this.props.header, this.state.config); }
+    handleRefreshClick = ()=>{
+        this.load();
+    }
 
     componentDidMount = ()=>{
+        this.load();
+    }
+
+    load = ()=>{
         this.props.getWorkspaceDetails(this.props.header).then(config=>{
-            this.setState({config});
+            this.setState({config, error: null});
+        }).catch(error=>{
+            this.setState({error: error, config: null});
         });
     }
 
     render(){
         let {active, header, onLocationClick, onPublishClick, onSelectWorkspaceClick, site} = this.props;
-        let config = this.state.config;
+        let { config, error } = this.state;
         let publishDisabled = config==null||config.build==null||config.build.length==0||site.publish==null||site.publish.length==0;
         let startServerDisabled = config==null||config.serve==null||config.serve.length==0;
 
@@ -65,9 +75,14 @@ export class Workspace extends React.Component<WorkspaceProps,WorkspaceState> {
                     onClick={this.handleOpenLocation}
                 />
             </InfoLine>
+            { error != null && (<InfoLine label="Validation Error">
+                <p style={{color:'#EC407A'}}>{error}</p>
+                <FlatButton label="Refresh" onClick={this.handleRefreshClick} />
+            </InfoLine>) }
             <InfoLine childrenWrapperStyle={{marginTop:'8px'}} label="Actions">
                 <RaisedButton
                     label="Select"
+                    disabled={config==null}
                     primary={active}
                     onClick={ this.handleWorkspaceSelect }
                 />
