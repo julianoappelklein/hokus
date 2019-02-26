@@ -61,18 +61,20 @@
     "_electron-dist-win": "npm run _copy-electron-code && electron-builder",
     "_electron-dist-linux-deb": "npm run _copy-electron-code && electron-builder --linux deb",
     "_electron-dist-linux": "npm run _copy-electron-code && electron-builder",
+    "_electron-dist-linux-all": "npm run _electron-dist-linux && electron-builder --linux deb",
     "_electron-dist-mac": "npm run _copy-electron-code && electron-builder",
     "_flow-kill": "taskkill /F /IM flow.exe",
     "_flow": "flow",
     "dist-win": "npm run _copy-ace && rimraf dist && rimraf build && npm run _react-build && npm run _electron-dist-win",
-    "dist-linux": "npm run _copy-ace && rimraf dist && rimraf build && npm run _react-build && npm run _electron-dist-linux",
+    "dist-linux": "npm run _copy-ace && rimraf dist && rimraf build && npm run _react-build && npm run _electron-dist-linux-all",
     "dist-mac": "npm run _copy-ace && rimraf dist && rimraf build && npm run _react-build && npm run _electron-dist-mac",
     "test": "./node_modules/.bin/mocha",
     "flow-restart": "concurrently \"taskkill /F /IM flow.exe\" \"flow\""
   },
   "build": {
     "appId": "julianoaklein.hokus",
-    "productName": "hokus-cms",
+    "artifactName": "hokus-cms_${os}_${arch}.${ext}",
+    "productName": "Hokus CMS",
     "directories": {
       "buildResources": "public"
     },
