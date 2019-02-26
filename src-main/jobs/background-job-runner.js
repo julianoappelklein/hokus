@@ -24,7 +24,7 @@ class BackgroundJobRunner{
             });
 
             actionWindow.webContents.executeJavaScript(`
-const action = require('${action}');
+const action = require('${action.replace(/\\/g,'/')}');
 const { ipcRenderer } = require('electron');
 
 action(${JSON.stringify(params)}).then((response)=>{
