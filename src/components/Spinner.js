@@ -12,7 +12,6 @@ class Spinner extends React.Component {
         this.timeout = setTimeout(()=>{
             
             this.setState({rotated:!this.state.rotated});
-            console.log('toggledState');
 
             this.timeout = setTimeout(() => {
                 this.spin();
