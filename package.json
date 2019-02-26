@@ -72,7 +72,7 @@
   },
   "build": {
     "appId": "julianoaklein.hokus",
-    "productName": "Hokus CMS",
+    "productName": "hokus-cms",
     "directories": {
       "buildResources": "public"
     },
