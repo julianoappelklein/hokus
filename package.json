@@ -54,7 +54,7 @@
     "_copy-electron-code": "copyfiles -u 1 -V \"./src-main/**/*\" \"./build/electron/\"",
     "_copy-ace": "copyfiles -u 3 -V \"./node_modules/ace-editor-builds/src-min-noconflict/**/*.*\" \"./public/ace-editor-min-noconflict/\"",
     "_copy_ace_extras": "copyfiles -u 2 -V \"./extras/ace-editor/**/*.*\" \"./public/ace-editor-min-noconflict/\"",
-    "_react-build": "react-scripts build",
+    "_react-build": "cross-env CI=false react-scripts build",
     "_react-dev": "cross-env APP_ENV=development cross-env BROWSER=none cross-env PORT=4000 cross-env react-scripts start",
     "_electron-dev": "cross-env APP_ENV=development cross-env REACT_DEV_URL=http://localhost:4000 cross-env  electron .",
     "_rebuild-native": "cross-env VisualStudioVersion=15.0 npm install --build-from-source",
