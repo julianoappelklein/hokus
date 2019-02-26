@@ -1,0 +1,19 @@
+language: node_js
+
+node_js:
+  - '8'
+
+matrix:
+  include:
+  - os: linux
+    dist: xenial
+    sudo: required
+
+cache: npm
+
+install:
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; apt-get install git-core
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; apt-get install libssl-dev
+
+script:
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; npm run dist-linux
