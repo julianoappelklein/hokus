@@ -12,9 +12,9 @@ matrix:
 cache: npm
 
 install:
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; apt-get install git-core
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; apt-get install libssl-dev
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then apt-get install git-core; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then apt-get install libssl-dev; fi
   - npm install
 
 script:
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; npm run dist-linux
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then npm run dist-linux; fi
