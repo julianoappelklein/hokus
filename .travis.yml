@@ -14,6 +14,7 @@ cache: npm
 install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; apt-get install git-core
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; apt-get install libssl-dev
+  - npm install
 
 script:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; npm run dist-linux
