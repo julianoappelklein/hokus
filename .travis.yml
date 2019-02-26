@@ -32,14 +32,13 @@ deploy:
     draft: true
     on:
       # tags: true
-      condition: "$TRAVIS_OS_NAME" == "linux"
-  
-  # - provider: releases
-  #   api_key: $GITHUB_OAUTH_TOKEN
-  #   file:
-  #     - "FILE TO UPLOAD"
-  #     - "FILE TO UPLOAD"
-  #   draft: true
-  #   on:
-  #     tags: true
-  #     condition: "$TRAVIS_OS_NAME" == "osx"
+      condition: "$TRAVIS_OS_NAME" == "linux" 
+  - provider: releases
+    api_key: $GITHUB_OAUTH_TOKEN
+    file:
+      - "FILE TO UPLOAD"
+      - "FILE TO UPLOAD"
+    draft: true
+    on:
+      tags: true
+      condition: "$TRAVIS_OS_NAME" == "osx"
