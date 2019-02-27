@@ -28,7 +28,7 @@ deploy:
     file:
       - "dist/hokus-cms_linux_amd64.snap"
       - "dist/hokus-cms_linux_x86_64.AppImage"
-      - "hokus-cms_linux_amd64.deb"
+      - "dist/hokus-cms_linux_amd64.deb"
     draft: true
     on:
       branch: travis-ci
