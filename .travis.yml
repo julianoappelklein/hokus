@@ -22,24 +22,26 @@ script:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then npm run dist-mac; fi
 
 deploy:
-  provider: releases
-  skip_cleanup: true
-  api_key: $GITHUB_OAUTH_TOKEN
-  file:
-    - "dist/hokus-cms_linux_amd64.snap"
-    - "dist/hokus-cms_linux_x86_64.AppImage"
-    - "hokus-cms_linux_amd64.deb"
-  draft: true
-  on:
-    branch: travis-ci
-    condition: $TRAVIS_OS_NAME = linux
+  - provider: releases
+    skip_cleanup: true
+    api_key: $GITHUB_PERSONAL_TOKEN
+    file:
+      - "dist/hokus-cms_linux_amd64.snap"
+      - "dist/hokus-cms_linux_x86_64.AppImage"
+      - "hokus-cms_linux_amd64.deb"
+    draft: true
+    on:
+      branch: travis-ci
+      condition: $TRAVIS_OS_NAME = linux
       # tags: true 
-  # - provider: releases
-  #   api_key: $GITHUB_OAUTH_TOKEN
-  #   file:
-  #     - "FILE TO UPLOAD"
-  #     - "FILE TO UPLOAD"
-  #   draft: true
-  #   on:
-  #     tags: true
-  #     condition: "$TRAVIS_OS_NAME" == "osx"
+  - provider: releases
+    skip_cleanup: true
+    api_key: $GITHUB_PERSONAL_TOKEN
+    file:
+      - "dist/hokus-cms_mac.dmg"
+      - "dist/hokus-cms_mac.zip"
+    draft: true
+    on:
+      # tags: true
+      branch: travis-ci
+      condition: "$TRAVIS_OS_NAME" == "osx"
