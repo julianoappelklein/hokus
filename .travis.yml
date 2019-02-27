@@ -32,8 +32,7 @@ deploy:
     draft: true
     on:
       branch: travis-ci
-      condition: $TRAVIS_OS_NAME = linux
-      # tags: true 
+      condition: $TRAVIS_OS_NAME = linux 
   - provider: releases
     skip_cleanup: true
     api_key: $GITHUB_PERSONAL_TOKEN
@@ -42,6 +41,5 @@ deploy:
       - "dist/hokus-cms_mac.zip"
     draft: true
     on:
-      # tags: true
       branch: travis-ci
-      condition: "$TRAVIS_OS_NAME" == "osx"
+      condition: $TRAVIS_OS_NAME = osx
