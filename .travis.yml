@@ -1,0 +1,45 @@
+language: node_js
+
+node_js:
+  - '8'
+
+matrix:
+  include:
+  - os: linux
+    dist: xenial
+    sudo: required
+  - os: osx
+
+cache: npm
+
+install:
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install git-core; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install libssl-dev; fi
+  - npm install
+
+script:
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then npm run dist-linux; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then npm run dist-mac; fi
+
+deploy:
+  - provider: releases
+    skip_cleanup: true
+    api_key: $GITHUB_PERSONAL_TOKEN
+    file:
+      - "dist/hokus-cms_linux_amd64.snap"
+      - "dist/hokus-cms_linux_x86_64.AppImage"
+      - "dist/hokus-cms_linux_amd64.deb"
+    draft: true
+    on:
+      branch: travis-ci
+      condition: $TRAVIS_OS_NAME = linux 
+  - provider: releases
+    skip_cleanup: true
+    api_key: $GITHUB_PERSONAL_TOKEN
+    file:
+      - "dist/hokus-cms_mac.dmg"
+      - "dist/hokus-cms_mac.zip"
+    draft: true
+    on:
+      branch: travis-ci
+      condition: $TRAVIS_OS_NAME = osx
