@@ -41,7 +41,7 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField,void> {
         return undefined;
     }
 
-   normalizeState({state, field, stateBuilder} : {state:any, field:BundleManagerDynamicField, stateBuilder: any}){
+    normalizeState({state, field, stateBuilder} : {state:any, field:BundleManagerDynamicField, stateBuilder: any}){
         if(!Array.isArray(state['resources'])){
             state['resources'] = [];
         }
