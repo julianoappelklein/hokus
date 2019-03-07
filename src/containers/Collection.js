@@ -11,7 +11,7 @@ import { Debounce } from './../utils/debounce';
 
 const Fragment = React.Fragment;
 
-const MAX_RECORDS = 100;
+const MAX_RECORDS = 200;
 
 type DeleteItemKeyDialogProps = {
     busy: bool,
