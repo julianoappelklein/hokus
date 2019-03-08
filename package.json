@@ -6,7 +6,7 @@
     "email": "julianoaklein@gmail.com"
   },
   "description": "A CMS for Hugo.",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "dependencies": {
     "7zip-bin": "3.1.0",
