@@ -1,13 +1,13 @@
 # Hokus CMS
 
-<img src="https://hokuscms.com/img/logo-dark.svg" alt="Hokus CMS" width="90"/>
+<img src="https://www.hokuscms.com/img/logo-dark.svg" alt="Hokus CMS" width="90"/>
 
 A CMS for Hugo to run on your computer. **No hosting fees are required**.
 
-[![screenshot](https://hokuscms.com/img/home-video-placeholder.jpg)](https://hokuscms.com/)
+[![screenshot](https://www.hokuscms.com/img/home-video-placeholder.jpg)](https://www.hokuscms.com/)
 
 For a quick preview, access our website and look for our **preview video**:
-https://hokuscms.com/
+https://www.hokuscms.com/
 
 **Alpha Warning**: Hokus is still a work in progress and some awesome features are not yet ready. 
 
