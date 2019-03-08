@@ -24,6 +24,7 @@ script:
 deploy:
   - provider: releases
     skip_cleanup: true
+    draft: true
     api_key: $GITHUB_PERSONAL_TOKEN
     file:
       - "dist/hokus-cms_linux_amd64.snap"
@@ -35,6 +36,7 @@ deploy:
       condition: $TRAVIS_OS_NAME = linux 
   - provider: releases
     skip_cleanup: true
+    draft: true
     api_key: $GITHUB_PERSONAL_TOKEN
     file:
       - "dist/hokus-cms_mac.dmg"
