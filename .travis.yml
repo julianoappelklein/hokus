@@ -31,9 +31,7 @@ deploy:
       - "dist/hokus-cms_linux_x86_64.AppImage"
       - "dist/hokus-cms_linux_amd64.deb"
     on:
-      tag: true
-      branch: master
-      condition: $TRAVIS_OS_NAME = linux 
+      condition: $TRAVIS_OS_NAME = linux AND $TRAVIS_COMMIT_MESSAGE =~ BUILD\sDRAFT 
   - provider: releases
     skip_cleanup: true
     draft: true
@@ -42,6 +40,4 @@ deploy:
       - "dist/hokus-cms_mac.dmg"
       - "dist/hokus-cms_mac.zip"
     on:
-      tag: true
-      branch: master
-      condition: $TRAVIS_OS_NAME = osx
+      condition: $TRAVIS_OS_NAME = osx AND $TRAVIS_COMMIT_MESSAGE =~ BUILD\sDRAFT
