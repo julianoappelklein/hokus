@@ -47,8 +47,8 @@ You'll have to learn some concepts before diving deep into Hokus. But don't worr
 
 ### Website Configuration File
 
-The website configuration files are stored in your *home/username/Hokus* folder.
-You can have multiple websites, each having their own configuration file. _\(e.g. config.website-1.json, config.website-2.json\)_
+The website configuration files are stored in your *home/username/Hokus* folder. It don't not be versioned, but you can if it get complex.
+You can have multiple websites registered, each having their own configuration file. _\(e.g. config.website-1.json, config.website-2.json\)_
 
 A minimal website configuration file looks like this:
 
@@ -78,8 +78,11 @@ Note that your website configuration can be a JSON, YAML or TOML file.
 
 All the UI configurations and bindings are set in the workspace configuration file.
 
+Keep in mind:
+
 * The workspace configuration file must be placed at the root of your Hugo website.
 * It should be versioned under the same _version control system_ as your website.
+* You can have many workspaces for a single site. When using the Folder Source for your site, you'll have only one workspace called *root*. When using the Git Source (under development), each branch is a workspace.
 
 For a minimal configuration file, see the default workspace configuration (which is auto created when you open a workspace without configuration), slightly changed:
 
@@ -227,7 +230,7 @@ Right now, Hokus is almost a one-man project. When I (Juliano Appel Klein) start
 
 I believe Hokus can become a great project. The Hugo community is large and there is a lack os simple tools to use.
 
-If you want to contribute, please let me know. You can [create an issue](https://github.com/julianoappelklein/hokus/issues) or reach me through the website [contact page](https://hokuscms.com/contact/).
+If you want to contribute, please let me know. You can [create an issue](https://github.com/julianoappelklein/hokus/issues) or reach me through the website [contact page](https://www.hokuscms.com/contact/).
 
 ## Vision
 
