@@ -23,12 +23,13 @@ export class FormStateBuilder{
     setLevelState(state: any, fields: any){
         for(let i = 0; i < fields.length; i++){
             let field = fields[i];
+            let cState = state;
 
             let component = this.componentRegistry.getProplessInstance(field.type);
             if(component){
-                state = component.allocateStateLevel(field,state,this.rootState);
+                cState = component.allocateStateLevel(field,state,this.rootState);
                 component.normalizeState({
-                    state,
+                    state: cState,
                     field,
                     stateBuilder:this
                 });               
