@@ -82,6 +82,7 @@ export type Configurations = {
     global: {
         siteManagementEnabled: bool,
         debugEnabled: bool,
-        cookbookEnabled: bool
+        cookbookEnabled: bool,
+        appTheme: string
     }
 };
