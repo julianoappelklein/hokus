@@ -30,7 +30,7 @@ function emptyCfg(){
 
 
 function normalizeSite(site/*: SiteConfig*/)/*: void*/{
-    
+
 }
 
 function validateSite(site/*: SiteConfig*/)/*: void*/{
@@ -56,6 +56,9 @@ const GLOBAL_DEFAULTS = {
     debugEnabled: false,
     cookbookEnabled: true,
     siteManagementEnabled: true,
+    maximizeAtStart: true,
+    hideWindowFrame: true,
+    hideMenuBar: true,
     appTheme: "default"
 }
 
@@ -76,7 +79,7 @@ function get(callback/*: (err: ?Error, data: Configurations | EmptyConfiguration
     let files = glob.sync(defaultPathSearchPattern)
         .concat(glob.sync(namespacedPathSearchPattern))
         .map(x=>path.normalize(x));
-        
+
     let configurations/*: Configurations */ = {sites:[], global: GLOBAL_DEFAULTS};
 
     for(let i = 0; i < files.length; i++){
@@ -91,7 +94,7 @@ function get(callback/*: (err: ?Error, data: Configurations | EmptyConfiguration
                 normalizeSite(site);
                 site.configPath = file;
                 configurations.sites.push(site);
-                
+
             }
             catch(e){
                 outputConsole.appendLine(`Configuration file is invalid '${file}': ${e.toString()}`);
@@ -110,6 +113,9 @@ function get(callback/*: (err: ?Error, data: Configurations | EmptyConfiguration
                 debugEnabled: global.debugEnabled == null ? GLOBAL_DEFAULTS.debugEnabled : global.debugEnabled===true, //default false
                 cookbookEnabled: global.cookbookEnabled == null ? GLOBAL_DEFAULTS.cookbookEnabled : global.cookbookEnabled===true, //default true
                 siteManagementEnabled: global.siteManagementEnabled == null ? GLOBAL_DEFAULTS.siteManagementEnabled : global.siteManagementEnabled===true,
+                maximizeAtStart: global.maximizeAtStart == null ? GLOBAL_DEFAULTS.maximizeAtStart : global.maximizeAtStart===true,
+                hideWindowFrame: global.hideMenuBar == null ? GLOBAL_DEFAULTS.hideWindowFrame : global.hideWindowFrame===true,
+                hideMenuBar: global.hideMenuBar == null ? GLOBAL_DEFAULTS.hideMenuBar : global.hideMenuBar===true,
                 appTheme: global.appTheme == null ? GLOBAL_DEFAULTS.appTheme : global.appTheme
             }
             configurations.global = global;
@@ -118,8 +124,8 @@ function get(callback/*: (err: ?Error, data: Configurations | EmptyConfiguration
             outputConsole.appendLine(`Global configuration file is invalid '${globalConfigFile}': ${e.toString()}`);
         }
     }
-    
-    
+
+
     if(configurations.sites.length>0){
         configurationCache = configurations;
         callback(undefined, configurations);
@@ -127,7 +133,7 @@ function get(callback/*: (err: ?Error, data: Configurations | EmptyConfiguration
     else{
         callback(undefined, EMPTY_CFG);
     }
-    
+
 }
 function getPromise(options/*::?:{invalidateCache?: bool}*/)/*: Promise<Configurations | EmptyConfigurations> */{
     return new Promise((resolve, reject)=>{

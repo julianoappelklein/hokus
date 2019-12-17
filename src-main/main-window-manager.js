@@ -50,27 +50,43 @@ function showInvalidDevelopmentUrl(mainWindow/*: any*/, url/*: ?string*/){
 }
 
 function createWindow () {
+    const configurationDataProvider = require('./configuration-data-provider')
 
     let icon;
     if(process.env.REACT_DEV_URL)
-        icon = path.normalize(__dirname + "/../public/icon.png");    
+        icon = path.normalize(__dirname + "/../public/icon.png");
 
-    // Create the browser window.
-    mainWindow = new BrowserWindow({
-      show: false,
-      frame: false,
-      backgroundColor:"#ffffff",
-      minWidth:1024,
-      //webPreferences:{webSecurity:false },
-      icon
+
+    configurationDataProvider.get(function(err, configurations){
+      if(configurations.empty===true) throw new Error('Configurations is empty.');
+
+      let showFrame=false;
+      configurations.global.hideWindowFrame ? showFrame = false : showFrame = true;
+
+      // Create the browser window.
+      mainWindow = new BrowserWindow({
+        show: false,
+        frame: showFrame,
+        backgroundColor:"#ffffff",
+        minWidth:1024,
+        //webPreferences:{webSecurity:false },
+        icon
+      });
+
+
+      if(configurations.global.maximizeAtStart){
+        mainWindow.maximize();
+      }
+      if(configurations.global.hideMenuBar){
+        mainWindow.setMenuBarVisibility(false);
+      }
+
+
+      mainWindow.show();
     });
 
-    mainWindow.maximize();
-    mainWindow.show();
-    mainWindow.setMenuBarVisibility(false);
-
     if(process.env.REACT_DEV_URL){
-        
+
         //DEVELOPMENT SERVER
 
         let url = process.env.REACT_DEV_URL;
@@ -81,7 +97,7 @@ function createWindow () {
         else{
             let port = urlWithPortMatch[1];
             showLookingForServer(mainWindow, port);
-    
+
             const net = require('net');
             const client = new net.Socket();
             const tryConnection = () => client.connect({port: port}, () => {
@@ -120,7 +136,7 @@ function createWindow () {
         }
         else{
             showNotFound(mainWindow, lookups);
-        }  
+        }
     }
 
     mainWindow.on('closed', function () {
@@ -133,7 +149,7 @@ function createWindow () {
             require('electron').shell.openExternal(url)
         }
     }
-    
+
     mainWindow.webContents.on('will-navigate', handleRedirect);
     mainWindow.webContents.on('new-window', handleRedirect);
 
@@ -142,7 +158,7 @@ function createWindow () {
 
 module.exports = {
     getCurrentInstance: function(){
-        return mainWindow;        
+        return mainWindow;
     },
     getCurrentInstanceOrNew: function(){
         let instance = this.getCurrentInstance();
