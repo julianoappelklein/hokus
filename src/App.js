@@ -26,32 +26,6 @@ import service from './services/service';
 
 import type { EmptyConfigurations, Configurations } from './types';
 
-import './css/App.css';
-
-
-//the default locked UI style
-const style = {
-  container:{
-    position: 'relative',
-    display:'flex',
-    height: 'calc(100vh - 42px)',
-    marginTop: '42px',
-    overflowX: 'hidden'
-  },
-  menuContainer: {
-    flex: '0 0 280px',
-    overflowY:'auto',
-    overflowX:'hidden',
-    userSelect:'none',
-    background:'linear-gradient(to bottom right, #2a0d56, #16062f)',
-  },
-  contentContainer:{
-    flex: 'auto',
-    overflow: 'auto',
-    overflowX: 'hidden'
-  }
-};
-
 
 type AppProps = {
 }
@@ -64,14 +38,18 @@ type AppState = {
   skipMenuTransition: bool
 }
 
+let style = require('./themes/default/style.js');
+
 class App extends React.Component<AppProps,AppState>{
-  
+
   constructor(props : any ){
     super(props);
 
     let win = window.require('electron').remote.getCurrentWindow();
+
     this.state = {
       maximized:win.isMaximized(),
+      style: style,
       menuIsLocked: true,
       forceShowMenu: false,
       skipMenuTransition: false
@@ -87,10 +65,13 @@ class App extends React.Component<AppProps,AppState>{
     service.getConfigurations().then((c)=>{
       var stateUpdate  = {};
       stateUpdate.configurations = c;
+      stateUpdate.style = require('./themes/' + c.global.appTheme + '/style.js');
+      let css = require('./themes/' + c.global.appTheme + '/css/App.css');
+
       this.setState(stateUpdate);
+
     })
   }
-
 
   minimizeWindow(){
     window.require('electron').remote.getCurrentWindow().minimize();
@@ -226,7 +207,7 @@ class App extends React.Component<AppProps,AppState>{
   }
 
   render() {
- 
+
     let header = <Header
       minimizeHandler={this.minimizeWindow.bind(this)}
       toggleMaximizeHandler={this.toggleWindowMode.bind(this)}
@@ -234,9 +215,9 @@ class App extends React.Component<AppProps,AppState>{
       isMaximized={this.state.maximized}
     />;
 
-    let containerStyle = style.container;
-    let menuContainerStyle = style.menuContainer;
-    let contentContainerStyle = style.contentContainer;
+    let containerStyle = this.state.style.container;
+    let menuContainerStyle = this.state.style.menuContainer;
+    let contentContainerStyle = this.state.style.contentContainer;
     let hideMenuItems = false;
 
      if(!this.state.menuIsLocked){
