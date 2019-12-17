@@ -52,7 +52,7 @@ You can have multiple websites registered, each having their own configuration f
 
 A minimal website configuration file looks like this:
 
-```
+```json
 {   
   "name": "Hokus Website", /* your website friendly name */
   "key": "hokus-website", /* your website unique key */
@@ -74,6 +74,21 @@ A minimal website configuration file looks like this:
 
 Note that your website configuration can be a JSON, YAML or TOML file.
 
+### Hokus Configuration File
+
+An optional configuration file can be stored in your *home/username/Hokus*
+folder. When *config.json* is found hokus will read the settings at startup.
+
+It looks like this:
+
+```json
+{
+  "debugEnabled": true,
+  "cookbookEnabled": true,
+  "siteManagementEnabled": true
+}
+```
+
 ### Workspace Configuration File
 
 All the UI configurations and bindings are set in the workspace configuration file.
@@ -86,7 +101,7 @@ Keep in mind:
 
 For a minimal configuration file, see the default workspace configuration (which is auto created when you open a workspace without configuration), slightly changed:
 
-```
+```json
 {
   "hugover": "0.35",
   "serve":[
@@ -169,6 +184,10 @@ Some components have a "field" or "fields" property, allowing for nesting and co
 To see the components in action, you can access our [Forms Cookbook](http://formscookbook.hokus.io.s3-website-us-east-1.amazonaws.com/). For quick reference. _\(the Forms Cookbook is also included in the desktop app.\)_
 
 You can also refer to the source code to see all available properties for each component type.
+
+## Global configuration
+
+
 
 ### More Concepts
 
