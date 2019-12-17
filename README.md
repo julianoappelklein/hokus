@@ -85,7 +85,11 @@ It looks like this:
 {
   "debugEnabled": true,
   "cookbookEnabled": true,
-  "siteManagementEnabled": true
+  "siteManagementEnabled": true,
+  "maximizeAtStart": false,
+  "hideWindowFrame": false,
+  "hideMenuBar": false,
+  "appTheme": "simple"
 }
 ```
 
