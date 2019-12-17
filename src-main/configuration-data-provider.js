@@ -107,7 +107,7 @@ function get(callback/*: (err: ?Error, data: Configurations | EmptyConfiguration
             let global = formatProvider.parse(strData);
             global = {
                 debugEnabled: global.debugEnabled == null ? GLOBAL_DEFAULTS.debugEnabled : global.debugEnabled===true, //default false
-                cookbookEnabled: global.cookbookEnabled == null ? GLOBAL_DEFAULTS.cookbookEnabled : global.debugEnabled===true, //default true
+                cookbookEnabled: global.cookbookEnabled == null ? GLOBAL_DEFAULTS.cookbookEnabled : global.cookbookEnabled===true, //default true
                 siteManagementEnabled: global.siteManagementEnabled == null ? GLOBAL_DEFAULTS.siteManagementEnabled : global.siteManagementEnabled===true
             }
             configurations.global = global;
