@@ -1,0 +1,32 @@
+.App-logo { 
+  height: 34px;
+  margin: 4px 16px;
+  display: inline-block;
+  position: absolute;
+}
+
+.App-header {
+  z-index: 3;
+  position: absolute;
+  background-color: #16062f;
+  color: white;
+  width:100%;
+  height: 42px;
+  top:0;
+  -webkit-app-region: drag;
+  box-shadow: 0 2px 1px RGBA(0,0,0,.3);
+}
+
+.App-title {
+  display: inline-block;
+  margin: 0;
+  margin-left:65px;
+  line-height: 44px;
+  font-weight: 300;
+  font-size: 1em;
+  font-family: 'Roboto';
+}
+
+.App-intro {
+  font-size: large;
+}
