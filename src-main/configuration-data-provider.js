@@ -55,7 +55,8 @@ function validateSite(site/*: SiteConfig*/)/*: void*/{
 const GLOBAL_DEFAULTS = {
     debugEnabled: false,
     cookbookEnabled: true,
-    siteManagementEnabled: true
+    siteManagementEnabled: true,
+    appTheme: "default"
 }
 
 function invalidateCache(){
@@ -108,7 +109,8 @@ function get(callback/*: (err: ?Error, data: Configurations | EmptyConfiguration
             global = {
                 debugEnabled: global.debugEnabled == null ? GLOBAL_DEFAULTS.debugEnabled : global.debugEnabled===true, //default false
                 cookbookEnabled: global.cookbookEnabled == null ? GLOBAL_DEFAULTS.cookbookEnabled : global.cookbookEnabled===true, //default true
-                siteManagementEnabled: global.siteManagementEnabled == null ? GLOBAL_DEFAULTS.siteManagementEnabled : global.siteManagementEnabled===true
+                siteManagementEnabled: global.siteManagementEnabled == null ? GLOBAL_DEFAULTS.siteManagementEnabled : global.siteManagementEnabled===true,
+                appTheme: global.appTheme == null ? GLOBAL_DEFAULTS.appTheme : global.appTheme
             }
             configurations.global = global;
         }
