@@ -18,8 +18,13 @@ import { MenuItem, SelectField } from 'material-ui';
 import logo from './img/logo.svg';
 
 //STYLE STUFF
-import './css/index.css';
-import './css/bootstrap-grid.css';
+import service from './services/service';
+
+service.getConfigurations().then((c) => {
+  let cssIndex = require('./themes/' + c.global.appTheme + '/css/index.css');
+  let cssBootstrap = require('./themes/' + c.global.appTheme + '/css/bootstrap-grid.css');
+})
+
 
 let samplesExt = [{key:'none', title:'Introduction', description: '', values: {}, fields: [
     { type:"info", lineHeight:'1.4', theme:'black-bare', content:`
@@ -58,10 +63,8 @@ For more informations, access our website [https://hokus.netlify.com](https://ho
 
 If you have any doubts, please, reach me by using the website contact form or from our repo.
 
-*Juliano Appel Klein*  
+*Juliano Appel Klein*
 *Hokus Author*
-
-
 
 ` }
 ]}].concat(samples);
@@ -71,7 +74,7 @@ const Container = (props:any)=>{
 }
 
 class FormsCookbookWeb extends React.Component<any,any>{
-    
+
     constructor(props: any){
         super(props);
         this.state = {index:0};
