@@ -75,7 +75,7 @@ export class API {
         let remote= window.require('electron').remote;
         let openDialogOptions = {
             title:title||'Select Files',
-            properties:['multiSelections','openFiles'],
+            properties:['multiSelections','openFile'],
             filters:[{name:'Allowed Extensions', extensions: extensions }]
         };
         return (new Promise((resolve)=>{
