@@ -22,6 +22,10 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Redirect from 'react-router-dom/Redirect';
 
+import service from './services/service';
+
+import type { EmptyConfigurations, Configurations } from './types';
+
 import './css/App.css';
 
 
@@ -53,6 +57,7 @@ type AppProps = {
 }
 
 type AppState = {
+  configurations?: Configurations | EmptyConfigurations,
   maximized : bool,
   menuIsLocked: bool,
   forceShowMenu: bool,
@@ -76,6 +81,16 @@ class App extends React.Component<AppProps,AppState>{
     win.on('unmaximize', ()=>{ this.setState({maximized: false}); });
     window.state = this.state;
   }
+
+  componentDidMount(){
+    console.log('App MOUNTED');
+    service.getConfigurations().then((c)=>{
+      var stateUpdate  = {};
+      stateUpdate.configurations = c;
+      this.setState(stateUpdate);
+    })
+  }
+
 
   minimizeWindow(){
     window.require('electron').remote.getCurrentWindow().minimize();
@@ -118,30 +133,42 @@ class App extends React.Component<AppProps,AppState>{
       onLockMenuClicked={()=>{this.toggleMenuIsLocked()}} />
   }
 
+  getExtraItems(){
+    let items = [
+      <MenuItem primaryText="Reload" onClick={ ()=>{ window.location = window.location; } } />,
+      <MenuItem primaryText="Restart Application" onClick={ ()=>{ const app = window.require('electron').remote.app; app.relaunch(); app.exit(0); } } />,
+    ];
+    return items;
+
+  }
+
   getExtraOptionsSwitch(){
     return (<Switch>
       <Route path="/forms-cookbook" exact={false} render={ ({match, history})=> {
+
+        let items = this.getExtraItems();
+        if(this.state.configurations && this.state.configurations.global.cookbookEnabled){
+          items.push(
+            <MenuItem primaryText="Exit Cookbook" onClick={()=>{ history.push('/') }} />
+          )
+        }
+
         return (
-          <ExtraOptions
-                items={ [
-                  <MenuItem primaryText="Reload" onClick={ ()=>{ window.location = window.location; } } />,
-                  <MenuItem primaryText="Restart Application" onClick={ ()=>{ const app = window.require('electron').remote.app; app.relaunch(); app.exit(0); } } />,
-                  <MenuItem primaryText="Exit Cookbook" onClick={()=>{ history.push('/') }} />
-                ]}
-              />
+          <ExtraOptions items={ items } />
           );
       }} />
       <Route
         path="*"
         render={ ({match, history})=>{
+          let items = this.getExtraItems();
+
+          if(this.state.configurations && this.state.configurations.global.cookbookEnabled){
+            items.push(
+              <MenuItem primaryText="Forms Cookbook" onClick={()=>{ history.push('/forms-cookbook') }} />
+            )
+          }
           return (
-            <ExtraOptions
-              items={ [
-                <MenuItem primaryText="Reload" onClick={ ()=>{ window.location = window.location; } } />,
-                <MenuItem primaryText="Restart Application" onClick={ ()=>{ const app = window.require('electron').remote.app; app.relaunch(); app.exit(0); } } />,
-                <MenuItem primaryText="Forms Cookbook" onClick={()=>{ history.push('/forms-cookbook') }} />
-              ]}
-            />
+            <ExtraOptions items={ items } />
           );
         }}
       />
