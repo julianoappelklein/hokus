@@ -279,7 +279,7 @@ class Home extends React.Component<HomeProps, HomeState>{
                             return (<ListItem
                                 key={index}
                                 style={selected? styles.siteActiveStyle : styles.siteInactiveStyle }
-                                rightIcon={<IconNavigationCheck color={active?this.props.muiTheme.palette.primary1Color:undefined}  />}
+                                rightIcon={<IconNavigationCheck color={active?this.props.muiTheme.palette?.primary1Color:undefined}  />}
                                 onClick={ ()=>{ this.selectSite(item); } } 
                                 primaryText={ item.name }
                             />);
