@@ -1,5 +1,3 @@
-
-
 export type ServeConfig = {
   key: string;
   config: string;
@@ -73,11 +71,13 @@ export type CollectionConfig = {
 };
 
 export type EmptyConfigurations = {
+  type: "EmptyConfigurations"
   empty: true;
   fileSearchPatterns: Array<string>;
 };
 
 export type Configurations = {
+  type: "Configurations"
   sites: Array<SiteConfig>;
   global: {
     siteManagementEnabled: boolean;
