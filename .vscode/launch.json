@@ -12,7 +12,7 @@
         },
         {
             //from: https://electronjs.org/docs/tutorial/debugging-main-process-vscode
-
+            "preLaunchTask": "Main Transpile",
             "name": "Debug Main Process",
             "type": "node",
             "request": "launch",
