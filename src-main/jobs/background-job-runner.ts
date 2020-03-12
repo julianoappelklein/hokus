@@ -5,7 +5,7 @@ class BackgroundJobRunner {
   run(action: string, params: any): Promise<any> {
     return new Promise((resolve, reject) => {
       let actionWindow = new BrowserWindow({
-        show: false,
+        show: false, //set it to true if you need to debug the window javascript
         backgroundColor: "#ffffff"
       });
       let html = `<html><body><p>Running Action.</p></body></html>`;
@@ -19,8 +19,9 @@ class BackgroundJobRunner {
       });
 
       actionWindow.webContents.executeJavaScript(`
-const action = require('${action.replace(/\\/g, "/")}');
+let action = require('${action.replace(/\\/g, "/")}');
 const { ipcRenderer } = require('electron');
+action = action.default||action;
 
 action(${JSON.stringify(params)}).then((response)=>{
     ipcRenderer.send('${channel}', {response,e:null});

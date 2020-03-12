@@ -3,26 +3,27 @@ import api from "./api";
 
 let enableLogging = process.env.ENV === "DEVELOPMENT";
 
-class IpcMainBinder{
-
+class IpcMainBinder {
   handlers: any = {};
+  binded: boolean = false;
 
-  bind(){
+  bind() {
+    if(this.binded) return;
     for (var key in api) {
       if (!key.startsWith("_")) this.addListener(key);
     }
-  
+
     ipcMain.on("message", (event: any, args: any) => {
       if (args.handler === undefined) throw "Could not find handler key in message.";
-  
+
       let handler = this.handlers[args.handler];
-  
+
       if (handler === undefined) throw `Could not find handler for key '${args.handler}'.`;
-  
+
       handler(event, args);
     });
+    this.binded = true;
   }
-
 
   addListener(key: string) {
     if (api.hasOwnProperty(key)) {
@@ -60,6 +61,5 @@ class IpcMainBinder{
     }
   }
 }
-
 
 export default new IpcMainBinder();

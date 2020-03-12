@@ -1,5 +1,3 @@
-//@flow
-
 import { BrowserWindow } from "electron";
 import * as url from "url";
 import * as path from "path";

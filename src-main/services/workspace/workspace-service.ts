@@ -7,7 +7,7 @@ import { WorkspaceConfigProvider } from "./workspace-config-provider.js";
 import * as contentFormats from "./../../content-formats";
 import formatProviderResolver from "../../format-provider-resolver.js";
 const workspaceConfigProvider = new WorkspaceConfigProvider();
-const { globJob, createThumbnailJob } = require("./../../jobs");
+import { globJob, createThumbnailJob } from "./../../jobs";
 import HugoBuilder from "../../hugo/hugo-builder.js";
 import pathHelper from "../../path-helper.js";
 import HugoServer from "../../hugo/hugo-server.js";

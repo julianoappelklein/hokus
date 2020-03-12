@@ -4,7 +4,7 @@
 */
 
 import * as fs from "fs-extra";
-var NodeGit = require("nodegit");
+const NodeGit = require("nodegit");
 import { SiteSource } from "./types";
 import { WorkspaceHeader } from "./../../global-types";
 import pathHelper from "../path-helper";
