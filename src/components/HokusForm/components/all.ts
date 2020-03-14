@@ -18,8 +18,10 @@ import BundleManagerDynamic from './BundleManagerDynamic';
 import SectionDynamic from './SectionDynamic';
 import SelectDynamic from './SelectDynamic';
 import BundleImgThumbDynamic from './BundleImgThumbDynamic';
+import { ComponentProps } from 'react';
 
-export default [
+// Explicitly specify type so the compiler can help.
+const allComponents: Array<React.ComponentClass<ComponentProps<any>, any>> = [
     AccordionDynamic,
     AceDynamic,
     ArrayDynamic,
@@ -41,3 +43,4 @@ export default [
     TextFieldNumberDynamic,
     ToggleDynamic
 ];
+export default allComponents;
