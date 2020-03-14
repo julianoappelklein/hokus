@@ -1,9 +1,5 @@
-
-
-import * as React from "react";
+import React from "react";
 import { ComponentContext } from "./component-context";
-
-export { ComponentContext } from "./component-context";
 
 export interface FieldBase {
   key: string;
@@ -13,22 +9,22 @@ export interface FieldBase {
 
 export interface FieldBaseGroup extends FieldBase {
   fields: Array<FieldBase>;
-};
+}
 
 export interface DynamicFormNode<Field extends FieldBase> {
   field: Field;
   state: any;
-  parent: DynamicFormNode<FieldBase> | null | undefined;
-  uiState: any | null | undefined;
+  parent?: DynamicFormNode<FieldBase>;
+  uiState?: any;
 }
 
 export interface ComponentProps<Field extends FieldBase> {
-  context: ComponentContext<Field>;
-};
+  context?: ComponentContext<Field>;
+}
 
 export type BreadcumbItem = {
   label: string;
-  node: DynamicFormNode<FieldBase> | null | undefined;
+  node?: DynamicFormNode<FieldBase>;
 };
 
 export type BreadcumbProps = {

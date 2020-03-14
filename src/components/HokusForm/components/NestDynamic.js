@@ -17,7 +17,7 @@ type NestDynamicField  = {
     groupdata: ?bool
 };
 
-class NestDynamic extends BaseDynamic<NestDynamicField, void> {
+class NestDynamic extends BaseDynamic<NestDynamicField, {}> {
 
     allocateStateLevel(field : NestDynamicField, parentState : any, rootState : any){
         if(field.groupdata==null||field.groupdata===true){

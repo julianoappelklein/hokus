@@ -28,7 +28,7 @@ type BundleManagerDynamicField= {
     title: string
 }
 
-class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField,void> {
+class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField,{}> {
 
     extendField(field: BundleManagerDynamicField, fieldExtender : any){
         if(field.fields===undefined)
