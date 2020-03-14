@@ -8,11 +8,16 @@ import IconNavigationExpandMore from 'material-ui/svg-icons/navigation/expand-mo
 // import IconToggleRadioButtonChecked from 'material-ui/svg-icons/toggle/radio-button-checked';
 
 type AccordionHeaderProps = {
-    active: bool, onClick: ()=>void, style: any, headerLeftItems: any, headerRightItems: any
+    active: boolean,
+    onClick: ()=>void,
+    style: any,
+    headerLeftItems: any,
+    headerRightItems: any,
+    label: string
 }
 
-class AccordionHeader extends React.PureComponent<AccordionHeaderProps,void>{
-    
+class AccordionHeader extends React.PureComponent<AccordionHeaderProps,{}>{
+
     // shouldComponentUpdate(props, state){
     //     return props.label != this.props.label
     //         || props.active != this.props.active;
@@ -40,10 +45,10 @@ class AccordionHeader extends React.PureComponent<AccordionHeaderProps,void>{
     }
 }
 
-class AccordionItem extends React.Component{
+class AccordionItem extends React.Component<any, {}>{
     render(){
         let {active, body, label, onHeadClick, headerRightItems=[], headerLeftItems=[], headStyle, bodyStyle, style, wrapperProps } = this.props;
- 
+
         let _headStyle = Object.assign({
             border: 'solid 1px #e8e8e8',
             padding: '16px',
@@ -52,14 +57,14 @@ class AccordionItem extends React.Component{
             marginTop:8,
             position:'relative'
         }, headStyle);
-        
+
         let _bodyStyle = Object.assign({
             display:active?'block':'none',
             padding:'8px 0',
             border: 'solid 1px #e8e8e8',
             borderTopWidth: 0
         },bodyStyle);
-        
+
         return <div style={style} className="accordion-item" {...wrapperProps} >
             <AccordionHeader
                 style={_headStyle}
@@ -76,9 +81,9 @@ class AccordionItem extends React.Component{
     }
 }
 
-class Accordion extends React.Component{
+class Accordion extends React.Component<any, {}>{
 
-    constructor(props){
+    constructor(props: any){
         super(props);
         this.state = { index : -1 };
     }

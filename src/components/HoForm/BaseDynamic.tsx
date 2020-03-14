@@ -1,22 +1,28 @@
 import React from "react";
 import Border from "./../Border";
-import { ComponentProps, DynamicFormNode, BreadcumbItem, FieldBase, FieldBaseGroup } from "./types";
+import {
+  ComponentProps,
+  DynamicFormNode,
+  BreadcumbItem,
+  FieldBase,
+  FieldBaseGroup,
+  NormalizeStateInput
+} from "./types";
 import { FieldsExtender } from "./fields-extender";
 import { ComponentContext } from "./component-context";
-
 export default class BaseDynamic<Field extends FieldBase, State> extends React.Component<
   ComponentProps<Field>,
-  State & { hasError: boolean }
+  State & { hasError?: boolean }
 > {
   // override this to set defaults in the field configuration.
-  extendField(field: FieldBaseGroup, extender: FieldsExtender): void {
+  protected extendField(field: FieldBaseGroup, extender: FieldsExtender): void {
     if (field.fields) {
       extender.extendFields(field.fields);
     }
   }
 
   // override this to set a initial value, a default value or a calculated value (e.g: "now" converts to a date).
-  normalizeState({ state, field, stateBuilder }: { state: any; field: Field; stateBuilder: any }): void {}
+  normalizeState(_: NormalizeStateInput<Field>): void {}
 
   shouldComponentUpdate(nextProps: ComponentProps<Field>, nextState: State) {
     return true;

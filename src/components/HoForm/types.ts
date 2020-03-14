@@ -1,5 +1,6 @@
 import React from "react";
 import { ComponentContext } from "./component-context";
+import { FormStateBuilder } from "./form-state-builder";
 
 export interface FieldBase {
   key: string;
@@ -19,7 +20,7 @@ export interface DynamicFormNode<Field extends FieldBase> {
 }
 
 export interface ComponentProps<Field extends FieldBase> {
-  context?: ComponentContext<Field>;
+  context: ComponentContext<Field>;
 }
 
 export type BreadcumbItem = {
@@ -31,6 +32,12 @@ export type BreadcumbProps = {
   items: Array<BreadcumbItem>;
   onNodeSelected: (node: DynamicFormNode<FieldBase>) => void;
 };
+
+export interface NormalizeStateInput<Field extends FieldBase> {
+  state: any;
+  field: Field;
+  stateBuilder?: FormStateBuilder;
+}
 
 export type BreadcumbComponentType = React.ComponentType<BreadcumbProps>;
 
