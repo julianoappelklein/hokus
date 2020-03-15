@@ -38,6 +38,7 @@ export class Workspace extends React.Component<WorkspaceProps,WorkspaceState> {
         let cfg = this.state.config;
         if(cfg==null) throw new Error('Invalid operation');
         this.props.onStartServerClick(this.props.header,  cfg.serve[index].key);
+        return true;
         
     }
     handleOpenLocation = ()=>{ this.props.onLocationClick(this.props.header.path); }
