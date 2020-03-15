@@ -1,14 +1,12 @@
-//@flow
-
 import React from "react";
 
 export let editorBackgroundColor = "#f3f3f3";
 
 class Debounce {
   _time: number;
-  _timeoutID: TimeoutID;
+  _timeoutID: any;
 
-  constructor(time) {
+  constructor(time: number) {
     this._time = time;
   }
 
@@ -23,26 +21,26 @@ class Debounce {
 }
 
 type EditorStateSnapshot = {
-  cursor: { row: number, column: number },
-  selection: any
+  cursor: { row: number; column: number };
+  selection: any;
 };
 
 type AceEditorProps = {
-  value: string,
-  editorState: ?EditorStateSnapshot,
-  onChange: (value: string) => void,
-  language: string,
-  isFullScreenMode: boolean,
-  lightTheme: boolean,
-  onStateSnapshotEmit: (editorState: EditorStateSnapshot) => void
+  value: string;
+  editorState: EditorStateSnapshot | null | undefined;
+  onChange: (value: string) => void;
+  language: string;
+  isFullScreenMode: boolean;
+  lightTheme: boolean;
+  onStateSnapshotEmit: (editorState: EditorStateSnapshot) => void;
 };
 
 type AceEditorState = {};
 
 export class AceEditor extends React.Component<AceEditorProps, AceEditorState> {
-  _aceContainer: ?HTMLElement;
-  _onDocumentResizeListener: () => void;
-  _editor: AceEditor$Editor;
+  _aceContainer: HTMLElement | null | undefined;
+  _onDocumentResizeListener: () => void = () => {};
+  _editor?: AceAjax.Editor;
   _relayoutDebounce: Debounce;
 
   constructor(props: AceEditorProps) {
@@ -58,17 +56,19 @@ export class AceEditor extends React.Component<AceEditorProps, AceEditorState> {
   }
 
   emitEditorStateSnapshot() {
+    if (!this._editor) return;
     let data = {
       cursor: this._editor.getCursorPosition(),
+      // @ts-ignore
       selection: this._editor.selection.toJSON()
     };
-    let snapshot = (JSON.parse(JSON.stringify(data)): EditorStateSnapshot);
+    let snapshot = JSON.parse(JSON.stringify(data)) as EditorStateSnapshot;
     this.props.onStateSnapshotEmit(snapshot);
   }
 
   componentWillUnmount() {
     if (this._onDocumentResizeListener) window.removeEventListener("onresize", this._onDocumentResizeListener);
-    this._editor.destroy();
+    if (this._editor) this._editor.destroy();
   }
 
   componentDidUpdate(prevProps: AceEditorProps, prevState: AceEditorState, snapshot: any) {
@@ -77,9 +77,9 @@ export class AceEditor extends React.Component<AceEditorProps, AceEditorState> {
 
   componentDidMount() {
     if (this._aceContainer != null) {
-      let options: AceEditor$Options = {
+      let options: any = {
         mode: this.props.language === "html" ? "ace/mode/html" : "ace/mode/markdown",
-        theme: this.props.lightTheme === true ? "ace/theme/hokus-light" : "ace/theme/hokus",
+        theme: this.props.lightTheme ? "ace/theme/hokus-light" : "ace/theme/hokus",
         fontFamily: "Roboto Mono",
         fontSize: "15px",
         wrap: true,
@@ -92,7 +92,9 @@ export class AceEditor extends React.Component<AceEditorProps, AceEditorState> {
       this._editor.setOptions(options);
 
       this._editor.on("change", () => {
-        this.props.onChange(this._editor.getValue());
+        if (this._editor) {
+          this.props.onChange(this._editor.getValue());
+        }
       });
 
       this._editor.on("blur", () => {
@@ -109,9 +111,11 @@ export class AceEditor extends React.Component<AceEditorProps, AceEditorState> {
         let { cursor, selection } = this.props.editorState;
         console.log(this.props.editorState);
         if (cursor) this._editor.moveCursorTo(cursor.row, cursor.column);
+        // @ts-ignore
         if (selection) this._editor.selection.fromJSON(selection);
       } else {
         this._editor.moveCursorTo(0, 0);
+        // @ts-ignore
         this._editor.selection.fromJSON("");
       }
 
