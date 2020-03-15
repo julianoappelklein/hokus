@@ -1,28 +1,28 @@
-import * as React from "react";
+import React from "react";
 import Border from "./../Border";
-import { ComponentContext, ComponentProps, DynamicFormNode, BreadcumbItem, FieldBase } from "./types";
+import {
+  ComponentProps,
+  DynamicFormNode,
+  BreadcumbItem,
+  FieldBase,
+  FieldBaseGroup,
+  NormalizeStateInput
+} from "./types";
 import { FieldsExtender } from "./fields-extender";
-
-export class BaseDynamic<Field extends FieldBase, State> extends React.Component<ComponentProps<Field>, State> {
-
+import { ComponentContext } from "./component-context";
+export default class BaseDynamic<Field extends FieldBase, State> extends React.Component<
+  ComponentProps<Field>,
+  State & { hasError?: boolean }
+> {
   // override this to set defaults in the field configuration.
-  extendField(field: Field, extender: FieldsExtender): void {
-    //$FlowFixMe
-    if (field.field) {
-      extender.extendFields([field.field]);
-    }
-    //$FlowFixMe
+  protected extendField(field: FieldBaseGroup, extender: FieldsExtender): void {
     if (field.fields) {
-      extender.extendFields([field.fields]);
+      extender.extendFields(field.fields);
     }
   }
 
   // override this to set a initial value, a default value or a calculated value (e.g: "now" converts to a date).
-  normalizeState({
-    state,
-    field,
-    stateBuilder
-  }: {state: any;field: Field;stateBuilder: any;}): void {}
+  normalizeState(_: NormalizeStateInput<Field>): void {}
 
   shouldComponentUpdate(nextProps: ComponentProps<Field>, nextState: State) {
     return true;
@@ -30,7 +30,7 @@ export class BaseDynamic<Field extends FieldBase, State> extends React.Component
 
   // override if the component is a container
   // the default behavior is fine for a leaf component
-  buildPathFragment(node: DynamicFormNode<Field>, nodeLevel: number, nodes: Array<DynamicFormNode<FieldBase>>): string | null | undefined {
+  buildPathFragment(node: DynamicFormNode<Field>, nodeLevel: number, nodes: Array<DynamicFormNode<FieldBase>>): string {
     return node.field.key;
   }
 
@@ -53,7 +53,7 @@ export class BaseDynamic<Field extends FieldBase, State> extends React.Component
 
   // override this with a unique key for the component
   getType(): string {
-    return '';
+    return "";
   }
 
   // override these bellow if the component have a non default getter/setter, like the ResourceManager
@@ -72,37 +72,46 @@ export class BaseDynamic<Field extends FieldBase, State> extends React.Component
   /*
    *  Don't override the methods below!
    */
-  componentDidCatch(error: Error, info: string) {
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
     // Display fallback UI
-
-    //$FlowFixMe
-    this.setState({ hasError: true });
+    this.setState(s => {
+      return { ...s, hasError: true };
+    });
     console.warn(error, info);
   }
 
   getSomethingWentWrongMessage(): React.ReactNode {
     let context = this.props.context;
     if (context === undefined) {
-      return <Border style={{ marginTop: 16 }}>
-                <p style={{ margin: 16 }}>
-                    <span>Something went wrong while processing the </span><b>{this.getType()}</b>
-                </p>
-            </Border>;
+      return (
+        <Border style={{ marginTop: 16 }}>
+          <p style={{ margin: 16 }}>
+            <span>Something went wrong while processing the </span>
+            <b>{this.getType()}</b>
+          </p>
+        </Border>
+      );
     }
-    return <Border style={{ marginTop: 16 }}>
-            <p style={{ margin: 16 }}>
-                <span>Something went wrong while processing the </span>
-                <b>{this.getType()}</b>
-                <span> of key </span>
-                <b>{this.props.context.node.field.key}</b>
-                <pre>
-                    {JSON.stringify({
-            nodePath: context.nodePath,
-            parentPath: context.parentPath
-          }, null, '  ')}
-                </pre>
-            </p>
-        </Border>;
+    return (
+      <Border style={{ marginTop: 16 }}>
+        <p style={{ margin: 16 }}>
+          <span>Something went wrong while processing the </span>
+          <b>{this.getType()}</b>
+          <span> of key </span>
+          <b>{this.props.context!.node.field.key}</b>
+          <pre>
+            {JSON.stringify(
+              {
+                nodePath: context.nodePath,
+                parentPath: context.parentPath
+              },
+              null,
+              "  "
+            )}
+          </pre>
+        </p>
+      </Border>
+    );
   }
 
   render(): React.ReactNode {
@@ -112,5 +121,3 @@ export class BaseDynamic<Field extends FieldBase, State> extends React.Component
     return this.renderComponent();
   }
 }
-
-export default BaseDynamic;
