@@ -4,25 +4,36 @@
     To build it, you'll have to swap the default index before calling "npm run _react-build".
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom'
-import { FormsCookbook } from './containers/FormsCookbook/FormsCookbook';
-import { samples } from './containers/FormsCookbook/samples';
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+import { FormsCookbook } from "./containers/FormsCookbook";
+import { samples } from "./containers/FormsCookbook/samples";
 
-import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
-import darkBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import { MenuItem, SelectField } from 'material-ui';
-import logo from './img/logo.svg';
+import lightBaseTheme from "material-ui/styles/baseThemes/lightBaseTheme";
+import darkBaseTheme from "material-ui/styles/baseThemes/lightBaseTheme";
+import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import getMuiTheme from "material-ui/styles/getMuiTheme";
+import { MenuItem, SelectField } from "material-ui";
+// @ts-ignore
+import logo from "./img/logo.svg";
 
 //STYLE STUFF
-import './css/index.css';
-import './css/bootstrap-grid.css';
+import "./css/index.css";
+import "./css/bootstrap-grid.css";
 
-let samplesExt = [{key:'none', title:'Introduction', description: '', values: {}, fields: [
-    { type:"info", lineHeight:'1.4', theme:'black-bare', content:`
+let samplesExt = [
+  {
+    key: "none",
+    title: "Introduction",
+    description: "",
+    values: {},
+    fields: [
+      {
+        type: "info",
+        lineHeight: "1.4",
+        theme: "black-bare",
+        content: `
 
 # Welcome to Hokus Forms Cookbook!
 
@@ -63,55 +74,63 @@ If you have any doubts, please, reach me by using the website contact form or fr
 
 
 
-` }
-]}].concat(samples);
+`
+      }
+    ]
+  }
+].concat(samples);
 
-const Container = (props:any)=>{
-    return <div style={{margin: '0px auto', maxWidth:'50em', padding:'0 0.5em'}}>{props.children}</div>
-}
+const Container = (props: any) => {
+  return <div style={{ margin: "0px auto", maxWidth: "50em", padding: "0 0.5em" }}>{props.children}</div>;
+};
 
-class FormsCookbookWeb extends React.Component<any,any>{
-    
-    constructor(props: any){
-        super(props);
-        this.state = {index:0};
-    }
+class FormsCookbookWeb extends React.Component<any, any> {
+  constructor(props: any) {
+    super(props);
+    this.state = { index: 0 };
+  }
 
-    handleChange = (e: any, index: number)=>{
-        this.setState({index});
-    }
+  handleChange = (e: any, index: any) => {
+    this.setState({ index });
+  };
 
-    render(){
-        return (
-            <React.Fragment>
-                <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
-                    <div style={{width:'100%', position:'fixed', background: '#16062f',zIndex:10}}>
-                        <Container>
-                            <div style={{padding: '20px 20px 0 20px'}}>
-                                <img src={logo} className="App-logo" alt="logo" style={{maxWidth:32}}  />
-                                <SelectField
-                                    style={{margin:'10px 0', padding:0 }} labelStyle={{color:'RGBA(255,255,255,.85)'}}
-                                    fullWidth value={this.state.index} onChange={this.handleChange}>
-                                    { samplesExt.map((x,i) => <MenuItem key={x.key} value={i} primaryText={x.title} />) }
-                                </SelectField>
-                            </div>
-                        </Container>
-                    </div>
-                </MuiThemeProvider>
-                <div style={{height:130}}></div>
-                <Container>
-                    <FormsCookbook samples={samplesExt} sampleKey={samplesExt[this.state.index].key} />
-                </Container>
-            </React.Fragment>
-        );
-    }
+  render() {
+    return (
+      <React.Fragment>
+        <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
+          <div style={{ width: "100%", position: "fixed", background: "#16062f", zIndex: 10 }}>
+            <Container>
+              <div style={{ padding: "20px 20px 0 20px" }}>
+                <img src={logo} className="App-logo" alt="logo" style={{ maxWidth: 32 }} />
+                <SelectField
+                  style={{ margin: "10px 0", padding: 0 }}
+                  labelStyle={{ color: "RGBA(255,255,255,.85)" }}
+                  fullWidth
+                  value={this.state.index}
+                  onChange={this.handleChange}
+                >
+                  {samplesExt.map((x, i) => (
+                    <MenuItem key={x.key} value={i} primaryText={x.title} />
+                  ))}
+                </SelectField>
+              </div>
+            </Container>
+          </div>
+        </MuiThemeProvider>
+        <div style={{ height: 130 }}></div>
+        <Container>
+          <FormsCookbook samples={samplesExt} sampleKey={samplesExt[this.state.index].key} />
+        </Container>
+      </React.Fragment>
+    );
+  }
 }
 
 ReactDOM.render(
-    <BrowserRouter>
-        <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
-            <FormsCookbookWeb />
-        </MuiThemeProvider>
-    </BrowserRouter>,
-    document.getElementById('root')
+  <BrowserRouter>
+    <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
+      <FormsCookbookWeb />
+    </MuiThemeProvider>
+  </BrowserRouter>,
+  document.getElementById("root")
 );
