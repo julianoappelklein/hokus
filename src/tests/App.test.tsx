@@ -1,10 +1,8 @@
 import ReactDOM from "react-dom";
 import App from "./../App";
-import { act } from "react-dom/test-utils";
+import React from "react";
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  act(() => {
-    ReactDOM.render(<Button>Foo</Button>, div);
-  });
+  ReactDOM.render(<App/>, div);
 });
