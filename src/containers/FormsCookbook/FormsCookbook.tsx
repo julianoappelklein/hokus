@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { samples } from './samples';
-import { Form, ComponentRegistry } from './../../components/HoForm';
+import { HoForm, ComponentRegistry } from './../../components/HoForm';
 import dynamicFormComponents from './../../components/HokusForm/components/all'
 import { FormBreadcumb } from './../../components/Breadcumb';
 import { Dialog, RaisedButton } from 'material-ui';
@@ -67,8 +67,9 @@ export class FormsCookbook extends React.Component<FormsCookbookProps, FormsCook
     let { sampleKey } = this.props;
     let sample = (this.props.samples || samples).find(x => x.key === sampleKey);
     if (sample) {
-      return (<React.Fragment>
-        <Form
+      return (<div style={{padding: '1rem'}}>
+        <HoForm
+          includes={{}}
           ref={this.handleFormRef}
           key={sampleKey}
           rootName={sample.title}
@@ -95,7 +96,7 @@ export class FormsCookbook extends React.Component<FormsCookbookProps, FormsCook
           open={this.state.modal === 'state'}
           autoScrollBodyContent={true}
           onRequestClose={this.handleModalClose}>
-          {this.state.modal === 'state' ? (<pre>{JSON.stringify(this.formRef.getFormDocumentClone(), null, ' ')}</pre>) : (null)}
+          {this.state.modal === 'state' ? (<pre>{JSON.stringify(this.formRef.getFormDocClone(), null, ' ')}</pre>) : (null)}
         </Dialog>
         <Dialog
           title="Config"
@@ -105,7 +106,7 @@ export class FormsCookbook extends React.Component<FormsCookbookProps, FormsCook
           onRequestClose={this.handleModalClose}>
           {this.state.modal === 'config' ? (<pre>{JSON.stringify(sample.fields, null, ' ')}</pre>) : (null)}
         </Dialog>
-      </React.Fragment>
+      </div>
       )
     }
     return (<p>Sample not found.</p>);

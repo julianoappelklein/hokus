@@ -13,12 +13,12 @@ export class BaseService {
       clearTimeout(this._notifyChangesTimeout);
     }
     setTimeout(
-      function() {
+      () => {
         console.log("Model state has changed...", this);
         for (let i = 0; i < this._listeners.length; i++) {
           this._listeners[i].forceUpdate();
         }
-      }.bind(this),
+      },
       10
     ); //throttle
   }

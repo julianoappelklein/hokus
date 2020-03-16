@@ -65,8 +65,9 @@ const WorkspaceWidget: React.FC<WorkspaceWidgetProps> = ({ onClick, siteConfig, 
             menuProps={{ style: { background: "rgb(22, 6, 47)" } }}
             popoverProps={{ style: { background: "rgb(22, 6, 47)" } }}
             options={serverOptions}
-            onOptionClick={serve => {
-              service.serveWorkspace(siteConfig.key, workspaceConfig.key, serverOptions[serve]);
+            onOptionClick={(event: any, index: number) => {
+              service.serveWorkspace(siteConfig.key, workspaceConfig.key, serverOptions[index]);
+              return true;
             }}
           />
           <FlatButton

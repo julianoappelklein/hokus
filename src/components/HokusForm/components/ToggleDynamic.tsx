@@ -2,7 +2,7 @@ import React from "react";
 import FormItemWrapper from "./shared/FormItemWrapper";
 import Tip from "../../Tip";
 import Toggle from "material-ui/Toggle";
-import { BaseDynamic, NormalizeStateInput } from "../../HoForm";
+import { BaseDynamic, NormalizeStateContext } from "../../HoForm";
 
 type ToggleDynamicField = {
   key: string;
@@ -16,7 +16,7 @@ type ToggleDynamicField = {
 type ToggleDynamicFieldState = {};
 
 class ToggleDynamic extends BaseDynamic<ToggleDynamicField, ToggleDynamicFieldState> {
-  normalizeState({ state, field, stateBuilder }: NormalizeStateInput<ToggleDynamicField>) {
+  normalizeState({ state, field, stateBuilder }: NormalizeStateContext<ToggleDynamicField>) {
     let key = field.key;
     if (state[key] === undefined) {
       state[key] = field.default !== undefined ? field.default : false;

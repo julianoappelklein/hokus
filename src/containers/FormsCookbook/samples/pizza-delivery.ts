@@ -1,6 +1,4 @@
-//@flow
-
-import { FormCookbookSample } from "../samples";
+import { FormCookbookSample } from "./types";
 
 export const pizzaDeliveryMenu: FormCookbookSample = {
   key: "pizza-delivery-menu",

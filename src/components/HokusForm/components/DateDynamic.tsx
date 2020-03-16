@@ -73,7 +73,7 @@ class DateDynamic extends BaseDynamic<DateDynamicField, DateDynamicState> {
 
     let iconButtons = [];
     iconButtons.push(
-      <IconButton onClick={() => context.clearValue()}>
+      <IconButton onClick={() => context.setValue('')}>
         <IconClear />
       </IconButton>
     );

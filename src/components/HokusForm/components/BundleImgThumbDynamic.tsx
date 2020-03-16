@@ -13,6 +13,7 @@ type BundleImgThumbDynamicField = {
 
 type BundleImgThumbDynamicState = {
   src?: string;
+  hasError?: boolean;
 };
 
 class BundleImgThumbDynamic extends BaseDynamic<BundleImgThumbDynamicField, BundleImgThumbDynamicState> {

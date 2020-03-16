@@ -2,7 +2,7 @@ import React from "react";
 import FormItemWrapper from "./shared/FormItemWrapper";
 import TextField from "material-ui/TextField";
 import Tip from "../../Tip";
-import { FormStateBuilder, NormalizeStateInput } from "../../HoForm";
+import { FormStateBuilder, NormalizeStateContext } from "../../HoForm";
 import { BaseDynamic } from "../../HoForm";
 
 type ReadonlyDynamicField = {
@@ -18,7 +18,7 @@ type ReadonlyDynamicField = {
 type ReadonlyDynamicState = {};
 
 class ReadonlyDynamic extends BaseDynamic<ReadonlyDynamicField, ReadonlyDynamicState> {
-  normalizeState(x: NormalizeStateInput<ReadonlyDynamicField>) {
+  normalizeState(x: NormalizeStateContext<ReadonlyDynamicField>) {
     let key = x.field.key;
     if (x.state[key] === undefined) {
       x.state[key] = x.field.default || "";

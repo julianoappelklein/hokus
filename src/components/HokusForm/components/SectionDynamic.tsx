@@ -1,7 +1,6 @@
 import React from "react";
-import { DynamicFormNode, FieldBase, NormalizeStateInput } from "../../HoForm";
+import { NormalizeStateContext, ExtendFieldContext } from "../../HoForm";
 import { BaseDynamic } from "../../HoForm";
-import { FieldsExtender } from "../../HoForm/fields-extender";
 
 type SectionDynamicField = {
   key: string;
@@ -23,11 +22,12 @@ class SectionDynamic extends BaseDynamic<SectionDynamicField, SectionDynamicStat
     return parentState;
   }
 
-  extendField(field: SectionDynamicField, fieldsExtender: FieldsExtender) {
-    fieldsExtender.extendFields(field.fields);
+  extendField({field, extender} : ExtendFieldContext<SectionDynamicField>): void{
+    extender.extendFields(field.fields);
   }
+  
 
-  normalizeState(x: NormalizeStateInput<SectionDynamicField>) {
+  normalizeState(x: NormalizeStateContext<SectionDynamicField>) {
     x.stateBuilder!.setLevelState(x.state, x.field.fields);
   }
 
@@ -41,13 +41,7 @@ class SectionDynamic extends BaseDynamic<SectionDynamicField, SectionDynamicStat
     let { field } = node;
 
     if (currentPath === parentPath) {
-      var state = node.state;
-      var level = context.renderLevel({
-        field,
-        state,
-        parent: node.parent
-      });
-
+      
       return (
         <React.Fragment>
           {field.title ? <div style={{ padding: "16px 0" }}>{field.title}</div> : undefined}
@@ -59,17 +53,21 @@ class SectionDynamic extends BaseDynamic<SectionDynamicField, SectionDynamicStat
               borderLeft: "solid 10px #eee"
             }}
           >
-            {level}
+            {context.form.renderLevel({
+              fields: field.fields,
+              state: node.state,
+              parent: node.parent as any
+            })}
           </div>
         </React.Fragment>
       );
     }
 
-    if (currentPath.startsWith(nodePath)) {
-      return context.renderLevel({
-        field,
+    if (currentPath.startsWith(parentPath)) {
+      return context.form.renderLevel({
+        fields: field.fields,
         state: node.state,
-        parent: node
+        parent: node.parent as any
       });
     }
 

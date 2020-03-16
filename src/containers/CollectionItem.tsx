@@ -22,7 +22,7 @@ type CollectionItemState = {
 
 class CollectionItem extends React.Component<CollectionItemProps,CollectionItemState>{
 
-    state = {};
+    state: CollectionItemState = {};
 
     componentWillMount(){
         service.registerListener(this);

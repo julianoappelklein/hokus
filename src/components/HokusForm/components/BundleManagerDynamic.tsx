@@ -5,11 +5,11 @@ import { Accordion, AccordionItem } from "../../Accordion";
 import DangerButton from "../../DangerButton";
 import FlatButton from "material-ui/FlatButton";
 import IconRemove from "material-ui/svg-icons/content/clear";
-import { ComponentContext, DynamicFormNode, FieldBase } from "../../HoForm";
+import { ComponentContext, DynamicFormNode, FieldBase, ExtendFieldContext } from "../../HoForm";
 import { BaseDynamic } from "../../HoForm";
 
 const regExtractExt = /[.]([^.]+)$/;
-const extractExt = file => {
+const extractExt = (file: string) => {
   return file.replace(regExtractExt, "$1");
 };
 
@@ -20,15 +20,17 @@ type BundleManagerDynamicField = {
   src: string;
   fields: Array<any>;
   path: string;
-  extensions: Array<string>;
+  extensions: string[];
   title: string;
 };
 
 class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, {}> {
-  extendField(field: BundleManagerDynamicField, fieldExtender: any) {
+  
+  
+  extendField({field, extender} : ExtendFieldContext<BundleManagerDynamicField>): void{
     if (field.fields === undefined) field.fields = [];
     field.fields.unshift({ key: "src", type: "readonly", title: "Source File" });
-    fieldExtender.extendFields(field.fields);
+    extender.extendFields(field.fields);
   }
 
   buildPathFragment(
@@ -47,7 +49,7 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, {}> {
       let resource = state["resources"][r];
       if (
         resource.src.startsWith(field.path) &&
-        (field.extensions || field.extensions.indexOf(extractExt(resource.src.src)) != -1)
+        (field.extensions || (field.extensions as string[]).indexOf(extractExt(resource.src.src)) != -1)
       ) {
         stateBuilder.setLevelState(resource, field.fields);
       }
@@ -68,12 +70,12 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, {}> {
 
     context.form.props.plugins
       .openBundleFileDialog({ title: field.title, extensions: field.extensions, targetPath: field.path })
-      .then(files => {
+      .then((files: string[]) => {
         if (files) {
           let currentFiles = context.value.slice();
           for (let f = 0; f < files.length; f++) {
             let file = files[f];
-            let match = currentFiles.find(x => x.src === file);
+            let match = currentFiles.find((x: any) => x.src === file);
             if (match) {
               if (match.__deleted) delete match.__deleted;
             } else {
@@ -100,11 +102,11 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, {}> {
       return null;
     }
 
-    let itemsStates = context.value.filter(x => {
+    let itemsStates = context.value.filter((x: any) => {
       return (
         x.src.startsWith(field.path) &&
         x.__deleted !== true &&
-        (field.extensions || field.extensions.indexOf(extractExt(x.src)) != -1)
+        (field.extensions || (field.extensions as string[]).indexOf(extractExt(x.src)) != -1)
       );
     });
 
@@ -120,9 +122,9 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, {}> {
           }}
         >
           <Accordion>
-            {itemsStates.map((state, childIndex) => {
+            {itemsStates.map((state: any, childIndex: number) => {
               let newNode = {
-                field,
+                fields: field.fields,
                 state,
                 uiState: {},
                 parent: node
@@ -133,7 +135,7 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, {}> {
                   bodyStyle={{ padding: "16px 16px 0px 16px" }}
                   label={state.name || state.src}
                   key={field.key + "-resource-" + childIndex}
-                  body={context.renderLevel(newNode)}
+                  body={context.form.renderLevel(newNode)}
                   headerRightItems={[
                     <DangerButton
                       onClick={(e, loaded) => {

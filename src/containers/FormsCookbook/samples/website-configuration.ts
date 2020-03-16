@@ -1,4 +1,4 @@
-import { FormCookbookSample } from "../samples";
+import { FormCookbookSample } from "./types";
 
 export const websiteConfiguration: FormCookbookSample = {
   key: "website-configuration",

@@ -20,9 +20,9 @@ class Service extends BaseService {
     super();
     this.api = api.instance;
 
-    this._configurations = undefined;
-    this._configurationsPromise = undefined;
-    this._siteAndWorkspaceDataPromise = undefined;
+    this._configurations = null;
+    this._configurationsPromise = null;
+    this._siteAndWorkspaceDataPromise = null;
   }
 
   getConfigurations(refetch?: boolean): Promise<Configurations> {
@@ -43,7 +43,7 @@ class Service extends BaseService {
   }
 
   getSiteAndWorkspaceData(siteKey: string, workspaceKey: string): Promise<SiteAndWorkspaceData> {
-    var bundle: SiteAndWorkspaceData = {} as any;
+    var bundle: Partial<SiteAndWorkspaceData> = {};
 
     if (this._siteAndWorkspaceDataPromise == null) {
       let errors = [];
@@ -59,7 +59,7 @@ class Service extends BaseService {
         })
         .then(workspaces => {
           bundle.siteWorkspaces = workspaces;
-          bundle.workspace = workspaces.find(workspace => {
+          bundle.workspace = workspaces||[].find((workspace: WorkspaceHeader) => {
             return workspace.key === workspaceKey;
           });
         })

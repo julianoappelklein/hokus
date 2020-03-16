@@ -18,6 +18,7 @@ import BlockDialog from "./components/BlockDialog";
 import Spinner from "./../../components/Spinner";
 
 import { EmptyConfigurations, Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from "./../../types";
+import { MuiTheme } from "material-ui/styles";
 
 const styles: { [k: string]: CSSProperties } = {
   container: {
@@ -50,9 +51,9 @@ const styles: { [k: string]: CSSProperties } = {
 };
 
 type HomeProps = {
-  muiTheme: any;
   siteKey: string;
   workspaceKey: string;
+  muiTheme?: MuiTheme | undefined;
 };
 
 type HomeState = {
@@ -135,7 +136,7 @@ class Home extends React.Component<HomeProps, HomeState> {
         </InfoLine>
         {configurations.global.siteManagementEnabled ? (
           <InfoLine label="Config Location">
-            <TextField id="config-location" value={site.configPath} readOnly={true} />
+            <TextField id="config-location" value={site.configPath} />
             <FlatButton
               style={{ minWidth: "40px" }}
               icon={<IconFileFolder />}
@@ -277,7 +278,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                   key={index}
                   style={selected ? styles.siteActiveStyle : styles.siteInactiveStyle}
                   rightIcon={
-                    <IconNavigationCheck color={active ? this.props.muiTheme.palette?.primary1Color : undefined} />
+                    <IconNavigationCheck color={active ? this.props.muiTheme?.palette?.primary1Color : undefined} />
                   }
                   onClick={() => {
                     this.selectSite(item);
@@ -332,4 +333,5 @@ class Home extends React.Component<HomeProps, HomeState> {
   }
 }
 
-export default muiThemeable()(Home);
+//TODO - fix "as any" below
+export default muiThemeable()(Home as any);

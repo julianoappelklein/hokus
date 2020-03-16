@@ -1,7 +1,7 @@
 import React from "react";
 import DefaultWrapper from "./shared/DefaultWrapper";
 import Chips from "../../Chips";
-import { NormalizeStateInput } from "../../HoForm";
+import { NormalizeStateContext } from "../../HoForm";
 import { BaseDynamic } from "../../HoForm";
 
 type ChipsDynamicField = {
@@ -14,7 +14,7 @@ type ChipsDynamicField = {
 type ChipsDynamicState = {};
 
 class ChipsDynamic extends BaseDynamic<ChipsDynamicField, ChipsDynamicState> {
-  normalizeState(x: NormalizeStateInput<ChipsDynamicField>) {
+  normalizeState(x: NormalizeStateContext<ChipsDynamicField>) {
     let key = x.field.key;
     if (x.state[key] === undefined) {
       x.state[key] = x.field.default || [];

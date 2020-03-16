@@ -364,7 +364,7 @@ class App extends React.Component<{}, AppState> {
         contentContainerStyle.transition = transition;
         menuContainerStyle.transition = transition;
       }
-      this.state.skipMenuTransition = false;
+      (this.state as any).skipMenuTransition = false;
     }
 
     return (

@@ -34,7 +34,7 @@ export class Workspace extends React.Component<WorkspaceProps,WorkspaceState> {
         this.state = { error: null, refreshing: false };
     }
 
-    handleOnStartServerOptionClick = (index: number)=>{
+    handleOnStartServerOptionClick = (event: any, index: number)=>{
         let cfg = this.state.config;
         if(cfg==null) throw new Error('Invalid operation');
         this.props.onStartServerClick(this.props.header,  cfg.serve[index].key);

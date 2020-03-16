@@ -90,19 +90,19 @@ class MainProcessBridge {
   _emptyFunction() {}
 
   request(method: string, data: any, opts: { timeout: number } = { timeout: 10000 }): AbortablePromise<any> {
-    let _reject;
+    let _reject: any;
     let token = this._createToken();
     let promise: any = new Promise(
-      function(resolve, reject) {
+      (resolve: (value?: unknown) =>void, reject: (reasone?: any)=>void) => {
         _reject = reject;
         this.ipcRenderer.send("message", { data, token, handler: method });
         let timeoutId = setTimeout(
-          function() {
+          () => {
             if (this._eraseCallback(token)) {
               reject("timeout");
               promise.forceAbort = function() {};
             }
-          }.bind(this),
+          },
           opts.timeout
         );
         this.pendingCallbacks.push({
@@ -116,14 +116,14 @@ class MainProcessBridge {
             promise.forceAbort = function() {};
           }
         });
-      }.bind(this)
+      }
     );
 
-    promise.forceAbort = function() {
+    promise.forceAbort = () => {
       console.log("Promise aborted.");
       _reject("Cancelled");
       this._eraseCallback(token);
-    }.bind(this);
+    };
 
     return promise;
   }

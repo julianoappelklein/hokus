@@ -82,7 +82,7 @@ export class API {
       filters: [{ name: 'Allowed Extensions', extensions: extensions }]
     };
     return new Promise(resolve => {
-      remote.dialog.showOpenDialog(remote.getCurrentWindow(), openDialogOptions, files => resolve(files));
+      remote.dialog.showOpenDialog(remote.getCurrentWindow(), openDialogOptions, (files: string[]) => resolve(files));
     }).then(files => {
       if (files) return mainProcessBridge.request('copyFilesIntoCollectionItem', { siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath, files });
     });

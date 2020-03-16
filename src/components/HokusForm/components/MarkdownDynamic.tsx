@@ -43,6 +43,7 @@ type MarkdownDynamicState = {
   value: string;
   preview: string;
   maxHeight?: number;
+  hasError?: boolean;
 };
 
 class MarkdownDynamic extends BaseDynamic<MarkdownDynamicField, MarkdownDynamicState> {

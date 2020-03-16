@@ -5,7 +5,7 @@ import RaisedButton from "material-ui/RaisedButton";
 import DefaultWrapper from "./shared/DefaultWrapper";
 import IconAdd from "material-ui/svg-icons/content/add";
 import IconRemove from "material-ui/svg-icons/content/remove";
-import { BaseDynamic, FieldBase, NormalizeStateInput } from "../../HoForm";
+import { BaseDynamic, FieldBase, NormalizeStateContext } from "../../HoForm";
 
 class TextFieldLabelMock extends React.Component<{ children: any }, {}> {
   render() {
@@ -36,7 +36,7 @@ type LeafArrayDynamicField = {
 };
 
 class LeafArrayDynamic extends BaseDynamic<LeafArrayDynamicField, { hasError: boolean }> {
-  normalizeState(x: NormalizeStateInput<LeafArrayDynamicField>) {
+  normalizeState(x: NormalizeStateContext<LeafArrayDynamicField>) {
     let key = x.field.key;
     if (x.state[key] === undefined) {
       x.state[key] = x.field.default || [];
@@ -63,7 +63,7 @@ class LeafArrayDynamic extends BaseDynamic<LeafArrayDynamicField, { hasError: bo
     childField.key = context.value.length;
     let childComponentProplessInstance = context.form.props.componentRegistry.getProplessInstance(childField.type);
     let valueCopy = context.value.slice(0);
-    childComponentProplessInstance.normalizeState({ state: valueCopy, field: childField });
+    childComponentProplessInstance.normalizeState({state:valueCopy, field:childField, stateBuilder: context.form.stateBuilder, includes: context.form.props.includes});
     context.setValue(valueCopy);
   }
 
@@ -107,7 +107,7 @@ class LeafArrayDynamic extends BaseDynamic<LeafArrayDynamicField, { hasError: bo
           };
           return (
             <div key={field.key + "-item-" + index} style={{ display: "flex", width: "100%" }}>
-              {context.renderField(childNode, this.getOnItemChange(index))}
+              {context.form.renderField(childNode, this.getOnItemChange(index))}
               <IconButtonGroup
                 style={{ flex: "0 0 auto", alignSelf: "flex-end", position: "relative", top: "-20px" }}
                 iconButtons={[

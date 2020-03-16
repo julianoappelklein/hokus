@@ -26,6 +26,7 @@ type AceDynamicField = {
 type AceDynamicState = {
   preview: string;
   value: string;
+  hasError?: boolean;
 };
 
 class Debounce {

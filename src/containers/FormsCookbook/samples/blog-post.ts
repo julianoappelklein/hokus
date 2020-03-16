@@ -1,4 +1,4 @@
-import { FormCookbookSample } from "../samples";
+import { FormCookbookSample } from "./types";
 
 export const blogPost: FormCookbookSample = {
   key: "blog-post",

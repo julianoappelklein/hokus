@@ -1,4 +1,4 @@
-import { FormCookbookSample } from "../samples";
+import { FormCookbookSample } from "./types";
 
 const items = [];
 for (let i = 0; i < 50; i++) { items.push(i); }

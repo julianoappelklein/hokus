@@ -1,10 +1,10 @@
 import AccordionDynamic from "./AccordionDynamic";
 import AceDynamic from "./AceDynamic";
-import ArrayDynamic from "./ArrayDynamic";
+//import ArrayDynamic from "./ArrayDynamic";
 import ChipsDynamic from "./ChipsDynamic";
 import DateDynamic from "./DateDynamic";
 import EmptyLineDynamic from "./EmptyLineDynamic";
-import HiddenDynamic from "./HiddenDynamic";
+import { HiddenDynamic } from "./../../HoForm/HiddenDynamic";
 import InfoDynamic from "./InfoDynamic";
 import LeafArrayDynamic from "./LeafArrayDynamic";
 import MarkdownDynamic from "./MarkdownDynamic";
@@ -25,7 +25,7 @@ import * as React from "react";
 const allComponents: Array<React.ComponentClass<ComponentProps<any>, any>> = [
   AccordionDynamic,
   AceDynamic,
-  ArrayDynamic,
+  // ArrayDynamic,
   BundleImgThumbDynamic,
   ChipsDynamic,
   DateDynamic,

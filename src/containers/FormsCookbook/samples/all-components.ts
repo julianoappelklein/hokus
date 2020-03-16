@@ -1,4 +1,4 @@
-import { FormCookbookSample } from "../samples";
+import { FormCookbookSample } from "./types";
 
 let fields: Array<any> = [
   {

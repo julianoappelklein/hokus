@@ -1,5 +1,5 @@
 import React from "react";
-import { NormalizeStateInput } from "../../HoForm";
+import { NormalizeStateContext } from "../../HoForm";
 import { BaseDynamic } from "../../HoForm";
 import FormItemWrapper from "./shared/FormItemWrapper";
 import MenuItem from "material-ui/MenuItem";
@@ -20,7 +20,7 @@ type SelectDynamicField = {
 type SelectDynamicState = {};
 
 class SelectDynamic extends BaseDynamic<SelectDynamicField, SelectDynamicState> {
-  normalizeState(x: NormalizeStateInput<SelectDynamicField>) {
+  normalizeState(x: NormalizeStateContext<SelectDynamicField>) {
     //TODO: clear if value is not a valid option
     let key = x.field.key;
     let isArrayType = x.field.multiple === true;

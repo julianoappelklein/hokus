@@ -2,10 +2,6 @@ import React from "react";
 import FlatButton from "material-ui/FlatButton";
 import IconNavigationExpandLess from "material-ui/svg-icons/navigation/expand-less";
 import IconNavigationExpandMore from "material-ui/svg-icons/navigation/expand-more";
-// import Border from './Border';
-// import FlatButton from 'material-ui/FlatButton';
-// import Checkbox from 'material-ui/Checkbox';
-// import IconToggleRadioButtonChecked from 'material-ui/svg-icons/toggle/radio-button-checked';
 
 type AccordionHeaderProps = {
   active: boolean;
@@ -16,7 +12,10 @@ type AccordionHeaderProps = {
   label: string;
 };
 
-class AccordionHeader extends React.PureComponent<AccordionHeaderProps, {}> {
+type AccordionHeaderState = {
+}
+
+class AccordionHeader extends React.PureComponent<AccordionHeaderProps, AccordionHeaderState> {
   // shouldComponentUpdate(props, state){
   //     return props.label != this.props.label
   //         || props.active != this.props.active;
@@ -27,7 +26,7 @@ class AccordionHeader extends React.PureComponent<AccordionHeaderProps, {}> {
     return (
       <a style={style} onClick={onClick}>
         <span style={{ display: "inline-block", margin: "-10px 0px -10px -5px" }}>
-          {headerLeftItems.map((item, index) => {
+          {headerLeftItems.map((item: any, index: number) => {
             return (
               <span key={index} style={{ display: "inline-block", margin: "0 5px" }}>
                 {item}
@@ -36,7 +35,7 @@ class AccordionHeader extends React.PureComponent<AccordionHeaderProps, {}> {
           })}
         </span>
         <span style={{ position: "absolute", top: "8px", right: "5px" }}>
-          {headerRightItems.map((item, index) => {
+          {headerRightItems.map((item: any, index: number) => {
             return (
               <span key={index} style={{ display: "inline-block", margin: "0 5px" }}>
                 {item}
@@ -107,13 +106,21 @@ class AccordionItem extends React.Component<any, {}> {
   }
 }
 
-class Accordion extends React.Component<any, {}> {
+type AccordionProps = {
+  index?: number;
+}
+
+type AccordionState = {
+  index?: number;
+}
+
+class Accordion extends React.Component<any, AccordionState> {
   constructor(props: any) {
     super(props);
     this.state = { index: -1 };
   }
 
-  getOpenedIndex() {
+  getOpenedIndex = () => {
     if (this.props.index !== undefined) {
       return this.props.index;
     } else {
@@ -121,8 +128,8 @@ class Accordion extends React.Component<any, {}> {
     }
   }
 
-  getHandleChange(i) {
-    return function(e) {
+  getHandleChange = (i: number) => {
+    return (e: any) => {
       if (this.props.index !== undefined) {
         if (this.props.onChange) {
           this.props.onChange(i);
@@ -131,21 +138,21 @@ class Accordion extends React.Component<any, {}> {
         let index = i !== this.state.index ? i : -1;
         this.setState(Object.assign({}, this.state, { index }));
       }
-    }.bind(this);
+    };
   }
 
   render() {
     let openedIndex = this.getOpenedIndex();
     return (
       <div className="accordion" style={this.props.style}>
-        {this.props.children.map(
-          function(item, index) {
+        {this.props.children||[].map(
+          (item: any, index: number) => {
             let active = index === openedIndex;
             return React.cloneElement(item, {
               active,
               onHeadClick: this.getHandleChange(index)
             });
-          }.bind(this)
+          }
         )}
       </div>
     );

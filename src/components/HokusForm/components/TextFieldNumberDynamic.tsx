@@ -2,7 +2,7 @@ import React from "react";
 import FormItemWrapper from "./shared/FormItemWrapper";
 import TextField from "material-ui/TextField";
 import Tip from "../../Tip";
-import { BaseDynamic, NormalizeStateInput } from "../../HoForm";
+import { BaseDynamic, NormalizeStateContext } from "../../HoForm";
 
 type TextFieldNumberDynamicField = {
   key: string;
@@ -16,7 +16,7 @@ type TextFieldNumberDynamicField = {
 type TextFieldNumberDynamicState = {};
 
 class TextFieldNumberDynamic extends BaseDynamic<TextFieldNumberDynamicField, TextFieldNumberDynamicState> {
-  normalizeState({ state, field }: NormalizeStateInput<TextFieldNumberDynamicField>) {
+  normalizeState({ state, field }: NormalizeStateContext<TextFieldNumberDynamicField>) {
     let key = field.key;
     if (state[key] === undefined) {
       state[key] = field.default || 0;
@@ -38,7 +38,7 @@ class TextFieldNumberDynamic extends BaseDynamic<TextFieldNumberDynamicField, Te
 
     let setNumberValue = (e: any, value: string) => {
       if (value === undefined || value.length === 0) {
-        context.clearValue();
+        context.setValue(0);
         return;
       }
       this.forceUpdate();

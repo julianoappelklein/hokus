@@ -4,7 +4,7 @@ import { FormBreadcumb } from "../Breadcumb";
 import IconCheck from "material-ui/svg-icons/navigation/check";
 import dynamicFormComponents from "./components/all";
 import { ComponentRegistry } from "../HoForm/component-registry";
-import Form from "../HoForm/Form";
+import { HoForm } from "../HoForm/";
 
 const componentRegistry = new ComponentRegistry(dynamicFormComponents);
 
@@ -98,7 +98,8 @@ export class HokusForm extends React.Component<HokusFormProps, HokusFormState> {
 
     return (
       <React.Fragment>
-        <Form
+        <HoForm
+          includes={{}}
           debug={false}
           breadcumbComponentType={FormBreadcumb}
           componentRegistry={componentRegistry}

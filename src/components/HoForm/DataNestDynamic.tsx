@@ -1,7 +1,7 @@
+import { BaseDynamic } from './BaseDynamic';
+import { FieldsExtender } from './fields-extender';
 import * as React from 'react';
-import { BaseDynamic } from './../../HoForm/BaseDynamic';
-import { FieldsExtender } from './../../HoForm/fields-extender';
-import { DynamicFormNode, NormalizeStateContext, ExtendFieldContext, CrawlContext } from './../../HoForm/types';
+import { DynamicFormNode, NormalizeStateContext, ExtendFieldContext, CrawlContext } from './types';
 
 type DataNestField = {
     type: string,
@@ -14,7 +14,7 @@ type DataNestState = {
     
 }
 
-export default class DataNestDynamic extends BaseDynamic<DataNestField, DataNestState> {
+export class DataNestDynamic extends BaseDynamic<DataNestField, DataNestState> {
 
     allocateStateLevel(field: DataNestField, parentState: any, rootState: any){
         let key = field.group||field.key;
@@ -32,7 +32,7 @@ export default class DataNestDynamic extends BaseDynamic<DataNestField, DataNest
     }
 
     getType(){
-        return 'pull';
+        return 'data-nest';
     }
 
     buildBreadcumbFragment(node : any, buttons : Array<{label:string, node:any}>){

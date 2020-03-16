@@ -4,11 +4,12 @@ import { Popover, Menu, MenuItem } from "material-ui";
 
 type TriggerWithOptionsProps = {
   options: Array<string>;
-  onOptionClick: (index: number) => boolean | null | undefined;
+  onOptionClick: (e: any, index: number) => boolean | null | undefined;
   triggerType: any;
   triggerProps: any;
   menuProps?: any;
   popoverProps?: any;
+  onOpen?: (e: any) => void;
 };
 
 type TriggerWithOptionsState = {
@@ -29,6 +30,10 @@ export class TriggerWithOptions extends React.Component<TriggerWithOptionsProps,
   handleTriggerClick = (event: any) => {
     event.preventDefault();
 
+    if(this.props.onOpen!=null){
+      this.props.onOpen(event);
+    }
+
     this.setState({
       open: true,
       anchorEl: event.currentTarget
@@ -42,7 +47,7 @@ export class TriggerWithOptions extends React.Component<TriggerWithOptionsProps,
   };
 
   handleMenuItemClick = (event: any, menuItem: any, index: number) => {
-    let result = this.props.onOptionClick(index);
+    let result = this.props.onOptionClick(event ,index);
     if (result !== false) this.setState({ open: false });
   };
 
