@@ -1,6 +1,4 @@
-//@flow
-
-import React from "react";
+import React, { ComponentProps } from "react";
 import Tip from "../../../Tip";
 import DefaultWrapper from "../shared/DefaultWrapper";
 import IconButton from "material-ui/IconButton";
@@ -10,43 +8,31 @@ import Paper from "material-ui/Paper";
 import MarkdownIt from "markdown-it";
 import { AceEditor } from "./AceEditor";
 
-import type { ComponentContext, DynamicFormNode, ComponentProps, FieldBase } from "../../../HoForm";
 import { BaseDynamic } from "../../../HoForm";
 
 const md = new MarkdownIt({ html: true });
 
 type AceDynamicField = {
-  key: string,
-  compositeKey: string,
-  type: string,
-  default: ?string,
-  tip: ?string,
-  multiLine: ?boolean,
-  language: ?string,
-  lightTheme: boolean
+  key: string;
+  compositeKey: string;
+  type: string;
+  default: string;
+  tip: string;
+  multiLine: boolean;
+  language: string;
+  lightTheme: boolean;
 };
 
 type AceDynamicState = {
-  preview: ?string
+  preview: string;
+  value: string;
 };
-
-function debounce(fn: () => void, delay: number) {
-  var timer: ?TimeoutID = null;
-  return function() {
-    let context = this;
-    let args = arguments;
-    if (timer != null) clearTimeout(timer);
-    timer = setTimeout(function() {
-      fn.apply(context, args);
-    }, delay);
-  };
-}
 
 class Debounce {
   _time: number;
-  _timeoutID: TimeoutID;
+  _timeoutID: any;
 
-  constructor(time) {
+  constructor(time: any) {
     this._time = time;
   }
 
@@ -63,7 +49,7 @@ class Debounce {
 class AceDynamic extends BaseDynamic<AceDynamicField, AceDynamicState> {
   _updateDebounce: Debounce;
 
-  constructor(props: ComponentProps<AceDynamicField>) {
+  constructor(props: any) {
     super(props);
     let value = this.props ? this.props.context.value : "";
     let preview = md.render(value || "");
@@ -75,7 +61,7 @@ class AceDynamic extends BaseDynamic<AceDynamicField, AceDynamicState> {
     this._updateDebounce = new Debounce(200);
   }
 
-  normalizeState({ state, field }: { state: any, field: AceDynamicField, stateBuilder: any }) {
+  normalizeState({ state, field }: { state: any; field: AceDynamicField; stateBuilder: any }) {
     let key = field.key;
     if (state[key] === undefined) {
       state[key] = field.default || "";
@@ -86,7 +72,7 @@ class AceDynamic extends BaseDynamic<AceDynamicField, AceDynamicState> {
     return "code-editor";
   }
 
-  buildBreadcumbFragment(node: any, buttons: Array<{ label: string, node: any }>) {
+  buildBreadcumbFragment(node: any, buttons: Array<{ label: string; node: any }>) {
     buttons.push({ label: node.field.title, node });
   }
 
@@ -135,7 +121,7 @@ class AceDynamic extends BaseDynamic<AceDynamicField, AceDynamicState> {
           key="tip"
           horizontalAlign="right"
           markdown={field.tip}
-          style={{ position: "absolute", right: 0, top: 20, zIndex: 2 }}
+          // style={{ position: "absolute", right: 0, top: 20, zIndex: 2 }}
         />
       );
     }

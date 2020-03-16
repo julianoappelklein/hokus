@@ -37,6 +37,7 @@
     "user-home": "2.0.0"
   },
   "devDependencies": {
+    "@types/ace": "^0.0.43",
     "@typescript-eslint/eslint-plugin": "^2.23.0",
     "@typescript-eslint/parser": "^2.23.0",
     "ace-editor-builds": "1.2.4",
