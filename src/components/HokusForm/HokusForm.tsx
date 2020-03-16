@@ -97,7 +97,7 @@ export class HokusForm extends React.Component<HokusFormProps, HokusFormState> {
     if (this.state.changed) floatingActionButtonClass += " rubberBand";
 
     return (
-      <React.Fragment>
+      <div style={{padding: '1rem'}}>
         <HoForm
           includes={{}}
           debug={false}
@@ -123,7 +123,7 @@ export class HokusForm extends React.Component<HokusFormProps, HokusFormState> {
           <IconCheck />
         </FloatingActionButton>
         <div style={{ height: "70px" }}></div>
-      </React.Fragment>
+      </div>
     );
   }
 }
