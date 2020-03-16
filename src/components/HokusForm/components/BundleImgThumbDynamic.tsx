@@ -17,9 +17,8 @@ type BundleImgThumbDynamicState = {
 };
 
 class BundleImgThumbDynamic extends BaseDynamic<BundleImgThumbDynamicField, BundleImgThumbDynamicState> {
-  constructor(props: ComponentProps<BundleImgThumbDynamicField>) {
-    super(props);
-  }
+  
+  state: BundleImgThumbDynamicState = { }
 
   renderComponent() {
     let { node } = this.props.context;
