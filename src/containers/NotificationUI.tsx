@@ -82,7 +82,7 @@ class ConsoleOutput extends React.Component {
         <a
           onMouseEnter={this.handleMouseEnter.bind(this)}
           onMouseLeave={this.handleMouseLeave.bind(this)}
-          // style={consoleStyle.toggleWrapper}
+          style={consoleStyle.toggleWrapper as any}
         >
           <span style={consoleStyle.toggle}>
             <ConsoleIcon style={{ color: "#d4d4d4", marginTop: 8 }} />
