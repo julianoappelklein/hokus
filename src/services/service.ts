@@ -26,11 +26,10 @@ class Service extends BaseService {
   }
 
   async getConfigurations(refetch?: boolean): Promise<Configurations> {
-    if (this._configurations!=null) {
+    if (this._configurations != null) {
       if (refetch === true) {
         this._configurations = null;
-      }
-      else {
+      } else {
         return this._configurations;
       }
     }
@@ -47,17 +46,16 @@ class Service extends BaseService {
 
   async getSiteAndWorkspaceData(siteKey: string, workspaceKey: string): Promise<SiteAndWorkspaceData> {
     if (this._siteAndWorkspaceDataPromise == null) {
-      this._siteAndWorkspaceDataPromise = (async () =>{
-        try{
+      this._siteAndWorkspaceDataPromise = (async () => {
+        try {
           const configurations = await this.getConfigurations();
           const site = configurations.sites.find(site => site.key === siteKey);
           const siteWorkspaces = await this.api.listWorkspaces(siteKey);
-          const workspace = (siteWorkspaces||[]).find((workspace: WorkspaceHeader) => workspace.key === workspaceKey);
+          const workspace = (siteWorkspaces || []).find((workspace: WorkspaceHeader) => workspace.key === workspaceKey);
           const workspaceDetails = await this.api.getWorkspaceDetails(siteKey, workspaceKey);
           this._siteAndWorkspaceDataPromise = null;
           return { configurations, site, siteWorkspaces, workspace, workspaceDetails };
-        }
-        catch(e){
+        } catch (e) {
           this._siteAndWorkspaceDataPromise = null;
           throw e;
         }

@@ -52,15 +52,14 @@ class GitSiteSource implements SiteSource {
       await this._ensureRepo();
       let branches: string[] = await git.listBranches({ fs, dir: repositoryPath });
       let currentBranchRef = await git.currentBranch({ fs, dir: repositoryPath });
-      if(currentBranchRef==null) throw new Error();
+      if (currentBranchRef == null) throw new Error();
       let currentBranchName = currentBranchRef.replace(repoNamePrefix, "");
 
-      try{
-        jobManager.runSharedJob(`git-site-source:fetch:${this.config.key}`, async () =>{
-          await git.fetch({fs, dir: repositoryPath, http: gitHttp, url: this.config.url})
+      try {
+        jobManager.runSharedJob(`git-site-source:fetch:${this.config.key}`, async () => {
+          await git.fetch({ fs, dir: repositoryPath, http: gitHttp, url: this.config.url });
         });
-      }
-      catch(e){
+      } catch (e) {
         //ignore?
       }
 
@@ -85,8 +84,8 @@ class GitSiteSource implements SiteSource {
     let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
     let branches: string[] = await git.listBranches({ fs, dir: repositoryPath });
     let refName = branches.find(x => x.endsWith("/" + key) && x.indexOf("/remotes/") !== -1);
-    if (refName == null) refName = branches.find(x => x.endsWith("/" + key))||'master';
-    await git.checkout({fs, dir: repositoryPath, ref: refName});
+    if (refName == null) refName = branches.find(x => x.endsWith("/" + key)) || "master";
+    await git.checkout({ fs, dir: repositoryPath, ref: refName });
 
     //do a regular pull
 

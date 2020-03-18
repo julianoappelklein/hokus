@@ -93,32 +93,27 @@ class MainProcessBridge {
     //console.log(`Invoking ${method}.`);
     let _reject: any;
     let token = this._createToken();
-    let promise: any = new Promise(
-      (resolve: (value?: unknown) =>void, reject: (reasone?: any)=>void) => {
-        _reject = reject;
-        this.ipcRenderer.send("message", { data, token, handler: method });
-        let timeoutId = setTimeout(
-          () => {
-            if (this._eraseCallback(token)) {
-              reject("timeout");
-              promise.forceAbort = function() {};
-            }
-          },
-          opts.timeout
-        );
-        this.pendingCallbacks.push({
-          token,
-          handler: function(response) {
-            clearTimeout(timeoutId);
-            if (response && response.error) {
-              reject(response.error);
-            }
-            resolve(response);
-            promise.forceAbort = function() {};
+    let promise: any = new Promise((resolve: (value?: unknown) => void, reject: (reasone?: any) => void) => {
+      _reject = reject;
+      this.ipcRenderer.send("message", { data, token, handler: method });
+      let timeoutId = setTimeout(() => {
+        if (this._eraseCallback(token)) {
+          reject("timeout");
+          promise.forceAbort = function() {};
+        }
+      }, opts.timeout);
+      this.pendingCallbacks.push({
+        token,
+        handler: function(response) {
+          clearTimeout(timeoutId);
+          if (response && response.error) {
+            reject(response.error);
           }
-        });
-      }
-    );
+          resolve(response);
+          promise.forceAbort = function() {};
+        }
+      });
+    });
 
     promise.forceAbort = () => {
       console.log("Promise aborted.");

@@ -48,9 +48,12 @@ api.listWorkspaces = async function({ siteKey }: any) {
 api.getWorkspaceDetails = async function({ siteKey, workspaceKey }: any) {
   const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
   let configuration: any;
-  try { configuration = await workspaceService.getConfigurationsData(); }
-  catch (e) {
-    return { error: `Could not load workspace configuration (website: ${siteKey}, workspace: ${workspaceKey}). ${e.message}`};
+  try {
+    configuration = await workspaceService.getConfigurationsData();
+  } catch (e) {
+    return {
+      error: `Could not load workspace configuration (website: ${siteKey}, workspace: ${workspaceKey}). ${e.message}`
+    };
   }
   try {
     hugoDownloader.download(configuration.hugover);
@@ -114,7 +117,14 @@ api.createCollectionItemKey = async function({ siteKey, workspaceKey, collection
   return workspaceService.createCollectionItemKey(collectionKey, collectionItemKey);
 };
 
-api.copyFilesIntoCollectionItem = async function({ siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath, files }: any) {
+api.copyFilesIntoCollectionItem = async function({
+  siteKey,
+  workspaceKey,
+  collectionKey,
+  collectionItemKey,
+  targetPath,
+  files
+}: any) {
   const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
   return workspaceService.copyFilesIntoCollectionItem(collectionKey, collectionItemKey, targetPath, files);
 };
@@ -124,19 +134,31 @@ api.deleteCollectionItem = async function({ siteKey, workspaceKey, collectionKey
   return workspaceService.deleteCollectionItem(collectionKey, collectionItemKey);
 };
 
-api.renameCollectionItem = async function({ siteKey, workspaceKey, collectionKey, collectionItemKey, collectionItemNewKey }: any) {
+api.renameCollectionItem = async function({
+  siteKey,
+  workspaceKey,
+  collectionKey,
+  collectionItemKey,
+  collectionItemNewKey
+}: any) {
   const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
   return workspaceService.renameCollectionItem(collectionKey, collectionItemKey, collectionItemNewKey);
 };
 
-api.getThumbnailForCollectionItemImage = async function({ siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath }: any) {
+api.getThumbnailForCollectionItemImage = async function({
+  siteKey,
+  workspaceKey,
+  collectionKey,
+  collectionItemKey,
+  targetPath
+}: any) {
   const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
   return workspaceService.getThumbnailForCollectionItemImage(collectionKey, collectionItemKey, targetPath);
 };
 
 api.createSite = async function(config: any) {
   await siteService.initializeSite(config);
-  configurationDataProvider.invalidateCache();  
+  configurationDataProvider.invalidateCache();
 };
 
 api.publishSite = async function({ siteKey, publishKey }: any) {

@@ -8,7 +8,7 @@ class IpcMainBinder {
   binded: boolean = false;
 
   bind() {
-    if(this.binded) return;
+    if (this.binded) return;
     for (var key in api) {
       if (!key.startsWith("_")) this.addListener(key);
     }
@@ -30,21 +30,17 @@ class IpcMainBinder {
       if (enableLogging) console.log("IPC_MAIN_BIND_LISTENER: " + key);
 
       this.handlers[key] = async (event: any, args: any) => {
-
         if (enableLogging) console.log("IPC_MAIN_REQUESTED: " + key, args);
-        
-        try{
-          const response = await api[key](args.data); 
+
+        try {
+          const response = await api[key](args.data);
           let pack = {
             key: key + "Response",
             token: args.token,
             response
           };
           event.sender.send("messageAsyncResponse", pack);
-        }
-        catch(error){
-          
-            
+        } catch (error) {
           let pack = {
             key: key + "Response",
             token: args.token,

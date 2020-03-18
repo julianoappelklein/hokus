@@ -1,2 +1,2 @@
-import CreateSiteDialog from './CreateSiteDialog';
+import CreateSiteDialog from "./CreateSiteDialog";
 export default CreateSiteDialog;

@@ -12,15 +12,12 @@ export class BaseService {
     if (this._notifyChangesTimeout) {
       clearTimeout(this._notifyChangesTimeout);
     }
-    setTimeout(
-      () => {
-        console.log("Model state has changed...", this);
-        for (let i = 0; i < this._listeners.length; i++) {
-          this._listeners[i].forceUpdate();
-        }
-      },
-      10
-    ); //throttle
+    setTimeout(() => {
+      console.log("Model state has changed...", this);
+      for (let i = 0; i < this._listeners.length; i++) {
+        this._listeners[i].forceUpdate();
+      }
+    }, 10); //throttle
   }
 
   registerListener(component: Component) {

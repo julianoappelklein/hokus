@@ -1,7 +1,7 @@
 export type FormCookbookSample = {
-    key: string,
-    title: string,
-    description: string,
-    fields: any,
-    values: {}
-}
+  key: string;
+  title: string;
+  description: string;
+  fields: any;
+  values: {};
+};

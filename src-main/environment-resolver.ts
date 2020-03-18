@@ -11,10 +11,10 @@ export const ARCHS = {
   x32: "x32"
 };
 
-type SupportedPlatforms = "linux"|"windows"|"macOS";
-type SupportedArchs = "x64"|"x32";
+type SupportedPlatforms = "linux" | "windows" | "macOS";
+type SupportedArchs = "x64" | "x32";
 
-export interface Environment{
+export interface Environment {
   platform: SupportedPlatforms;
   arch: SupportedArchs;
 }

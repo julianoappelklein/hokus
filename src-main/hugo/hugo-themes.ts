@@ -4,7 +4,6 @@
 // const path = require('path');
 // const themesRepo = 'https://github.com/gohugoio/hugoThemes.git';
 
-
 // class HugoThemeProvider{
 
 //     parseModules(modulesString/*: string*/)/*: Array<{url: string}>*/{
@@ -25,14 +24,14 @@
 //         //     let transformedData = jsonData.channel.items.map(x => {
 //         //         return 1
 //         //     });
-//         //     return transformedData;    
+//         //     return transformedData;
 //         // }
 //         // throw new Error('Could not list hugo Templates.')
 //     }
 
 //     /*:: cache: any; */
 //     async getList() {
-        
+
 //         if(this.cache!=null)
 //             return this.cache;
 

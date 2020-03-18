@@ -8,10 +8,10 @@ import { accordionTest } from "./accordion-test";
 
 export const samples = [
   allComponents,
-//   accordionTest,
+  //   accordionTest,
   blogPost,
   lotsOfString,
-//   nestTest,
+  //   nestTest,
   pizzaDeliveryMenu,
   websiteConfiguration
 ];

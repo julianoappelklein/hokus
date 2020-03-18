@@ -83,6 +83,7 @@
     "_electron-dist-mac": "npm run _copy-electron-code && electron-builder",
     "_flow-kill": "taskkill /F /IM flow.exe",
     "_flow": "flow",
+    "_prettify": "prettier --write \"**/*.ts\"",
     "dist-win": "npm run _copy-ace && rimraf dist && rimraf build && npm run _react-build && npm run _electron-dist-win",
     "dist-linux": "npm run _copy-ace && rimraf dist && rimraf build && npm run _react-build && npm run _electron-dist-linux-all",
     "dist-mac": "npm run _copy-ace && rimraf dist && rimraf build && npm run _react-build && npm run _electron-dist-mac",

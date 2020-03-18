@@ -106,6 +106,5 @@ export const nestTest: FormCookbookSample = {
   title: "Nest Test",
   description: "Nest test.",
   fields,
-  values: {
-  }
+  values: {}
 };

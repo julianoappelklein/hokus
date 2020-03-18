@@ -7,10 +7,9 @@ class SiteInitializerFactory {
     type = type.toLowerCase();
     if (type === "folder") {
       return new FolderSiteInitializer();
-    } else if(type === "git"){
+    } else if (type === "git") {
       return new GitSiteInitializer();
-    }
-    else{
+    } else {
       throw new Error("Site source builder not implemented.");
     }
   }

@@ -1,7 +1,6 @@
 import { WorkspaceHeader } from "./../../global-types";
 
 export interface SiteSource {
-  
   //list all workspaces - like branches from a git repository
   listWorkspaces(): Promise<Array<WorkspaceHeader>>;
 

@@ -106,6 +106,5 @@ export const accordionTest: FormCookbookSample = {
   title: "Accordion Test",
   description: "Accordion test.",
   fields,
-  values: {
-  }
+  values: {}
 };
