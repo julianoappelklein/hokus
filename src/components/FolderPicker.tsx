@@ -5,6 +5,7 @@ type FolderPickerProps = {
   onFolderSelected: (folder: string | null) => void;
   selectedFolder: string | null | undefined;
   label: string;
+  errorText?: string;
 };
 
 type FolderPickerState = {};
@@ -42,6 +43,7 @@ export default class FolderPicker extends React.Component<FolderPickerProps, Fol
           value={selectedFolder || ""}
           floatingLabelText={label}
           floatingLabelFixed
+          errorText={this.props.errorText}
           style={{ flex: "1" }}
           { ...{ onClick: this.handleTextFieldClick.bind(this) } as any }
         />

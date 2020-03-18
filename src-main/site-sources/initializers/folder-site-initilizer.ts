@@ -1,19 +1,19 @@
-import { SiteSourceBuilder } from "./types";
+import { SiteInitializer } from "./types";
 import { RawSiteConfig } from "./../../../global-types";
 import * as fs from "fs-extra";
 import pathHelper from "../../path-helper";
 import ThemeInstaller from "../../hugo/hugo-theme-installer";
 
-type BuildConfig = {
+type InitializeConfig = {
   folderPath: string;
   theme: string;
   key: string;
 };
 
-class FolderSiteSourceBuilder implements SiteSourceBuilder {
+export default class FolderSiteInitializer implements SiteInitializer {
   constructor() {}
 
-  async build(config: BuildConfig): Promise<void> {
+  async initialize(config: InitializeConfig): Promise<void> {
     //create a hokus config
     //create a config
 
@@ -42,5 +42,3 @@ class FolderSiteSourceBuilder implements SiteSourceBuilder {
     fs.writeFileSync(configPath, JSON.stringify(siteConfig, null, "  "), "utf8");
   }
 }
-
-export default FolderSiteSourceBuilder;

@@ -1,4 +1,6 @@
-const NodeGit = require("nodegit");
+import git from "isomorphic-git";
+import gitHttp from "isomorphic-git/http/node";
+const _fs = require("fs");
 import * as fs from "fs-extra";
 import * as glob from "glob";
 import * as path from "path";
@@ -22,7 +24,7 @@ class ThemeInstaller {
     let themePath = path.join(destPath, "themes", themeKey);
     await fs.ensureDir(themePath);
 
-    await NodeGit.Clone(repoUrl, themePath);
+    await git.clone({ fs: _fs, http: gitHttp, dir: themePath, url: repoUrl });
 
     //copy "sample" or "example" site to dest
     let sampleSitesPath = ["exampleSite", "sampleSite"].map(x => path.join(themePath, x));

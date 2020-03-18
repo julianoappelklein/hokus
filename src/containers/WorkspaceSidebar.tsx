@@ -163,7 +163,7 @@ class WorkspaceSidebar extends React.Component<WorkspaceSidebarProps, WorkspaceS
 
     //append workspace widget
     menus.push({
-      title: "Foo Current Workspace",
+      title: "Current Workspace",
       widget: (
         <WorkspaceWidget
           siteConfig={this.state.site}

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { TextField } from 'material-ui';
 import FolderPicker from './../../../../../components/FolderPicker';
+import { FormItem } from '../../../../../components/FormItem';
 
 type FolderSourceFormModel = {
     folderPath: string,
@@ -18,17 +19,17 @@ type FolderSourceFormState = {
 
 export default class FolderSourceForm extends React.Component<FolderSourceFormProps,FolderSourceFormState>{
     
-    validateModel(model: FolderSourceFormModel){
-        let isValid = true;
+    validateModel(model: FolderSourceFormModel): {[key: string]: string} {
+        const errors: any = {};
         if(model.folderPath==null||model.folderPath.trim().length===0){
-            isValid = false;
+            errors.folderPath = 'Folder path is required.';
         }
-        return isValid;
+        return errors;
     }
 
     updateModel(modelUpdate: {}){
         let data = Object.assign({}, this.props.model, modelUpdate);
-        let valid = this.validateModel(data);
+        let valid = Object.keys(this.validateModel(data)).length === 0;
         this.props.onFormChange(data, valid);
     }
 
@@ -44,23 +45,27 @@ export default class FolderSourceForm extends React.Component<FolderSourceFormPr
 
         let { model={} as any } = this.props;
 
+        const errors = this.validateModel(model);
+
         return (<React.Fragment>
-            <div>
+            <FormItem>
                 <FolderPicker
                     label={"Site Folder *"}
                     selectedFolder={model.folderPath}
+                    errorText={errors.folderPath}
                     onFolderSelected={this.handleFolderSelected} />
-            </div>
-            <div>
+            </FormItem>
+            <FormItem>
                 <TextField
                     floatingLabelFixed={true}
                     value={model.theme||''}
                     onChange ={this.handleRepoURLChange}
+                    errorText={errors.theme}
                     fullWidth={true}
                     placeholder='Only for empty site folders'
                     floatingLabelText={'Theme Repository URL'}
                 />
-            </div>
+            </FormItem>
         </React.Fragment>)
     }
 

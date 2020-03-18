@@ -24,12 +24,12 @@ export class BaseService {
   }
 
   registerListener(component: Component) {
-    console.log("registering listener");
+    //console.log("registering listener");
     this._listeners.push(component);
   }
 
   unregisterListener(component: Component) {
-    console.log("unregistering listener");
+    //console.log("unregistering listener");
     let index = this._listeners.indexOf(component);
     if (index >= 0) this._listeners.splice(index, 1);
   }

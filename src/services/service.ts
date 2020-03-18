@@ -25,56 +25,43 @@ class Service extends BaseService {
     this._siteAndWorkspaceDataPromise = null;
   }
 
-  getConfigurations(refetch?: boolean): Promise<Configurations> {
-    if (this._configurations) {
-      if (refetch === true) this._configurations = null;
-      else return Promise.resolve(this._configurations);
+  async getConfigurations(refetch?: boolean): Promise<Configurations> {
+    if (this._configurations!=null) {
+      if (refetch === true) {
+        this._configurations = null;
+      }
+      else {
+        return this._configurations;
+      }
     }
     if (!this._configurationsPromise) {
-      this._configurationsPromise = this.api
-        .getConfigurations({ invalidateCache: refetch || false })
-        .then(configurations => {
-          this._configurations = configurations;
-          this._configurationsPromise = null;
-          return configurations;
-        });
+      this._configurationsPromise = (async () => {
+        const configurations = await this.api.getConfigurations({ invalidateCache: refetch || false });
+        this._configurations = configurations;
+        this._configurationsPromise = null;
+        return configurations;
+      })();
     }
     return this._configurationsPromise;
   }
 
-  getSiteAndWorkspaceData(siteKey: string, workspaceKey: string): Promise<SiteAndWorkspaceData> {
-    var bundle: Partial<SiteAndWorkspaceData> = {};
-
+  async getSiteAndWorkspaceData(siteKey: string, workspaceKey: string): Promise<SiteAndWorkspaceData> {
     if (this._siteAndWorkspaceDataPromise == null) {
-      let errors = [];
-      this._siteAndWorkspaceDataPromise = this.getConfigurations()
-        .then(configurations => {
-          bundle.configurations = configurations;
-          //$FlowFixMe
-          bundle.site = configurations.sites.find(site => {
-            return site.key === siteKey;
-          });
-          //$FlowFixMe
-          return this.api.listWorkspaces(siteKey);
-        })
-        .then(workspaces => {
-          bundle.siteWorkspaces = workspaces;
-          bundle.workspace = workspaces||[].find((workspace: WorkspaceHeader) => {
-            return workspace.key === workspaceKey;
-          });
-        })
-        .then(() => {
-          return this.api.getWorkspaceDetails(siteKey, workspaceKey);
-        })
-        .then(workspaceDetails => {
-          bundle.workspaceDetails = workspaceDetails;
+      this._siteAndWorkspaceDataPromise = (async () =>{
+        try{
+          const configurations = await this.getConfigurations();
+          const site = configurations.sites.find(site => site.key === siteKey);
+          const siteWorkspaces = await this.api.listWorkspaces(siteKey);
+          const workspace = (siteWorkspaces||[]).find((workspace: WorkspaceHeader) => workspace.key === workspaceKey);
+          const workspaceDetails = await this.api.getWorkspaceDetails(siteKey, workspaceKey);
           this._siteAndWorkspaceDataPromise = null;
-          return bundle;
-        })
-        .catch(error => {
+          return { configurations, site, siteWorkspaces, workspace, workspaceDetails };
+        }
+        catch(e){
           this._siteAndWorkspaceDataPromise = null;
-          return Promise.reject(error);
-        });
+          throw e;
+        }
+      })();
     }
 
     return this._siteAndWorkspaceDataPromise;

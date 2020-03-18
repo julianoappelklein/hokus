@@ -1,31 +1,47 @@
-import siteSourceFactory from "./../../site-sources/site-source-factory";
-import { SiteConfig, WorkspaceHeader } from "./../../../global-types";
+import { siteSourceFactory, SiteSource } from "./../../site-sources";
+import { SiteConfig, WorkspaceHeader, Configurations } from "./../../../global-types";
 import pathHelper from "../../path-helper";
 import publisherFactory from "../../publishers/publisher-factory";
+import configurationDataProvider from "./../../configuration-data-provider";
+import siteInitializerFactory from "../../site-sources/initializers/site-initializer-factory";
 
 class SiteService {
-  _config: SiteConfig;
-
-  constructor(config: SiteConfig) {
-    this._config = config;
+  async _getSiteConfig(siteKey: string): Promise<SiteConfig> {
+    const config = await configurationDataProvider.getPromise();
+    if (config.type === "EmptyConfigurations") throw new Error("The configuration is empty.");
+    const cfg = config as Configurations;
+    const siteConfig = cfg.sites.find(x => x.key === siteKey);
+    if (siteConfig == null) {
+      throw new Error("Could not find config.");
+    }
+    return siteConfig;
   }
 
-  _getSiteSource() {
-    return siteSourceFactory.get(this._config.key, this._config.source);
+  async _getSiteSource(siteKey: string): Promise<SiteSource> {
+    const siteConfig = await this._getSiteConfig(siteKey);
+    return siteSourceFactory.get(siteKey, siteConfig.source);
   }
 
   //List all workspaces
-  async listWorkspaces(): Promise<Array<WorkspaceHeader>> {
-    return this._getSiteSource().listWorkspaces();
+  async listWorkspaces(siteKey: string): Promise<Array<WorkspaceHeader>> {
+    const siteSource = await this._getSiteSource(siteKey);
+    return siteSource.listWorkspaces();
   }
 
-  async getWorkspaceHead(workspaceKey: string): Promise<WorkspaceHeader | undefined> {
-    const workspaces = await this.listWorkspaces();
+  async getWorkspaceHead(siteKey: string, workspaceKey: string): Promise<WorkspaceHeader | undefined> {
+    const siteSource = await this._getSiteSource(siteKey);
+    const workspaces = await siteSource.listWorkspaces();
     return workspaces.find((x: any) => x.key === workspaceKey);
   }
 
-  async mountWorkspace(workspaceKey: string): Promise<void> {
-    await this._getSiteSource().mountWorkspace(workspaceKey);
+  async mountWorkspace(siteKey: string, workspaceKey: string): Promise<void> {
+    const siteSource = await this._getSiteSource(siteKey);
+    await siteSource.mountWorkspace(workspaceKey);
+  }
+
+  async initializeSite(config: any) {
+    const siteInitializer = siteInitializerFactory.get(config.type);
+    await siteInitializer.initialize(config);
   }
 
   _findFirstMatchOrDefault<T extends { key: string }>(arr: Array<T>, key: string): T {
@@ -48,8 +64,9 @@ class SiteService {
     }
   }
 
-  publish(publishKey: string): Promise<void> {
-    let publishConfig = this._findFirstMatchOrDefault(this._config.publish, publishKey);
+  async publish(siteKey: string, publishKey: string): Promise<void> {
+    const siteConfig = await this._getSiteConfig(siteKey);
+    let publishConfig = this._findFirstMatchOrDefault(siteConfig.publish, publishKey);
     if (publishConfig == null) throw new Error(`Could not find a publisher config for key '${publishKey}'.`);
     if (publishConfig.config == null) throw new Error(`The matcher publisher config does not have a property config.`);
 
@@ -57,7 +74,7 @@ class SiteService {
     if (from == null) throw new Error("Could not resolve the last build directory.");
 
     let publisher = publisherFactory.getPublisher(publishConfig.config);
-    return publisher.publish({ siteKey: this._config.key, publishKey, from });
+    return publisher.publish({ siteKey: siteConfig.key, publishKey, from });
   }
 }
 

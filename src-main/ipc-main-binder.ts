@@ -29,10 +29,22 @@ class IpcMainBinder {
     if (api.hasOwnProperty(key)) {
       if (enableLogging) console.log("IPC_MAIN_BIND_LISTENER: " + key);
 
-      this.handlers[key] = function(event: any, args: any) {
-        let context: any = {};
+      this.handlers[key] = async (event: any, args: any) => {
 
-        context.reject = function(error: any) {
+        if (enableLogging) console.log("IPC_MAIN_REQUESTED: " + key, args);
+        
+        try{
+          const response = await api[key](args.data); 
+          let pack = {
+            key: key + "Response",
+            token: args.token,
+            response
+          };
+          event.sender.send("messageAsyncResponse", pack);
+        }
+        catch(error){
+          
+            
           let pack = {
             key: key + "Response",
             token: args.token,
@@ -40,21 +52,7 @@ class IpcMainBinder {
           };
           event.sender.send("messageAsyncResponse", pack);
           console.log("IPC_MAIN_FAIL: " + key, pack);
-        };
-
-        context.resolve = function(response: any) {
-          let pack = {
-            key: key + "Response",
-            token: args.token,
-            response
-          };
-          event.sender.send("messageAsyncResponse", pack);
-          console.log("IPC_MAIN_RESPONDED: " + key, pack);
-        };
-
-        if (enableLogging) console.log("IPC_MAIN_REQUESTED: " + key, args);
-
-        api[key](args.data, context);
+        }
       };
     } else {
       throw `Could not find API method for key '${key}'.`;

@@ -1,19 +1,18 @@
-import { SiteSource } from "../../global-types";
+import { SiteSource } from "./types";
 import FolderSiteSource from "./folder-site-source";
-const GitSiteSource = require("./git-site-source");
+import GitSiteSource from "./git-site-source";
 
 class SiteSourceFactory {
-  get(key: string, config: any): SiteSource<any> {
-    let Type = this.getType(config);
+  get(key: string, config: any): SiteSource {
+    let Type = this.getType(config.type);
     let instance /*:any*/ = new Type({ ...config, key });
     return instance;
   }
 
-  getType(config: any): any {
-    let type = config.type.toLowerCase();
+  getType(type: string): any {
     if (type === "folder") return FolderSiteSource;
     else if (type === "git") return GitSiteSource;
-    else throw new Error(`Site source (${config.type}) not implemented.`);
+    else throw new Error(`Site source (${type}) not implemented.`);
   }
 }
 

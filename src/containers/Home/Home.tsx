@@ -211,22 +211,19 @@ class Home extends React.Component<HomeProps, HomeState> {
     this.setState({ createSiteDialog: true });
   }
 
-  handleCreateSiteSubmit = (data: any) => {
-    this.setState({ createSiteDialog: false, blockingOperation: "Creating site..." });
-    service.api
-      .createSite(data)
-      .then(() => {
-        return service.getConfigurations(true);
-      })
-      .then(configurations => {
-        this.setState({ configurations });
-      })
-      .catch(() => {
-        alert("Failed to create site");
-      })
-      .then(() => {
-        this.setState({ blockingOperation: null });
-      });
+  handleCreateSiteSubmit = async (data: any) => {
+    this.setState({ blockingOperation: "Creating site..." });
+    try{
+      await service.api.createSite(data);
+      const configurations = await service.getConfigurations(true);
+      this.setState({ configurations, blockingOperation: null, createSiteDialog: false });
+      return true;
+    }
+    catch{
+      alert("Failed to create site");
+      this.setState({ blockingOperation: null });
+      return false;
+    } 
   };
 
   handlePublishSiteCancelClick = () => {

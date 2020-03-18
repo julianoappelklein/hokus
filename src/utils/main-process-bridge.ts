@@ -90,6 +90,7 @@ class MainProcessBridge {
   _emptyFunction() {}
 
   request(method: string, data: any, opts: { timeout: number } = { timeout: 10000 }): AbortablePromise<any> {
+    //console.log(`Invoking ${method}.`);
     let _reject: any;
     let token = this._createToken();
     let promise: any = new Promise(

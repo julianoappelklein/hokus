@@ -6,91 +6,31 @@ import configurationDataProvider from "./configuration-data-provider";
 import SiteService from "./services/site/site-service";
 import WorkspaceService from "./services/workspace/workspace-service";
 import * as fs from "fs-extra";
-import siteSourceBuilderFactory from "./site-sources/builders/site-source-builder-factory";
 import { hugoDownloader } from "./hugo/hugo-downloader";
 import { dirname } from "path";
 import { shell } from "electron";
 
-interface APIContext {
-  resolve: (data: any) => void;
-  reject: (error: any) => void;
-}
+const siteService = new SiteService();
 
-type CallbackTyped<T> = (error: any, data: T) => void;
+let api: { [key: string]: (payload: any) => Promise<any> } = {};
 
-let api: { [key: string]: (payload: any, context: APIContext) => void | Promise<void> } = {};
-
-function bindResponseToContext(promise: Promise<any>, context: any) {
-  promise.then(
-    (result: any) => {
-      context.resolve(result);
-    },
-    error => {
-      context.reject(error);
-    }
-  );
-}
-
-function getSiteService(siteKey: string, callback: CallbackTyped<SiteService>) {
-  return getSiteServicePromise(siteKey).then(
-    data => {
-      callback(null, data);
-    },
-    e => {
-      callback(e, null as any);
-    }
-  );
-}
-
-function getSiteServicePromise(siteKey: string): Promise<SiteService> {
-  return new Promise((resolve, reject) => {
-    configurationDataProvider.get(function(err, configurations) {
-      if (configurations.type === "EmptyConfigurations") throw new Error("Configurations is empty.");
-      if (err) {
-        reject(err);
-        return;
-      }
-      let siteData = configurations.sites.find(x => x.key === siteKey);
-      if (siteData == null) throw new Error("Could not find site is empty.");
-      let siteService = new SiteService(siteData);
-      resolve(siteService);
-    });
-  });
-}
-
-function getWorkspaceService(
+async function getWorkspaceService(
   siteKey: string,
-  workspaceKey: string,
-  callback: CallbackTyped<{ siteService: SiteService; workspaceService: WorkspaceService }>
-) {
-  return getWorkspaceServicePromise(siteKey, workspaceKey).then(
-    data => {
-      callback(null, data);
-    },
-    e => {
-      callback(e, null as any);
-    }
-  );
-}
-
-async function getWorkspaceServicePromise(siteKey: string, workspaceKey: string) {
-  let siteService: SiteService = await getSiteServicePromise(siteKey);
-  let workspaceHead = await siteService.getWorkspaceHead(workspaceKey);
-  if (workspaceHead == null) return Promise.reject(new Error("Could not find workspace."));
+  workspaceKey: string
+): Promise<{ siteService: SiteService; workspaceService: WorkspaceService }> {
+  let workspaceHead = await siteService.getWorkspaceHead(siteKey, workspaceKey);
+  if (workspaceHead == null) throw new Error("Could not find workspace.");
   else {
     let workspaceService = new WorkspaceService(workspaceHead.path, workspaceHead.key, siteKey);
     return { siteService, workspaceService };
   }
 }
 
-api.getConfigurations = function(options: any, context: any) {
-  configurationDataProvider.get(function(err, data) {
-    if (err) context.reject(err);
-    else context.resolve(data);
-  }, options);
+api.getConfigurations = async function(options: any) {
+  return configurationDataProvider.getPromise(options);
 };
 
-api.openFileExplorer = function({ path }: any, context: any) {
+api.openFileExplorer = async function({ path }: any) {
   try {
     let lstat = fs.lstatSync(path);
     if (lstat.isDirectory()) {
@@ -101,312 +41,106 @@ api.openFileExplorer = function({ path }: any, context: any) {
   } catch (e) {}
 };
 
-api.listWorkspaces = async function({ siteKey }: any, context: any) {
-  let service = await getSiteServicePromise(siteKey);
-  let workspaces = await service.listWorkspaces();
-  context.resolve(workspaces);
+api.listWorkspaces = async function({ siteKey }: any) {
+  return siteService.listWorkspaces(siteKey);
 };
 
-api.getWorkspaceDetails = async function({ siteKey, workspaceKey }: any, context: any) {
-  const { workspaceService } = await getWorkspaceServicePromise(siteKey, workspaceKey);
+api.getWorkspaceDetails = async function({ siteKey, workspaceKey }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
   let configuration: any;
-  try {
-    configuration = await workspaceService.getConfigurationsData();
-  } catch (e) {
-    context.resolve({
-      error: `Could not load workspace configuration (website: ${siteKey}, workspace: ${workspaceKey}). ${e.message}`
-    });
-    return;
+  try { configuration = await workspaceService.getConfigurationsData(); }
+  catch (e) {
+    return { error: `Could not load workspace configuration (website: ${siteKey}, workspace: ${workspaceKey}). ${e.message}`};
   }
   try {
     hugoDownloader.download(configuration.hugover);
   } catch (e) {
     // warn about HugoDownloader error?
   }
-  context.resolve(configuration);
+  return configuration;
 };
 
-api.mountWorkspace = async function({ siteKey, workspaceKey }: any, context: any) {
-  let siteService = await getSiteServicePromise(siteKey);
-  bindResponseToContext(siteService.mountWorkspace(workspaceKey), context);
+api.mountWorkspace = async function({ siteKey, workspaceKey }: any) {
+  siteService.mountWorkspace(siteKey, workspaceKey);
 };
 
-api.serveWorkspace = function({ siteKey, workspaceKey, serveKey }: any, context: any) {
-  getWorkspaceService(siteKey, workspaceKey, function(err, { workspaceService }) {
-    if (err) {
-      context.reject(err);
-      return;
-    }
-    workspaceService
-      .serve(serveKey)
-      .then(
-        () => {
-          shell.openItem("http://localhost:1313");
-          context.resolve();
-        },
-        () => {
-          context.reject(err);
-          return;
-        }
-      )
-      .catch((error: any) => {
-        context.reject(error);
-      });
-  });
+api.serveWorkspace = async function({ siteKey, workspaceKey, serveKey }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  await workspaceService.serve(serveKey);
+  shell.openItem("http://localhost:1313");
 };
 
-api.buildWorkspace = function({ siteKey, workspaceKey, buildKey }: any, context: any) {
-  getWorkspaceService(siteKey, workspaceKey, function(err, { workspaceService }) {
-    if (err) {
-      context.reject(err);
-      return;
-    }
-    workspaceService
-      .build(buildKey)
-      .then(
-        () => {
-          context.resolve();
-        },
-        () => {
-          context.reject(err);
-          return;
-        }
-      )
-      .catch((error: any) => {
-        context.reject(error);
-      });
-  });
+api.buildWorkspace = async function({ siteKey, workspaceKey, buildKey }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  await workspaceService.build(buildKey);
 };
 
-api.getSingle = function({ siteKey, workspaceKey, singleKey }: any, context: any) {
-  getWorkspaceService(siteKey, workspaceKey, function(err, { workspaceService }) {
-    if (err) {
-      context.reject(err);
-      return;
-    }
-    workspaceService
-      .getSingle(singleKey)
-      .then((r: any) => {
-        context.resolve(r);
-      })
-      .catch((error: any) => {
-        context.reject(error);
-      });
-  });
+api.getSingle = async function({ siteKey, workspaceKey, singleKey }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  const single = await workspaceService.getSingle(singleKey);
+  return single;
 };
 
-api.updateSingle = function({ siteKey, workspaceKey, singleKey, document }: any, context: any) {
-  getWorkspaceService(siteKey, workspaceKey, function(err, { workspaceService }) {
-    if (err) {
-      context.reject(err);
-      return;
-    }
-    workspaceService
-      .updateSingle(singleKey, document)
-      .then((r: any) => {
-        context.resolve(r);
-      })
-      .catch((error: any) => {
-        context.reject(error);
-      });
-  });
+api.updateSingle = async function({ siteKey, workspaceKey, singleKey, document }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  const result = await workspaceService.updateSingle(singleKey, document);
+  return result;
 };
 
-api.listCollectionItems = function({ siteKey, workspaceKey, collectionKey }: any, context: any) {
-  getWorkspaceService(siteKey, workspaceKey, function(err, { workspaceService }) {
-    if (err) {
-      context.reject(err);
-      return;
-    }
-    workspaceService
-      .listCollectionItems(collectionKey)
-      .then((result: any) => {
-        context.resolve(result);
-      })
-      .catch((error: any) => {
-        context.reject(error);
-      });
-  });
+api.listCollectionItems = async function({ siteKey, workspaceKey, collectionKey }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  return workspaceService.listCollectionItems(collectionKey);
 };
 
-api.getCollectionItem = function({ siteKey, workspaceKey, collectionKey, collectionItemKey }: any, context: any) {
-  getWorkspaceService(siteKey, workspaceKey, function(err, { workspaceService }) {
-    if (err) {
-      context.reject(err);
-      return;
-    }
-    workspaceService
-      .getCollectionItem(collectionKey, collectionItemKey)
-      .then((result: any) => {
-        context.resolve(result);
-      })
-      .catch((error: any) => {
-        context.reject(error);
-      });
-  });
+api.getCollectionItem = async function({ siteKey, workspaceKey, collectionKey, collectionItemKey }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  return workspaceService.getCollectionItem(collectionKey, collectionItemKey);
 };
 
-api.createCollectionItemKey = function({ siteKey, workspaceKey, collectionKey, collectionItemKey }: any, context: any) {
-  getWorkspaceService(siteKey, workspaceKey, function(err, { workspaceService }) {
-    if (err) {
-      context.reject(err);
-      return;
-    }
-    workspaceService
-      .createCollectionItemKey(collectionKey, collectionItemKey)
-      .then((result: any) => {
-        context.resolve(result);
-      })
-      .catch((error: any) => {
-        context.reject(error);
-      });
-  });
+api.createCollectionItemKey = async function({ siteKey, workspaceKey, collectionKey, collectionItemKey }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  const item = await workspaceService.createCollectionItemKey(collectionKey, collectionItemKey);
+  return item;
 };
 
-api.updateCollectionItem = function(
-  { siteKey, workspaceKey, collectionKey, collectionItemKey, document }: any,
-  context: any
-) {
-  getWorkspaceService(siteKey, workspaceKey, function(err, { workspaceService }) {
-    if (err) {
-      context.reject(err);
-      return;
-    }
-    workspaceService
-      .updateCollectionItem(collectionKey, collectionItemKey, document)
-      .then((result: any) => {
-        context.resolve(result);
-      })
-      .catch((error: any) => {
-        context.reject(error);
-      });
-  });
+api.updateCollectionItem = async function({ siteKey, workspaceKey, collectionKey, collectionItemKey, document }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  const result = await workspaceService.updateCollectionItem(collectionKey, collectionItemKey, document);
+  return result;
 };
 
-api.createCollectionItemKey = function({ siteKey, workspaceKey, collectionKey, collectionItemKey }: any, context: any) {
-  getWorkspaceService(siteKey, workspaceKey, function(err, { workspaceService }) {
-    if (err) {
-      context.reject(err);
-      return;
-    }
-    workspaceService
-      .createCollectionItemKey(collectionKey, collectionItemKey)
-      .then((result: any) => {
-        context.resolve(result);
-      })
-      .catch((error: any) => {
-        context.reject(error);
-      });
-  });
+api.createCollectionItemKey = async function({ siteKey, workspaceKey, collectionKey, collectionItemKey }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  return workspaceService.createCollectionItemKey(collectionKey, collectionItemKey);
 };
 
-api.copyFilesIntoCollectionItem = function(
-  { siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath, files }: any,
-  context: any
-) {
-  getWorkspaceService(siteKey, workspaceKey, function(err, { workspaceService }) {
-    if (err) {
-      context.reject(err);
-      return;
-    }
-    workspaceService
-      .copyFilesIntoCollectionItem(collectionKey, collectionItemKey, targetPath, files)
-      .then((result: any) => {
-        context.resolve(result);
-      })
-      .catch((error: any) => {
-        context.reject(error);
-      });
-  });
+api.copyFilesIntoCollectionItem = async function({ siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath, files }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  return workspaceService.copyFilesIntoCollectionItem(collectionKey, collectionItemKey, targetPath, files);
 };
 
-api.deleteCollectionItem = function({ siteKey, workspaceKey, collectionKey, collectionItemKey }: any, context: any) {
-  getWorkspaceService(siteKey, workspaceKey, function(err, { workspaceService }) {
-    if (err) {
-      context.reject(err);
-      return;
-    }
-    workspaceService
-      .deleteCollectionItem(collectionKey, collectionItemKey)
-      .then((result: any) => {
-        context.resolve({ deleted: result });
-      })
-      .catch((error: any) => {
-        context.reject(error);
-      });
-  });
+api.deleteCollectionItem = async function({ siteKey, workspaceKey, collectionKey, collectionItemKey }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  return workspaceService.deleteCollectionItem(collectionKey, collectionItemKey);
 };
 
-api.renameCollectionItem = function(
-  { siteKey, workspaceKey, collectionKey, collectionItemKey, collectionItemNewKey }: any,
-  context: any
-) {
-  getWorkspaceService(siteKey, workspaceKey, function(err, { workspaceService }) {
-    if (err) {
-      context.reject(err);
-      return;
-    }
-    workspaceService
-      .renameCollectionItem(collectionKey, collectionItemKey, collectionItemNewKey)
-      .then((result: any) => {
-        context.resolve(result);
-      })
-      .catch((error: any) => {
-        context.reject(error);
-      });
-  });
+api.renameCollectionItem = async function({ siteKey, workspaceKey, collectionKey, collectionItemKey, collectionItemNewKey }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  return workspaceService.renameCollectionItem(collectionKey, collectionItemKey, collectionItemNewKey);
 };
 
-api.getThumbnailForCollectionItemImage = function(
-  { siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath }: any,
-  promise: any
-) {
-  getWorkspaceService(siteKey, workspaceKey, function(err, { workspaceService }) {
-    if (err) {
-      promise.reject(err);
-      return;
-    }
-    workspaceService
-      .getThumbnailForCollectionItemImage(collectionKey, collectionItemKey, targetPath)
-      .then((result: any) => {
-        promise.resolve(result);
-      })
-      .catch((error: any) => {
-        promise.reject(error);
-      });
-  });
+api.getThumbnailForCollectionItemImage = async function({ siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  return workspaceService.getThumbnailForCollectionItemImage(collectionKey, collectionItemKey, targetPath);
 };
 
-api.createSite = function(config: any, context: any) {
-  siteSourceBuilderFactory
-    .get(config.sourceType)
-    .build(config)
-    .then(
-      () => {
-        configurationDataProvider.invalidateCache();
-        context.resolve();
-      },
-      (err: any) => {
-        context.reject(err);
-      }
-    );
+api.createSite = async function(config: any) {
+  await siteService.initializeSite(config);
+  configurationDataProvider.invalidateCache();  
 };
 
-api.publishSite = function({ siteKey, publishKey }: any, context: any) {
-  getSiteService(siteKey, function(err, siteService) {
-    if (err) {
-      context.reject(err);
-      return;
-    }
-    siteService.publish(publishKey).then(
-      () => {
-        context.resolve();
-      },
-      () => {
-        context.reject(err);
-      }
-    );
-  });
+api.publishSite = async function({ siteKey, publishKey }: any) {
+  await siteService.publish(siteKey, publishKey);
 };
 
 export default api;
