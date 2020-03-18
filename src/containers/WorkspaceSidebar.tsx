@@ -25,14 +25,11 @@ interface WorkspaceWidgetProps {
   onClick: () => void;
   siteConfig?: SiteConfig;
   workspaceConfig?: WorkspaceConfig;
-};
+}
 
 const WorkspaceWidget: React.FC<WorkspaceWidgetProps> = ({ onClick, siteConfig, workspaceConfig }) => {
-
   const serverOptions =
-    workspaceConfig != null && workspaceConfig.serve != null
-      ? workspaceConfig.serve.map(x => x.key || "default")
-      : [];
+    workspaceConfig != null && workspaceConfig.serve != null ? workspaceConfig.serve.map(x => x.key || "default") : [];
 
   return (
     <MenuBorder>
@@ -45,13 +42,13 @@ const WorkspaceWidget: React.FC<WorkspaceWidgetProps> = ({ onClick, siteConfig, 
             rightIcon={<IconActionSetting color={translucentColor} />}
           />
         ) : (
-            <ListItem
-              primaryText={"Please"}
-              secondaryText={"select a workspace"}
-              onClick={onClick}
-              rightIcon={<IconActionSetting color={translucentColor} />}
-            />
-          )}
+          <ListItem
+            primaryText={"Please"}
+            secondaryText={"select a workspace"}
+            onClick={onClick}
+            rightIcon={<IconActionSetting color={translucentColor} />}
+          />
+        )}
       </List>
       {siteConfig != null && workspaceConfig != null ? (
         <div style={{ display: "flex" }}>
@@ -71,7 +68,7 @@ const WorkspaceWidget: React.FC<WorkspaceWidgetProps> = ({ onClick, siteConfig, 
             }}
           />
           <FlatButton
-            onClick={function () {
+            onClick={function() {
               service.openWorkspaceDir(siteConfig.key, workspaceConfig.key);
             }}
             style={{ flex: 1, minWidth: 40 }}
@@ -84,7 +81,7 @@ const WorkspaceWidget: React.FC<WorkspaceWidgetProps> = ({ onClick, siteConfig, 
       ) : null}
     </MenuBorder>
   );
-}
+};
 
 type WorkspaceSidebarProps = {
   siteKey: string | null | undefined;

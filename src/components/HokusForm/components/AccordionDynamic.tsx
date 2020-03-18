@@ -1,37 +1,43 @@
-import React from 'react';
-import { Accordion, AccordionItem } from './../../Accordion'
-import { ListItem, FlatButton, List, RaisedButton, MenuItem, IconMenu } from 'material-ui';
+import React from "react";
+import { Accordion, AccordionItem } from "./../../Accordion";
+import { ListItem, FlatButton, List, RaisedButton, MenuItem, IconMenu } from "material-ui";
 import IconAdd from "material-ui/svg-icons/content/add";
 import IconSort from "material-ui/svg-icons/editor/drag-handle";
 import IconChevronRight from "material-ui/svg-icons/navigation/chevron-right";
 import IconFileFolder from "material-ui/svg-icons/file/folder";
 import IconMore from "material-ui/svg-icons/navigation/more-vert";
-import dynamicComponentUtils from './../components/shared/dynamic-component-utils'
-import { DynamicFormNode, ComponentProps, FieldBase, CrawlContext, NormalizeStateContext, ExtendFieldContext } from '../../HoForm';
-import { BaseDynamic } from '../../HoForm';
-import { hasValidationErrorInTree } from '../../HoForm/utils';
+import dynamicComponentUtils from "./../components/shared/dynamic-component-utils";
+import {
+  DynamicFormNode,
+  ComponentProps,
+  FieldBase,
+  CrawlContext,
+  NormalizeStateContext,
+  ExtendFieldContext
+} from "../../HoForm";
+import { BaseDynamic } from "../../HoForm";
+import { hasValidationErrorInTree } from "../../HoForm/utils";
 
 const Fragment = React.Fragment;
 
 type AccordionDynamicField = {
-  title: string,
-  fields: Array<any>,
-  groupdata: boolean | null,
-  itemTitleKey?: string,
-  itemTitleFallbackKey?: string
+  title: string;
+  fields: Array<any>;
+  groupdata: boolean | null;
+  itemTitleKey?: string;
+  itemTitleFallbackKey?: string;
 } & FieldBase;
 
 type AccordionDynamicState = {
-  dragFromIndex: number | null,
-  dragToIndex: number | null,
-  hasError?: boolean,
-  menuOpen: boolean,
-  menuIndex: number
-}
+  dragFromIndex: number | null;
+  dragToIndex: number | null;
+  hasError?: boolean;
+  menuOpen: boolean;
+  menuIndex: number;
+};
 
 class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynamicState> {
-
-  documentMouseUpListener: (e: any) => void = (e) => { };
+  documentMouseUpListener: (e: any) => void = e => {};
 
   constructor(props: ComponentProps<AccordionDynamicField>) {
     super(props);
@@ -43,15 +49,19 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
   }
 
   getType() {
-    return 'accordion';
+    return "accordion";
   }
 
   normalizeState({ state, field, stateBuilder }: NormalizeStateContext<AccordionDynamicField>) {
     dynamicComponentUtils.normalizeStateForArrayOfObject(state, field, stateBuilder);
   }
 
-  buildBreadcumbFragment(currentNode: DynamicFormNode<AccordionDynamicField>, items: Array<{ label: string, node: (DynamicFormNode<FieldBase> | null) }>): void {
-    if (items.length > 0) { //has a previous item
+  buildBreadcumbFragment(
+    currentNode: DynamicFormNode<AccordionDynamicField>,
+    items: Array<{ label: string; node: DynamicFormNode<FieldBase> | null }>
+  ): void {
+    if (items.length > 0) {
+      //has a previous item
       var previousItem = items[items.length - 1];
       const parent = (previousItem as any).node.parent as any;
       const indexKey = this.genIndexKey(currentNode.field);
@@ -61,12 +71,11 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
         node: { ...currentNode, state: { ...currentNode.state, [indexKey]: index } }
       });
     }
-    items.push({ label: currentNode.field.title, node: (currentNode/*: any*/) });
+    items.push({ label: currentNode.field.title, node: currentNode /*: any*/ });
   }
 
   buildDisplayPathFragment(node: any, nodeLevel: any, nodes: any) {
-    if (nodeLevel > 0)
-      return node.field.key + '/' + node.state[this.genIndexKey(node.field)];
+    if (nodeLevel > 0) return node.field.key + "/" + node.state[this.genIndexKey(node.field)];
     return node.field.key;
   }
 
@@ -85,7 +94,7 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
     context.form.stateBuilder.setLevelState(newData, context.node.field.fields);
     copy.push(newData);
     context.setValue(copy);
-  };
+  }
 
   handleCloneItemAfterClick = (e: any) => {
     let context = this.props.context;
@@ -106,11 +115,11 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
     copy.splice(index + 1, 0, newData);
     context.setValue(copy);
     this.setState({ menuOpen: false });
-  }
+  };
 
   handleRemoveItemClick = (e: any) => {
     setTimeout(() => this.removeItemAtIndex(this.state.menuIndex), 1);
-  }
+  };
 
   removeItemAtIndex(i: number) {
     let context = this.props.context;
@@ -119,9 +128,8 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
     context.setValue(copy);
   }
 
-  swapItems({ index, otherIndex }: { index: number, otherIndex: number }) {
-    if (index === otherIndex)
-      return;
+  swapItems({ index, otherIndex }: { index: number; otherIndex: number }) {
+    if (index === otherIndex) return;
     let context = this.props.context;
     let copy = (context.value || []).slice(0);
     let temp = copy[index];
@@ -130,9 +138,8 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
     context.setValue(copy);
   }
 
-  moveItem({ fromIndex, toIndex }: { fromIndex: number, toIndex: number }) {
-    if (fromIndex === toIndex)
-      return;
+  moveItem({ fromIndex, toIndex }: { fromIndex: number; toIndex: number }) {
+    if (fromIndex === toIndex) return;
     let context = this.props.context;
     let copy: Array<any> = (context.value || []).slice(0);
     copy.splice(toIndex, 0, copy.splice(fromIndex, 1)[0]);
@@ -142,11 +149,11 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
   handleMenuOpenClick = (e: any) => {
     e.stopPropagation();
     this.setState({ menuOpen: true, menuIndex: parseInt(e.currentTarget.firstElementChild.dataset.index) });
-  }
+  };
 
   handleMenuClose = (e: any) => {
     this.setState({ menuOpen: false });
-  }
+  };
 
   //DRAG EVENTS
   getDocumentMouseUpListener() {
@@ -155,7 +162,7 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
         this.moveItem({ fromIndex: this.state.dragFromIndex, toIndex: this.state.dragToIndex });
         this.setState({ dragFromIndex: null, dragToIndex: null });
       }
-      document.removeEventListener('mouseup', this.documentMouseUpListener);
+      document.removeEventListener("mouseup", this.documentMouseUpListener);
     };
     return this.documentMouseUpListener;
   }
@@ -164,9 +171,9 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
     return (e: any) => {
       if (true /*this.props.sortable*/) {
         this.setState({ dragFromIndex: index, dragToIndex: index });
-        document.addEventListener('mouseup', this.getDocumentMouseUpListener());
+        document.addEventListener("mouseup", this.getDocumentMouseUpListener());
       }
-    }
+    };
   }
 
   getOnItemMouseEnter(index: number) {
@@ -174,7 +181,7 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
       if (this.state.dragFromIndex != null) {
         this.setState({ dragToIndex: index });
       }
-    }
+    };
   }
 
   crawlComponent({ form, node }: CrawlContext<AccordionDynamicField>): void {
@@ -201,7 +208,6 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
   }
 
   renderComponent() {
-
     let { context } = this.props;
     let { node, currentPath } = context;
     let { field } = node;
@@ -211,24 +217,25 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
     }
 
     if (currentPath === context.parentPath) {
-
       return (
         <List style={{ marginBottom: 16, padding: 0 }}>
           <ListItem
             style={{ border: "solid 1px #e8e8e8", borderRadius: "7px" }}
-            onClick={function () { context.setPath(node) }}
+            onClick={function() {
+              context.setPath(node);
+            }}
             primaryText={`${field.title} (${(context.value || []).length})`}
             leftIcon={<IconFileFolder />}
             rightIcon={<IconChevronRight />}
           />
-        </List>);
+        </List>
+      );
     }
 
     if (currentPath === context.nodePath) {
       let { dragToIndex, dragFromIndex } = this.state;
 
       let renderItem = (componentKey: string, childIndex: number, isDragging: boolean = false) => {
-
         let newNode = {
           fields: field.fields,
           state: context.value[childIndex],
@@ -238,30 +245,37 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
         let label = this.resolveItemLabel(field, newNode.state, childIndex);
 
         let background;
-        if (isDragging) { background = '#eee'; }
+        if (isDragging) {
+          background = "#eee";
+        }
 
         const hasError = hasValidationErrorInTree(node.state[field.key][childIndex]);
 
-        const body = isDragging ? null :
-          context.node.state[this.getIndexKey()] == childIndex ? context.form.renderLevel(newNode)
-            : null;
+        const body = isDragging
+          ? null
+          : context.node.state[this.getIndexKey()] == childIndex
+          ? context.form.renderLevel(newNode)
+          : null;
 
         return (
-          <AccordionItem key={componentKey}
-            label={label} style={{ background }}
-            bodyStyle={body == null ? { display: 'none' } : { padding: '16px 16px 16px 16px' }}
+          <AccordionItem
+            key={componentKey}
+            label={label}
+            style={{ background }}
+            bodyStyle={body == null ? { display: "none" } : { padding: "16px 16px 16px 16px" }}
             body={body}
             error={hasError}
             wrapperProps={{ onMouseEnter: this.getOnItemMouseEnter(childIndex) }}
             headerRightItems={[
               <FlatButton
-                onClick={(e) => e.stopPropagation()}
+                onClick={e => e.stopPropagation()}
                 onMouseDown={this.getOnItemDragHandleMouseDown(childIndex)}
                 icon={<IconSort opacity={0.3} />}
-                style={{ minWidth: 40, cursor: 'move' }} />,
+                style={{ minWidth: 40, cursor: "move" }}
+              />,
               <IconMenu
                 useLayerForClickAway={true}
-                iconButtonElement={(<FlatButton data-index={childIndex} style={{ minWidth: 40 }} icon={<IconMore />} />)}
+                iconButtonElement={<FlatButton data-index={childIndex} style={{ minWidth: 40 }} icon={<IconMore />} />}
                 onClick={this.handleMenuOpenClick}
               >
                 <MenuItem primaryText="Clone Item After" onClick={this.handleCloneItemAfterClick} />
@@ -272,57 +286,58 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
           />
         );
       };
-      return (<Fragment>
-        <Accordion
-          index={node.state[this.getIndexKey()]}
-          onChange={(index: number) => {
-            const currentIndex = node.state[this.getIndexKey()];
-            node.state[this.getIndexKey()] = currentIndex == null || currentIndex == -1 || currentIndex !== index ? index : -1;
-            context.form.forceUpdate();
-          }
-          }>
-          {(context.value || []).map((item: any, childIndex: number) => {
-            let componentKey = `item-${childIndex}`;
-            if (childIndex === dragFromIndex) {
-              return renderItem(componentKey, childIndex, true);
-            }
+      return (
+        <Fragment>
+          <Accordion
+            index={node.state[this.getIndexKey()]}
+            onChange={(index: number) => {
+              const currentIndex = node.state[this.getIndexKey()];
+              node.state[this.getIndexKey()] =
+                currentIndex == null || currentIndex == -1 || currentIndex !== index ? index : -1;
+              context.form.forceUpdate();
+            }}
+          >
+            {(context.value || []).map((item: any, childIndex: number) => {
+              let componentKey = `item-${childIndex}`;
+              if (childIndex === dragFromIndex) {
+                return renderItem(componentKey, childIndex, true);
+              }
 
-            if (childIndex === dragToIndex && dragFromIndex != null && dragToIndex != null) {
-              let movedItem = <div style={{ margin: '8px 0', height: '8px', background: '#00bcd4'/*cyan500*/, borderRadius: 3 }}></div>;
-              let beforeItem, afterItem;
-              if (dragFromIndex < dragToIndex)
-                afterItem = movedItem;
-              else
-                beforeItem = movedItem;
-              return <Fragment key={componentKey}>
-                {beforeItem}
-                {renderItem(componentKey, childIndex)}
-                {afterItem}
-              </Fragment>
-            }
-            else {
-              return renderItem(componentKey, childIndex);
-            }
-          })}
-        </Accordion>
-        <RaisedButton
-          style={{ marginTop: '16px' }}
-          onClick={this.handleAddClick.bind(this)}
-          icon={<IconAdd />}
-        />
-      </Fragment>);
+              if (childIndex === dragToIndex && dragFromIndex != null && dragToIndex != null) {
+                let movedItem = (
+                  <div
+                    style={{ margin: "8px 0", height: "8px", background: "#00bcd4" /*cyan500*/, borderRadius: 3 }}
+                  ></div>
+                );
+                let beforeItem, afterItem;
+                if (dragFromIndex < dragToIndex) afterItem = movedItem;
+                else beforeItem = movedItem;
+                return (
+                  <Fragment key={componentKey}>
+                    {beforeItem}
+                    {renderItem(componentKey, childIndex)}
+                    {afterItem}
+                  </Fragment>
+                );
+              } else {
+                return renderItem(componentKey, childIndex);
+              }
+            })}
+          </Accordion>
+          <RaisedButton style={{ marginTop: "16px" }} onClick={this.handleAddClick.bind(this)} icon={<IconAdd />} />
+        </Fragment>
+      );
     }
 
     if (currentPath.startsWith(context.nodePath)) {
-      return (context.form.renderLevel({
+      return context.form.renderLevel({
         fields: field.fields,
         state: context.value[node.state[this.getIndexKey()]],
         parent: node
-      }));
-
+      });
     }
 
-    return (null);
+    return null;
   }
 }
 

@@ -15,8 +15,7 @@ type BundleImgThumbDynamicState = {
 };
 
 class BundleImgThumbDynamic extends BaseDynamic<BundleImgThumbDynamicField, BundleImgThumbDynamicState> {
-  
-  state: BundleImgThumbDynamicState = { }
+  state: BundleImgThumbDynamicState = {};
 
   renderComponent() {
     return (

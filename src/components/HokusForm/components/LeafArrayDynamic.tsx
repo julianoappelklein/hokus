@@ -62,7 +62,12 @@ class LeafArrayDynamic extends BaseDynamic<LeafArrayDynamicField, { hasError: bo
     childField.key = context.value.length;
     let childComponentProplessInstance = context.form.props.componentRegistry.getProplessInstance(childField.type);
     let valueCopy = context.value.slice(0);
-    childComponentProplessInstance.normalizeState({state:valueCopy, field:childField, stateBuilder: context.form.stateBuilder, includes: context.form.props.includes});
+    childComponentProplessInstance.normalizeState({
+      state: valueCopy,
+      field: childField,
+      stateBuilder: context.form.stateBuilder,
+      includes: context.form.props.includes
+    });
     context.setValue(valueCopy);
   }
 

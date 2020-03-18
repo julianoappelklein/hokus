@@ -1,25 +1,24 @@
-import React from 'react';
-import service from './../services/service'
-import { snackMessageService } from './../services/ui-service'
-import { HokusForm } from './../components/HokusForm';
-import Spinner from './../components/Spinner'
+import React from "react";
+import service from "./../services/service";
+import { snackMessageService } from "./../services/ui-service";
+import { HokusForm } from "./../components/HokusForm";
+import Spinner from "./../components/Spinner";
 
-import { WorkspaceConfig } from './../types';
+import { WorkspaceConfig } from "./../types";
 
 type CollectionItemProps = {
-  siteKey: string,
-  workspaceKey: string,
-  collectionKey: string,
-  collectionItemKey: string
-}
+  siteKey: string;
+  workspaceKey: string;
+  collectionKey: string;
+  collectionItemKey: string;
+};
 
 type CollectionItemState = {
-  selectedWorkspaceDetails?: WorkspaceConfig,
-  collectionItemValues?: any
-}
+  selectedWorkspaceDetails?: WorkspaceConfig;
+  collectionItemValues?: any;
+};
 
-class CollectionItem extends React.Component<CollectionItemProps, CollectionItemState>{
-
+class CollectionItem extends React.Component<CollectionItemProps, CollectionItemState> {
   state: CollectionItemState = {};
 
   componentWillMount() {
@@ -35,30 +34,39 @@ class CollectionItem extends React.Component<CollectionItemProps, CollectionItem
     var { siteKey, workspaceKey, collectionKey, collectionItemKey } = this.props;
 
     Promise.all([
-      service.api.getWorkspaceDetails(siteKey, workspaceKey).then((workspaceDetails) => {
+      service.api.getWorkspaceDetails(siteKey, workspaceKey).then(workspaceDetails => {
         stateUpdate.selectedWorkspaceDetails = workspaceDetails;
       }),
-      service.api.getCollectionItem(siteKey, workspaceKey, collectionKey, collectionItemKey).then((collectionItemValues) => {
-        stateUpdate.collectionItemValues = collectionItemValues;
-      })
+      service.api
+        .getCollectionItem(siteKey, workspaceKey, collectionKey, collectionItemKey)
+        .then(collectionItemValues => {
+          stateUpdate.collectionItemValues = collectionItemValues;
+        })
     ]).then(() => {
       this.setState(stateUpdate as any);
     });
-
   }
 
   handleSave(context: any) {
     let { siteKey, workspaceKey, collectionKey, collectionItemKey } = this.props;
 
-    let promise = service.api.updateCollectionItem(siteKey, workspaceKey, collectionKey, collectionItemKey, context.data);
-    promise.then(function (updatedValues) {
-      snackMessageService.addSnackMessage("Document saved successfully.")
-      context.accept(updatedValues);
-    }, function () {
-      context.reject('Something went wrong.');
-    })
+    let promise = service.api.updateCollectionItem(
+      siteKey,
+      workspaceKey,
+      collectionKey,
+      collectionItemKey,
+      context.data
+    );
+    promise.then(
+      function(updatedValues) {
+        snackMessageService.addSnackMessage("Document saved successfully.");
+        context.accept(updatedValues);
+      },
+      function() {
+        context.reject("Something went wrong.");
+      }
+    );
   }
-
 
   render() {
     if (this.state.collectionItemValues === undefined || this.state.selectedWorkspaceDetails == null) {
@@ -72,24 +80,39 @@ class CollectionItem extends React.Component<CollectionItemProps, CollectionItem
     if (collection == null) return null;
 
     let fields = collection.fields.slice(0);
-    fields.unshift({ key: '__item', type: 'readonly', title: 'Item' });
+    fields.unshift({ key: "__item", type: "readonly", title: "Item" });
 
-    let values = Object.assign({ __item: collectionItemKey }, this.state.collectionItemValues)
+    let values = Object.assign({ __item: collectionItemKey }, this.state.collectionItemValues);
 
-    return (<HokusForm
-      rootName={collection.itemtitle || collection.title}
-      fields={fields}
-      values={values}
-      plugins={{
-        openBundleFileDialog: ({ title, extensions, targetPath }: any, onFilesReady: any) => {
-          return service.api.openFileDialogForCollectionItem(siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath, { title, extensions });
-        },
-        getBundleThumbnailSrc: (targetPath: string) => {
-          return service.api.getThumbnailForCollectionItemImage(siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath);
-        }
-      }}
-      onSave={this.handleSave.bind(this)}
-    />);
+    return (
+      <HokusForm
+        rootName={collection.itemtitle || collection.title}
+        fields={fields}
+        values={values}
+        plugins={{
+          openBundleFileDialog: ({ title, extensions, targetPath }: any, onFilesReady: any) => {
+            return service.api.openFileDialogForCollectionItem(
+              siteKey,
+              workspaceKey,
+              collectionKey,
+              collectionItemKey,
+              targetPath,
+              { title, extensions }
+            );
+          },
+          getBundleThumbnailSrc: (targetPath: string) => {
+            return service.api.getThumbnailForCollectionItemImage(
+              siteKey,
+              workspaceKey,
+              collectionKey,
+              collectionItemKey,
+              targetPath
+            );
+          }
+        }}
+        onSave={this.handleSave.bind(this)}
+      />
+    );
   }
 }
 

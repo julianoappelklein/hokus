@@ -54,12 +54,12 @@ class AccordionHeader extends React.PureComponent<AccordionHeaderProps, {}> {
   }
 }
 
-interface AccordionItemProps{
+interface AccordionItemProps {
   active?: boolean;
   body: any;
   label: string;
   error?: boolean; //todo: use this
-  onHeadClick?: ()=>void;
+  onHeadClick?: () => void;
   headerRightItems?: Array<any>;
   headerLeftItems?: Array<any>;
   headStyle?: any;
@@ -112,7 +112,7 @@ class AccordionItem extends React.Component<AccordionItemProps, {}> {
           onClick={onHeadClick as any}
           headerLeftItems={headerLeftItems}
           headerRightItems={headerRightItems}
-          active={active||false}
+          active={active || false}
           label={label}
         />
         <div style={_bodyStyle}>{active ? body : null}</div>
@@ -123,7 +123,7 @@ class AccordionItem extends React.Component<AccordionItemProps, {}> {
 
 interface AccordionProps {
   index?: number;
-  onChange?: (index: number)=>void;
+  onChange?: (index: number) => void;
   style?: any;
 }
 
@@ -156,21 +156,19 @@ class Accordion extends React.Component<AccordionProps, AccordionState> {
         this.setState(Object.assign({}, this.state, { index }));
       }
     };
-  }
+  };
 
   render() {
     let openedIndex = this.getOpenedIndex();
     return (
       <div className="accordion" style={this.props.style}>
-        {(this.props.children as any||[]).map(
-          (item: any, index: any) => {
-            let active = index === openedIndex;
-            return React.cloneElement(item, {
-              active,
-              onHeadClick: this.getHandleChange(index)
-            });
-          }
-        )}
+        {((this.props.children as any) || []).map((item: any, index: any) => {
+          let active = index === openedIndex;
+          return React.cloneElement(item, {
+            active,
+            onHeadClick: this.getHandleChange(index)
+          });
+        })}
       </div>
     );
   }

@@ -1,30 +1,27 @@
 import BaseDynamic from "./BaseDynamic";
 import { NormalizeStateContext } from "./types";
 
-
 type HiddenDynamicField = {
-    type: string,
-    key: string,
-    default: string | null
-}
+  type: string;
+  key: string;
+  default: string | null;
+};
 
-type HiddenDynamicState = {
-}
+type HiddenDynamicState = {};
 
 export class HiddenDynamic extends BaseDynamic<HiddenDynamicField, HiddenDynamicState> {
-
-    normalizeState({state, field}: NormalizeStateContext<HiddenDynamicField>){
-        let key = field.key;
-        if(state[key]==null){
-            state[key] = field.default || '';
-        }
+  normalizeState({ state, field }: NormalizeStateContext<HiddenDynamicField>) {
+    let key = field.key;
+    if (state[key] == null) {
+      state[key] = field.default || "";
     }
+  }
 
-    getType(){
-        return 'hidden';
-    }
+  getType() {
+    return "hidden";
+  }
 
-    renderComponent(){
-        return null;
-    }
+  renderComponent() {
+    return null;
+  }
 }

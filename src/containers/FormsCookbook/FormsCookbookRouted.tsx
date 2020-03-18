@@ -1,25 +1,20 @@
-import * as React from 'react';
-import { Route } from 'react-router';
-import { FormsCookbook } from './FormsCookbook';
+import * as React from "react";
+import { Route } from "react-router";
+import { FormsCookbook } from "./FormsCookbook";
 
-interface Props {
+interface Props {}
 
-}
+interface State {}
 
-interface State {
-
-}
-
-export class FormsCookbookRouted extends React.Component<Props, State>{
-
+export class FormsCookbookRouted extends React.Component<Props, State> {
   render() {
-    return (<Route
-      path={'/forms-cookbook/:sampleKey'}
-      render={({ history, match }) => {
-        return (<FormsCookbook
-          sampleKey={match.params.sampleKey}
-        />);
-      }}
-    />);
+    return (
+      <Route
+        path={"/forms-cookbook/:sampleKey"}
+        render={({ history, match }) => {
+          return <FormsCookbook sampleKey={match.params.sampleKey} />;
+        }}
+      />
+    );
   }
 }
