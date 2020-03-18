@@ -74,21 +74,6 @@ A minimal website configuration file looks like this:
 
 Note that your website configuration can be a JSON, YAML or TOML file.
 
-### Hokus Configuration File
-
-An optional configuration file can be stored in your *home/username/Hokus*
-folder. When *config.json* is found hokus will read the settings at startup.
-
-It looks like this:
-
-```json
-{
-  "debugEnabled": true,
-  "cookbookEnabled": true,
-  "siteManagementEnabled": true
-}
-```
-
 ### Workspace Configuration File
 
 All the UI configurations and bindings are set in the workspace configuration file.
@@ -101,9 +86,9 @@ Keep in mind:
 
 For a minimal configuration file, see the default workspace configuration (which is auto created when you open a workspace without configuration), slightly changed:
 
-```json
+```jsonc
 {
-  "hugover": "0.35",
+  "hugover": "0.67.1",
   "serve":[
     {
       "key":"default",
@@ -157,6 +142,21 @@ For a minimal configuration file, see the default workspace configuration (which
 
 Note that your workspace configuration can be a JSON, YAML or TOML file.
 
+### Hokus Configuration File
+
+An optional configuration file can be stored in your *home/username/Hokus*
+folder. When *config.json* is found hokus will read the settings at startup.
+
+It looks like this:
+
+```json
+{
+  "debugEnabled": true,
+  "cookbookEnabled": true,
+  "siteManagementEnabled": true
+}
+```
+
 ### Fields
 
 Collections and singles configurations have a property named "fields" where you must provide an array of field configurations.
@@ -169,12 +169,16 @@ Each field must use one of the available Hokus components by setting a "type" pr
 * chips
 * code-editor
 * date
+* data-nest
+* extend
+* include
 * leaf-array
 * hidden
 * markdown
 * nest
 * number
 * readonly
+* row
 * section
 * select
 * string
@@ -185,13 +189,15 @@ To see the components in action, you can access our [Forms Cookbook](http://form
 
 You can also refer to the source code to see all available properties for each component type.
 
-## Global configuration
-
-
-
 ### More Concepts
 
 More concepts are yet to come, but with those already given, and by looking into the Forms Cookbook, you should now be ready to use Hokus CMS.
+
+## Development
+
+### Debugging
+
+To debug the main process using VSCode, select "Debug Main Process" and hit F5. This will start only the main process (Electron), you also need to start the frontend by running `npm run _react-dev`.
 
 ## Building
 
@@ -200,10 +206,9 @@ More concepts are yet to come, but with those already given, and by looking into
 * Install the required tools:
   * [Git (optional)](https://nodejs.org/en/download/)
   * [Node + NPM](https://nodejs.org/en/download/)
-  * [Visual Studio 2017 (c++ tools)](//docs.microsoft.com/pt-br/visualstudio/)
 * Clone or download the source code.
 * Open the terminal in the project's root directory.
-* Run ```npm install && npm run _rebuild-native && npm run dist-win```
+* Run ```npm install && npm run dist-win```
 
 
 ###  Building on Linux
@@ -214,8 +219,6 @@ Install the required tools:
 ```
 sudo apt-get install nodejs
 sudo apt-get install npm
-sudo apt-get install git-core
-sudo apt-get install libssl-dev
 ```
 
 Clone the repository and set the current directory to the root:
@@ -224,7 +227,7 @@ Clone the repository and set the current directory to the root:
 
 Install NPM dependencies and build:
 
-```npm install && npm run _rebuild-native && npm run dist-linux```
+```npm install && npm run dist-linux```
 
 
 ### Building on macOS
@@ -241,7 +244,7 @@ Clone the repository and set the current directory to the root:
 
 Install NPM dependencies and build:
 
-```npm install && npm run _rebuild-native && npm run dist-mac```
+```npm install && npm run dist-mac```
 
 ## Help Wanted
 
@@ -267,4 +270,4 @@ The desired workflow for Hokus is:
 * Electron
 * React (using create-react-app)
 * Material UI for React JS
-* Flow
+* Typescript
