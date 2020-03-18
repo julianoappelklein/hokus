@@ -10,6 +10,8 @@
   "private": true,
   "dependencies": {
     "7zip-bin": "3.1.0",
+    "@material-ui/core": "^4.9.7",
+    "@material-ui/icons": "^4.9.1",
     "@types/fs-extra": "^8.1.0",
     "@types/jest": "^25.1.4",
     "@types/joi": "^14.3.4",
