@@ -52,7 +52,7 @@ You can have multiple websites registered, each having their own configuration f
 
 A minimal website configuration file looks like this:
 
-```json
+```jsonc
 {   
   "name": "Hokus Website", /* your website friendly name */
   "key": "hokus-website", /* your website unique key */
