@@ -3,7 +3,6 @@ import { BaseDynamic } from "../../HoForm";
 
 type EmptyLineDynamicField = {
   key: string;
-  compositeKey: string;
   type: string;
   amount: number | null | undefined;
 };

@@ -9,7 +9,6 @@ import IconButton from "material-ui/IconButton";
 type DateDynamicField = {
   type: string;
   key: string;
-  compositeKey: string;
   default: string | null | undefined;
   tip: string | null | undefined;
   title: string | null | undefined;

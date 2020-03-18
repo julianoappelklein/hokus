@@ -32,7 +32,6 @@ const linkHrefMatcher = /<a.+?>/gi;
 type MarkdownDynamicField = {
   type: string;
   key: string;
-  compositeKey: string;
   multiLine: boolean;
   default: string;
   tip: string;

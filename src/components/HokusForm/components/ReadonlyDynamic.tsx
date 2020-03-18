@@ -7,7 +7,6 @@ import { BaseDynamic } from "../../HoForm";
 
 type ReadonlyDynamicField = {
   key: string;
-  compositeKey: string;
   type: string;
   title: string;
   tip: string | null | undefined;

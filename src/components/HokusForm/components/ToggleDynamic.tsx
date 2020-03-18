@@ -6,7 +6,6 @@ import { BaseDynamic, NormalizeStateContext } from "../../HoForm";
 
 type ToggleDynamicField = {
   key: string;
-  compositeKey: string;
   type: string;
   tip: string;
   title: string;

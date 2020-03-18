@@ -6,7 +6,6 @@ import { BaseDynamic, NormalizeStateContext } from "../../HoForm";
 
 type TextFieldNumberDynamicField = {
   key: string;
-  compositeKey: string;
   type: string;
   tip: string;
   title: string;

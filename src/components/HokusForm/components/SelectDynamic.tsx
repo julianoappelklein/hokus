@@ -8,7 +8,6 @@ import Tip from "../../Tip";
 
 type SelectDynamicField = {
   key: string;
-  compositeKey: string;
   type: string;
   default: string;
   tip: string;

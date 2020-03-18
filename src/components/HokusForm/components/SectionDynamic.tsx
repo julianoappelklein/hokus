@@ -4,7 +4,6 @@ import { BaseDynamic } from "../../HoForm";
 
 type SectionDynamicField = {
   key: string;
-  compositeKey: string;
   type: string;
   title: string;
   fields: Array<any>;

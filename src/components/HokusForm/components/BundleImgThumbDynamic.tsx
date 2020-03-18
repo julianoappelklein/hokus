@@ -1,12 +1,10 @@
 import React from "react";
 import IconBroken from "material-ui/svg-icons/image/broken-image";
-import { ComponentProps } from "../../HoForm";
 import { BaseDynamic } from "../../HoForm";
 import Spinner from "../../Spinner";
 
 type BundleImgThumbDynamicField = {
   key: string;
-  compositeKey: string;
   type: string;
   src?: string;
 };
@@ -21,7 +19,6 @@ class BundleImgThumbDynamic extends BaseDynamic<BundleImgThumbDynamicField, Bund
   state: BundleImgThumbDynamicState = { }
 
   renderComponent() {
-    let { node } = this.props.context;
     return (
       <div style={{ width: "64px", height: "64px", marginBottom: "16px", overflow: "hidden", background: "#16062f" }}>
         {this.state.src === undefined ? (

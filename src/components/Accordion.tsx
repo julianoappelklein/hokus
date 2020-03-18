@@ -54,7 +54,21 @@ class AccordionHeader extends React.PureComponent<AccordionHeaderProps, {}> {
   }
 }
 
-class AccordionItem extends React.Component<any, {}> {
+interface AccordionItemProps{
+  active?: boolean;
+  body: any;
+  label: string;
+  error?: boolean; //todo: use this
+  onHeadClick?: ()=>void;
+  headerRightItems?: Array<any>;
+  headerLeftItems?: Array<any>;
+  headStyle?: any;
+  bodyStyle?: any;
+  style?: any;
+  wrapperProps?: any;
+}
+
+class AccordionItem extends React.Component<AccordionItemProps, {}> {
   render() {
     let {
       active,
@@ -95,10 +109,10 @@ class AccordionItem extends React.Component<any, {}> {
       <div style={style} className="accordion-item" {...wrapperProps}>
         <AccordionHeader
           style={_headStyle}
-          onClick={onHeadClick}
+          onClick={onHeadClick as any}
           headerLeftItems={headerLeftItems}
           headerRightItems={headerRightItems}
-          active={active}
+          active={active||false}
           label={label}
         />
         <div style={_bodyStyle}>{active ? body : null}</div>
@@ -107,7 +121,17 @@ class AccordionItem extends React.Component<any, {}> {
   }
 }
 
-class Accordion extends React.Component<any, any> {
+interface AccordionProps {
+  index?: number;
+  onChange?: (index: number)=>void;
+  style?: any;
+}
+
+interface AccordionState {
+  index: number;
+}
+
+class Accordion extends React.Component<AccordionProps, AccordionState> {
   constructor(props: any) {
     super(props);
     this.state = { index: -1 };

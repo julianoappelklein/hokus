@@ -14,7 +14,6 @@ const md = new MarkdownIt({ html: true });
 
 type AceDynamicField = {
   key: string;
-  compositeKey: string;
   type: string;
   default: string;
   tip: string;

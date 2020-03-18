@@ -15,7 +15,6 @@ const extractExt = (file: string) => {
 
 type BundleManagerDynamicField = {
   key: string;
-  compositeKey: string;
   type: string;
   src: string;
   fields: Array<any>;
@@ -133,16 +132,16 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
               let newNode = {
                 fields: field.fields,
                 state,
-                uiState: {},
-                parent: node
+                parent: node.parent as any
               };
+              const body = context.form.renderLevel(newNode);
               return (
                 <AccordionItem
                   style={{ marginTop: childIndex ? "8px" : undefined }}
                   bodyStyle={{ padding: "16px 16px 0px 16px" }}
                   label={state.name || state.src}
                   key={field.key + "-resource-" + childIndex}
-                  body={context.form.renderLevel(newNode)}
+                  body={body}
                   headerRightItems={[
                     <DangerButton
                       onClick={(e, loaded) => {

@@ -25,7 +25,6 @@ const infoSizeStyles: { [k: string]: CSSProperties } = {
 type InfoDynamicField = {
   type: string;
   key: string;
-  compositeKey: string;
   content: string;
   size: number;
   lineHeight: string;

@@ -28,7 +28,6 @@ class TextFieldLabelMock extends React.Component<{ children: any }, {}> {
 
 type LeafArrayDynamicField = {
   key: string;
-  compositeKey: string;
   type: string;
   field: any;
   title: string;

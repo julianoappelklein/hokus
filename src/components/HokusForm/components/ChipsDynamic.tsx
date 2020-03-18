@@ -7,7 +7,6 @@ import { BaseDynamic } from "../../HoForm";
 type ChipsDynamicField = {
   type: string;
   key: string;
-  compositeKey: string;
   default: Array<string> | null | undefined;
 };
 

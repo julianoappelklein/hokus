@@ -6,7 +6,6 @@ import { BaseDynamic, NormalizeStateContext } from "../../HoForm";
 
 type TextFieldDynamicField = {
   key: string;
-  compositeKey: string;
   type: string;
   default: string;
   multiLine: boolean;
