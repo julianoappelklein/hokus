@@ -30,7 +30,7 @@ export class TriggerWithOptions extends React.Component<TriggerWithOptionsProps,
   handleTriggerClick = (event: any) => {
     event.preventDefault();
 
-    if(this.props.onOpen!=null){
+    if (this.props.onOpen != null) {
       this.props.onOpen(event);
     }
 
@@ -47,7 +47,7 @@ export class TriggerWithOptions extends React.Component<TriggerWithOptionsProps,
   };
 
   handleMenuItemClick = (event: any, menuItem: any, index: number) => {
-    let result = this.props.onOptionClick(event ,index);
+    let result = this.props.onOptionClick(event, index);
     if (result !== false) this.setState({ open: false });
   };
 

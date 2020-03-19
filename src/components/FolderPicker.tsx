@@ -45,7 +45,7 @@ export default class FolderPicker extends React.Component<FolderPickerProps, Fol
           floatingLabelFixed
           errorText={this.props.errorText}
           style={{ flex: "1" }}
-          { ...{ onClick: this.handleTextFieldClick.bind(this) } as any }
+          {...({ onClick: this.handleTextFieldClick.bind(this) } as any)}
         />
         <RaisedButton
           onClick={this.handlePickFileClick.bind(this)}

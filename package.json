@@ -68,6 +68,7 @@
   "main": "build/src-main/electron.js",
   "scripts": {
     "start": "npm run _copy-ace && npm run _copy_ace_extras && npm run _main-transpile && concurrently --kill-others \"npm run _react-dev\" \"npm run _electron-dev\"",
+    "check-lint": "prettier -c src/**/*.{ts,tsx}",
     "_copy-electron-code": "npm run _main-transpile && copyfiles -u 2 -V \"./build/src-main/**/*\" \"./build/electron/\" && rimraf ./build/src-main/",
     "_copy-ace": "copyfiles -u 3 -V \"./node_modules/ace-editor-builds/src-min-noconflict/**/*.*\" \"./public/ace-editor-min-noconflict/\"",
     "_copy_ace_extras": "copyfiles -u 2 -V \"./extras/ace-editor/**/*.*\" \"./public/ace-editor-min-noconflict/\"",

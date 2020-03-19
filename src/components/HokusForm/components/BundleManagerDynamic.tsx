@@ -23,17 +23,12 @@ type BundleManagerDynamicField = {
   title: string;
 };
 
-type BundleManagerDynamicState = {
-
-}
+type BundleManagerDynamicState = {};
 
 class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, BundleManagerDynamicState> {
-  
-  state: BundleManagerDynamicState = {
-    
-  };
-  
-  extendField({field, extender} : ExtendFieldContext<BundleManagerDynamicField>): void{
+  state: BundleManagerDynamicState = {};
+
+  extendField({ field, extender }: ExtendFieldContext<BundleManagerDynamicField>): void {
     if (field.fields === undefined) field.fields = [];
     field.fields.unshift({ key: "src", type: "readonly", title: "Source File" });
     extender.extendFields(field.fields);
@@ -81,7 +76,7 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
           let currentFiles = context.value.slice();
           for (let f = 0; f < files.length; f++) {
             let file = files[f];
-            let match = currentFiles.find((x: any) => x!=null && x.src === file);
+            let match = currentFiles.find((x: any) => x != null && x.src === file);
             if (match) {
               if (match.__deleted) delete match.__deleted;
             } else {

@@ -97,7 +97,7 @@ export class HokusForm extends React.Component<HokusFormProps, HokusFormState> {
     if (this.state.changed) floatingActionButtonClass += " rubberBand";
 
     return (
-      <div style={{padding: '1rem'}}>
+      <div style={{ padding: "1rem" }}>
         <HoForm
           includes={{}}
           debug={false}

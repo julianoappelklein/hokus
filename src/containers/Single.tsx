@@ -1,24 +1,23 @@
-import React from 'react';
-import service from './../services/service'
-import { snackMessageService } from './../services/ui-service'
-import { HokusForm } from './../components/HokusForm';
-import Spinner from './../components/Spinner';
-import { WorkspaceConfig, SingleConfig } from './../types';
+import React from "react";
+import service from "./../services/service";
+import { snackMessageService } from "./../services/ui-service";
+import { HokusForm } from "./../components/HokusForm";
+import Spinner from "./../components/Spinner";
+import { WorkspaceConfig, SingleConfig } from "./../types";
 
 type SingleProps = {
-  siteKey: string,
-  workspaceKey: string,
-  singleKey: string
-}
+  siteKey: string;
+  workspaceKey: string;
+  singleKey: string;
+};
 
 type SingleState = {
-  selectedWorkspaceDetails?: WorkspaceConfig,
-  single?: SingleConfig,
-  singleValues: any
-}
+  selectedWorkspaceDetails?: WorkspaceConfig;
+  single?: SingleConfig;
+  singleValues: any;
+};
 
-
-class Single extends React.Component<SingleProps, SingleState>{
+class Single extends React.Component<SingleProps, SingleState> {
   constructor(props: SingleProps) {
     super(props);
     this.state = {
@@ -34,18 +33,17 @@ class Single extends React.Component<SingleProps, SingleState>{
     var { siteKey, workspaceKey, singleKey } = this.props;
 
     Promise.all([
-      service.api.getSingle(siteKey, workspaceKey, singleKey).then((single) => {
+      service.api.getSingle(siteKey, workspaceKey, singleKey).then(single => {
         stateUpdate.singleValues = single;
       }),
-      service.api.getWorkspaceDetails(siteKey, workspaceKey).then((workspaceDetails) => {
+      service.api.getWorkspaceDetails(siteKey, workspaceKey).then(workspaceDetails => {
         stateUpdate.selectedWorkspaceDetails = workspaceDetails;
       })
-    ]).then(() => {
-      this.setState(stateUpdate as any);
-    }).catch((e) => {
-
-    });
-
+    ])
+      .then(() => {
+        this.setState(stateUpdate as any);
+      })
+      .catch(e => {});
   }
 
   componentWillUnmount() {
@@ -56,12 +54,15 @@ class Single extends React.Component<SingleProps, SingleState>{
     var { siteKey, workspaceKey, singleKey } = this.props;
 
     let promise = service.api.updateSingle(siteKey, workspaceKey, singleKey, context.data);
-    promise.then(function (updatedValues) {
-      snackMessageService.addSnackMessage("Document saved successfully.")
-      context.accept(updatedValues);
-    }, function () {
-      context.reject('Something went wrong.');
-    });
+    promise.then(
+      function(updatedValues) {
+        snackMessageService.addSnackMessage("Document saved successfully.");
+        context.accept(updatedValues);
+      },
+      function() {
+        context.reject("Something went wrong.");
+      }
+    );
   }
 
   render() {
@@ -71,13 +72,14 @@ class Single extends React.Component<SingleProps, SingleState>{
     let single = this.state.selectedWorkspaceDetails.singles.find(x => x.key === this.props.singleKey);
     if (single == null) return null;
 
-    return (<HokusForm
-      rootName={single.title}
-      fields={single.fields}
-      values={this.state.singleValues}
-      onSave={this.handleSave.bind(this)}
-      plugins={{}}
-    />
+    return (
+      <HokusForm
+        rootName={single.title}
+        fields={single.fields}
+        values={this.state.singleValues}
+        onSave={this.handleSave.bind(this)}
+        plugins={{}}
+      />
     );
   }
 }

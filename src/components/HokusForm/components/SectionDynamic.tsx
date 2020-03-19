@@ -21,10 +21,9 @@ class SectionDynamic extends BaseDynamic<SectionDynamicField, SectionDynamicStat
     return parentState;
   }
 
-  extendField({field, extender} : ExtendFieldContext<SectionDynamicField>): void{
+  extendField({ field, extender }: ExtendFieldContext<SectionDynamicField>): void {
     extender.extendFields(field.fields);
   }
-  
 
   normalizeState(x: NormalizeStateContext<SectionDynamicField>) {
     x.stateBuilder!.setLevelState(x.state, x.field.fields);
@@ -40,7 +39,6 @@ class SectionDynamic extends BaseDynamic<SectionDynamicField, SectionDynamicStat
     let { field } = node;
 
     if (currentPath === parentPath) {
-      
       return (
         <React.Fragment>
           {field.title ? <div style={{ padding: "16px 0" }}>{field.title}</div> : undefined}

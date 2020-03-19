@@ -55,7 +55,7 @@ interface AppState {
   menuIsLocked: boolean;
   forceShowMenu: boolean;
   skipMenuTransition: boolean;
-};
+}
 
 class App extends React.Component<{}, AppState> {
   constructor(props: any) {
@@ -110,7 +110,9 @@ class App extends React.Component<{}, AppState> {
   }
 
   toggleMenuIsLocked() {
-    this.setState((s) => { return { ...s, menuIsLocked: !s.menuIsLocked, forceShowMenu: true, skipMenuTransition: true } });
+    this.setState(s => {
+      return { ...s, menuIsLocked: !s.menuIsLocked, forceShowMenu: true, skipMenuTransition: true };
+    });
     window.dispatchEvent(new Event("resize"));
   }
 
@@ -119,12 +121,7 @@ class App extends React.Component<{}, AppState> {
     this.setState({ forceShowMenu });
   }
 
-  renderWorkspaceSidebar = (
-    history: any,
-    url: string,
-    site?: string,
-    workspace?: string
-  ) => {
+  renderWorkspaceSidebar = (history: any, url: string, site?: string, workspace?: string) => {
     return (
       <WorkspaceSidebar
         key={url}
