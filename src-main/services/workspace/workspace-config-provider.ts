@@ -8,7 +8,7 @@ import InitialWorkspaceConfigBuilder from "./initial-workspace-config-builder";
 import WorkspaceConfigValidator from "./workspace-config-validator";
 
 export class WorkspaceConfigProvider {
-  cache: { [file: string]: { token: FileCacheToken; config: any } };
+  cache: { [key: string]: { token: FileCacheToken; config: any } };
 
   constructor() {
     this.cache = {};
@@ -19,10 +19,11 @@ export class WorkspaceConfigProvider {
     workspaceKey: string
   ): Promise<WorkspaceConfig & { path: string; key: string }> {
     let filePath = this._getFilePath(workspacePath);
+    const cacheKey = `${filePath}-${workspaceKey}`;
     let config: WorkspaceConfig;
 
     if (filePath != null) {
-      const cached = this.cache[filePath];
+      const cached = this.cache[cacheKey];
       const token = await new FileCacheToken([filePath]).build();
 
       if (cached != null) {
@@ -35,7 +36,7 @@ export class WorkspaceConfigProvider {
       let config = this._loadConfigurationsData(filePath, workspaceKey);
       config.path = workspacePath;
       config.key = workspaceKey;
-      this.cache[filePath] = { token, config };
+      this.cache[cacheKey] = { token, config };
       return config;
     } else {
       // need to build default config and update cache
@@ -45,7 +46,7 @@ export class WorkspaceConfigProvider {
       const token = await new FileCacheToken([filePath]).build();
       config.path = workspacePath;
       config.key = workspaceKey;
-      this.cache[filePath] = { token, config };
+      this.cache[cacheKey] = { token, config };
       return config;
     }
   }
