@@ -25,6 +25,7 @@ import service from "./services/service";
 import { EmptyConfigurations, Configurations } from "./types";
 
 import "./css/App.css";
+import { FormsBuilder } from "./containers/FormsBuilder/FormsBuilder";
 
 //the default locked UI style
 const style: { [k: string]: CSSProperties } = {
@@ -309,7 +310,14 @@ class App extends React.Component<{}, AppState> {
           path="/forms-cookbook"
           exact={false}
           render={({ match, history }) => {
-            return <FormsCookbookRouted />;
+            return (<FormsCookbookRouted />);
+          }}
+        />
+        <Route
+          path="/forms-builder"
+          exact={true}
+          render={({ match, history }) => {
+            return (<FormsBuilder />);
           }}
         />
         <Route

@@ -68,6 +68,7 @@ export class ExtendDynamic extends BaseDynamic<ExtendDynamicField, {}> {
   }
 
   extendField({ field, extender }: ExtendFieldContext<ExtendDynamicField>): void {
+    if(!field.fields){ field.fields = []; }
     for (let i = 0; i < field.types.length; i++) {
       const type = field.types[i];
       if (type != null && type.fields != null) {

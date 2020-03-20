@@ -15,7 +15,8 @@ type HokusFormProps = {
     [key: string]: Function;
   };
   rootName: string;
-  values: {};
+  values: { [key: string]: any };
+  includes?: { [key: string]: any };
 };
 
 type HokusFormState = {
@@ -25,7 +26,7 @@ type HokusFormState = {
 };
 
 export class HokusForm extends React.Component<HokusFormProps, HokusFormState> {
-  _valueFactory: () => any = () => {};
+  _valueFactory: () => any = () => { };
 
   constructor(props: HokusFormProps) {
     super(props);
@@ -99,7 +100,7 @@ export class HokusForm extends React.Component<HokusFormProps, HokusFormState> {
     return (
       <div style={{ padding: "1rem" }}>
         <HoForm
-          includes={{}}
+          includes={this.props.includes||{}}
           debug={false}
           breadcumbComponentType={FormBreadcumb}
           componentRegistry={componentRegistry}

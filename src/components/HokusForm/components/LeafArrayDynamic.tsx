@@ -56,8 +56,9 @@ class LeafArrayDynamic extends BaseDynamic<LeafArrayDynamicField, { hasError: bo
     return true;
   }
 
-  pushEmptyValue() {
+  pushEmptyValue= () => {
     let context = this.props.context;
+    context.value = context.value || [];
     let childField = Object.assign({}, Object.assign({}, this.props.context.node.field.field));
     childField.key = context.value.length;
     let childComponentProplessInstance = context.form.props.componentRegistry.getProplessInstance(childField.type);
@@ -103,7 +104,7 @@ class LeafArrayDynamic extends BaseDynamic<LeafArrayDynamicField, { hasError: bo
     return (
       <DefaultWrapper>
         <TextFieldLabelMock>{field.title}</TextFieldLabelMock>
-        {arrayData.map((item: any, index: number) => {
+        {(arrayData||[]).map((item: any, index: number) => {
           let childNode = {
             state: context.value,
             field: Object.assign({}, field.field, { key: index }),
@@ -123,7 +124,7 @@ class LeafArrayDynamic extends BaseDynamic<LeafArrayDynamicField, { hasError: bo
             </div>
           );
         })}
-        <RaisedButton style={{ marginTop: "20px" }} onClick={this.pushEmptyValue.bind(this)} icon={<IconAdd />} />
+        <RaisedButton style={{ marginTop: "20px" }} onClick={this.pushEmptyValue} icon={<IconAdd />} />
       </DefaultWrapper>
     );
   }
