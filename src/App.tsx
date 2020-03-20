@@ -77,13 +77,9 @@ class App extends React.Component<{}, AppState> {
     });
   }
 
-  componentDidMount() {
-    console.log("App MOUNTED");
-    service.getConfigurations().then(c => {
-      var stateUpdate = {} as AppState;
-      stateUpdate.configurations = c;
-      this.setState(stateUpdate);
-    });
+  async componentDidMount() {
+    const configurations = await service.getConfigurations();
+    this.setState({ configurations });
   }
 
   minimizeWindow() {

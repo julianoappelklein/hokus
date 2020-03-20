@@ -101,7 +101,7 @@ export class API {
     mainProcessBridge.requestVoid("openFileExplorer", { path });
   }
 
-  openFileDialogForCollectionItem(
+  async openFileDialogForCollectionItem(
     siteKey: string,
     workspaceKey: string,
     collectionKey: string,
@@ -115,19 +115,18 @@ export class API {
       properties: ["multiSelections", "openFile"],
       filters: [{ name: "Allowed Extensions", extensions: extensions }]
     };
-    return new Promise(resolve => {
+    const files = await new Promise(resolve => {
       remote.dialog.showOpenDialog(remote.getCurrentWindow(), openDialogOptions, (files: string[]) => resolve(files));
-    }).then(files => {
-      if (files)
-        return mainProcessBridge.request("copyFilesIntoCollectionItem", {
-          siteKey,
-          workspaceKey,
-          collectionKey,
-          collectionItemKey,
-          targetPath,
-          files
-        });
     });
+    if (files)
+      return mainProcessBridge.request("copyFilesIntoCollectionItem", {
+        siteKey,
+        workspaceKey,
+        collectionKey,
+        collectionItemKey,
+        targetPath,
+        files
+      });
   }
 
   getThumbnailForCollectionItemImage(
