@@ -18,9 +18,7 @@ export class ComponentRegistry {
   }
 
   register(classType: React.ComponentType<ComponentProps<FieldBase>>) {
-    //$FlowFixMe
     let proplessInstance = new (classType as any)();
-    //$FlowFixMe
     this.dynamicComponents[proplessInstance.getType()] = {
       classType,
       proplessInstance

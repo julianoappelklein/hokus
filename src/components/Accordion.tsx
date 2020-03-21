@@ -13,7 +13,7 @@ type AccordionHeaderProps = {
   style: any;
   headerLeftItems: any;
   headerRightItems: any;
-  label: string;
+  label: React.ReactNode;
 };
 
 class AccordionHeader extends React.PureComponent<AccordionHeaderProps, {}> {
@@ -57,7 +57,7 @@ class AccordionHeader extends React.PureComponent<AccordionHeaderProps, {}> {
 interface AccordionItemProps {
   active?: boolean;
   body: any;
-  label: string;
+  label: React.ReactNode;
   error?: boolean; //todo: use this
   onHeadClick?: () => void;
   headerRightItems?: Array<any>;

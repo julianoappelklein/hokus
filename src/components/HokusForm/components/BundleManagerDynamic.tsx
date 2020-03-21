@@ -5,7 +5,7 @@ import { Accordion, AccordionItem } from "../../Accordion";
 import DangerButton from "../../DangerButton";
 import FlatButton from "material-ui/FlatButton";
 import IconRemove from "material-ui/svg-icons/content/clear";
-import { ComponentContext, DynamicFormNode, FieldBase, ExtendFieldContext } from "../../HoForm";
+import { ComponentContext, DynamicFormNode, FieldBase, ExtendFieldContext, CrawlContext } from "../../HoForm";
 import { BaseDynamic } from "../../HoForm";
 
 const regExtractExt = /[.]([^.]+)$/;
@@ -55,6 +55,11 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
         stateBuilder.setLevelState(resource, field.fields);
       }
     }
+  }
+
+  crawlComponent({ form, node }: CrawlContext<BundleManagerDynamicField>): void {
+    const { field, state } = node;
+    form.crawlLevel({ fields: field.fields, state, parent: node });
   }
 
   getType() {

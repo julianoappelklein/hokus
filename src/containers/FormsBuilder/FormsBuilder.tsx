@@ -38,7 +38,7 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
     const includes = {
       fieldsAccordionInclude: [
         {
-          key: "fields", type: "accordion", title: "Fields", itemTitleKey: "key", fields: [
+          key: "fields", type: "accordion", title: "fields", itemTitleKey: "key", fields: [
             { key: "anyFieldInclude", type: "include", include: "anyFieldInclude" }
           ]
         }
@@ -82,23 +82,23 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
       selectInclude: [
         { key: "title", title: "title", type: "string", required: true },
         {
-          key: "options", title: "Options", type: "accordion", itemTitleKey: "value", fields: [
-            { key: "value", title: "Value", type: "string" },
-            { key: "text", title: "Text", type: "string" },
+          key: "options", title: "options", type: "accordion", itemTitleKey: "value", fields: [
+            { key: "value", title: "value", type: "string" },
+            { key: "text", title: "text", type: "string" },
           ]
         },
-        { key: "multiple", title: "Multiple", type: "boolean", default: false },
+        { key: "multiple", title: "multiple", type: "boolean", default: false },
         { key: "required", title: "required", type: "boolean", default: false },
         {
           key: "multipleExtend", selectorKey: "multiple", type: "extend", clearOnChange: ["default"], types: [
             {
               key: "false", fields: [
-                { key: "default", title: "Default", type: "string", default: "" },
+                { key: "default", title: "default", type: "string", default: "" },
               ]
             },
             {
               key: "true", fields: [
-                { key: "default", title: "Default", type: "leaf-array", field: { key: "value", title: "Value", type: "string" }, default: [] },
+                { key: "default", title: "default", type: "leaf-array", field: { key: "value", title: "Value", type: "string" }, default: [] },
               ]
             }
           ]

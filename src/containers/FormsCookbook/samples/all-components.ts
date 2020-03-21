@@ -11,11 +11,20 @@ let fields: Array<any> = [
         key: "accordion",
         title: "accordion",
         type: "accordion",
+        itemTitleKey: "title",
         fields: [
-          { key: "title", title: "Title", type: "string", arrayTitle: true },
-          { key: "boolean1", title: "Boolean 1", type: "boolean" },
-          { key: "boolean2", title: "Boolean 2", type: "boolean" },
-          { key: "boolean3", title: "Boolean 3", type: "boolean" }
+          { key: "title", title: "Title", type: "string" },
+          { key: "boolean", title: "Boolean", type: "boolean" }
+        ]
+      },
+      {
+        key: "accordion-with-validated-child",
+        title: "accordion-with-validated-child",
+        type: "accordion",
+        itemTitleKey: "title",
+        fields: [
+          { key: "title", title: "Title", type: "string", required: true },
+          { key: "boolean", title: "Boolean", type: "boolean" }
         ]
       }
     ]
@@ -40,6 +49,7 @@ let fields: Array<any> = [
         path: "images",
         extensions: ["png", "jpg", "jpeg"],
         fields: [
+          { key: "title", title: "Title", type: "string", required: true },
           { key: "featured", title: "Featured", type: "boolean" },
           { key: "thumb", title: "Thubmanil", type: "bundle-image-thumbnail" }
         ]
@@ -184,7 +194,8 @@ let fields: Array<any> = [
     groupdata: false,
     fields: [
       { key: "string", title: "String", type: "string" },
-      { key: "string-multiLine", title: "String MultiLine", type: "string", multiLine: true }
+      { key: "string-multiLine", title: "String MultiLine", type: "string", multiLine: true },
+      { key: "string-required", title: "String Required", type: "string", required: true }
     ]
   }
 ];
@@ -192,7 +203,7 @@ let fields: Array<any> = [
 let codeStartEnd = "```";
 
 fields.forEach(field => {
-  field.fields.push({
+  field.fields?.push({
     key: field.key + "-info",
     type: "info",
     theme: "black-bare",

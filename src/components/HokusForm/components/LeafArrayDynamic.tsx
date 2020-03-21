@@ -5,7 +5,7 @@ import RaisedButton from "material-ui/RaisedButton";
 import DefaultWrapper from "./shared/DefaultWrapper";
 import IconAdd from "material-ui/svg-icons/content/add";
 import IconRemove from "material-ui/svg-icons/content/remove";
-import { BaseDynamic, FieldBase, NormalizeStateContext } from "../../HoForm";
+import { BaseDynamic, FieldBase, NormalizeStateContext, CrawlContext } from "../../HoForm";
 
 class TextFieldLabelMock extends React.Component<{ children: any }, {}> {
   render() {
@@ -56,7 +56,7 @@ class LeafArrayDynamic extends BaseDynamic<LeafArrayDynamicField, { hasError: bo
     return true;
   }
 
-  pushEmptyValue= () => {
+  pushEmptyValue = () => {
     let context = this.props.context;
     context.value = context.value || [];
     let childField = Object.assign({}, Object.assign({}, this.props.context.node.field.field));
@@ -91,6 +91,18 @@ class LeafArrayDynamic extends BaseDynamic<LeafArrayDynamicField, { hasError: bo
     };
   }
 
+  crawlComponent({ form, node }: CrawlContext<LeafArrayDynamicField>): void {
+    const value = this.getValueFromNode(node) || [];
+    for (let childIndex = 0; childIndex < value.length; childIndex++) {
+      let childNode = {
+        state: value,
+        field: Object.assign({}, node.field.field, { key: childIndex.toString() }),
+        parent: node
+      };
+      form.crawlField(childNode);
+    }
+  }
+
   renderComponent() {
     let { context } = this.props;
     let { node, currentPath } = context;
@@ -104,7 +116,7 @@ class LeafArrayDynamic extends BaseDynamic<LeafArrayDynamicField, { hasError: bo
     return (
       <DefaultWrapper>
         <TextFieldLabelMock>{field.title}</TextFieldLabelMock>
-        {(arrayData||[]).map((item: any, index: number) => {
+        {(arrayData || []).map((item: any, index: number) => {
           let childNode = {
             state: context.value,
             field: Object.assign({}, field.field, { key: index }),

@@ -1,5 +1,5 @@
 import React from "react";
-import { NormalizeStateContext, ExtendFieldContext } from "../../HoForm";
+import { NormalizeStateContext, ExtendFieldContext, CrawlContext } from "../../HoForm";
 import { BaseDynamic } from "../../HoForm";
 
 type SectionDynamicField = {
@@ -23,6 +23,12 @@ class SectionDynamic extends BaseDynamic<SectionDynamicField, SectionDynamicStat
 
   extendField({ field, extender }: ExtendFieldContext<SectionDynamicField>): void {
     extender.extendFields(field.fields);
+  }
+
+  crawlComponent({ form, node }: CrawlContext<SectionDynamicField>): void {
+    const { field, state } = node;
+    const parent = node.parent as any;
+    form.crawlLevel({fields: field.fields, state, parent});
   }
 
   normalizeState(x: NormalizeStateContext<SectionDynamicField>) {

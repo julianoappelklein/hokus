@@ -17,6 +17,8 @@ import {
 } from "../../HoForm";
 import { BaseDynamic } from "../../HoForm";
 import { hasValidationErrorInTree } from "../../HoForm/utils";
+import MuiThemed from "../../MuiThemed";
+import { MuiTheme } from "material-ui/styles";
 
 const Fragment = React.Fragment;
 
@@ -37,7 +39,7 @@ type AccordionDynamicState = {
 };
 
 class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynamicState> {
-  documentMouseUpListener: (e: any) => void = e => {};
+  documentMouseUpListener: (e: any) => void = e => { };
 
   constructor(props: ComponentProps<AccordionDynamicField>) {
     super(props);
@@ -208,6 +210,10 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
   }
 
   renderComponent() {
+    return <MuiThemed render={this.renderComponentWithTheme} />
+  }
+
+  renderComponentWithTheme = (theme: MuiTheme) => {
     let { context } = this.props;
     let { node, currentPath } = context;
     let { field } = node;
@@ -217,14 +223,16 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
     }
 
     if (currentPath === context.parentPath) {
+      const hasError = hasValidationErrorInTree(node.state[field.key]);
+
       return (
         <List style={{ marginBottom: 16, padding: 0 }}>
           <ListItem
             style={{ border: "solid 1px #e8e8e8", borderRadius: "7px" }}
-            onClick={function() {
+            onClick={function () {
               context.setPath(node);
             }}
-            primaryText={`${field.title} (${(context.value || []).length})`}
+            primaryText={<span style={{ color: hasError ? theme.palette?.accent1Color : undefined }}>{`${field.title} (${(context.value || []).length})`}</span>}
             leftIcon={<IconFileFolder />}
             rightIcon={<IconChevronRight />}
           />
@@ -254,13 +262,13 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
         const body = isDragging
           ? null
           : context.node.state[this.getIndexKey()] == childIndex
-          ? context.form.renderLevel(newNode)
-          : null;
+            ? context.form.renderLevel(newNode)
+            : null;
 
         return (
           <AccordionItem
             key={componentKey}
-            label={label}
+            label={<span style={{ color: hasError ? theme.palette?.accent1Color : undefined }}>{label}</span>}
             style={{ background }}
             bodyStyle={body == null ? { display: "none" } : { padding: "16px 16px 16px 16px" }}
             body={body}
