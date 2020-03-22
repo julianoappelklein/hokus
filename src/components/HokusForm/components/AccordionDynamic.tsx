@@ -39,7 +39,7 @@ type AccordionDynamicState = {
 };
 
 class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynamicState> {
-  documentMouseUpListener: (e: any) => void = e => { };
+  documentMouseUpListener: (e: any) => void = e => {};
 
   constructor(props: ComponentProps<AccordionDynamicField>) {
     super(props);
@@ -210,7 +210,7 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
   }
 
   renderComponent() {
-    return <MuiThemed render={this.renderComponentWithTheme} />
+    return <MuiThemed render={this.renderComponentWithTheme} />;
   }
 
   renderComponentWithTheme = (theme: MuiTheme) => {
@@ -229,10 +229,14 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
         <List style={{ marginBottom: 16, padding: 0 }}>
           <ListItem
             style={{ border: "solid 1px #e8e8e8", borderRadius: "7px" }}
-            onClick={function () {
+            onClick={function() {
               context.setPath(node);
             }}
-            primaryText={<span style={{ color: hasError ? theme.palette?.accent1Color : undefined }}>{`${field.title} (${(context.value || []).length})`}</span>}
+            primaryText={
+              <span style={{ color: hasError ? theme.palette?.accent1Color : undefined }}>{`${field.title} (${
+                (context.value || []).length
+              })`}</span>
+            }
             leftIcon={<IconFileFolder />}
             rightIcon={<IconChevronRight />}
           />
@@ -262,8 +266,8 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
         const body = isDragging
           ? null
           : context.node.state[this.getIndexKey()] == childIndex
-            ? context.form.renderLevel(newNode)
-            : null;
+          ? context.form.renderLevel(newNode)
+          : null;
 
         return (
           <AccordionItem
@@ -346,7 +350,7 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
     }
 
     return null;
-  }
+  };
 }
 
 export default AccordionDynamic;

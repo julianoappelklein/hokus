@@ -70,7 +70,7 @@ class LeafArrayDynamic extends BaseDynamic<LeafArrayDynamicField, { hasError: bo
       includes: context.form.props.includes
     });
     context.setValue(valueCopy);
-  }
+  };
 
   getOnRequestDeleteHandler(index: number): () => void {
     return () => {

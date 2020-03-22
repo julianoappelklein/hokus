@@ -19,7 +19,7 @@ class EmptyLineDynamic extends BaseDynamic<EmptyLineDynamicField, EmptyLineDynam
     let { node, currentPath, parentPath } = context;
     let { field } = node;
 
-    if (currentPath !== parentPath) {
+    if (!parentPath.startsWith(currentPath)) {
       return null;
     }
 

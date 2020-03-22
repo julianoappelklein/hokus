@@ -27,8 +27,7 @@ class SelectDynamic extends BaseDynamic<SelectDynamicField, SelectDynamicState> 
       if (x.state[key] == null || !Array.isArray(x.state[key])) {
         x.state[key] = x.field.default || [];
       }
-    }
-    else {
+    } else {
       if (x.state[key] === null || typeof x.state[key] !== "string") {
         x.state[key] = x.field.default || "";
       }
@@ -57,7 +56,7 @@ class SelectDynamic extends BaseDynamic<SelectDynamicField, SelectDynamicState> 
     let { node, currentPath, parentPath } = context;
     let { field } = node;
 
-    if (currentPath !== parentPath) {
+    if (!parentPath.startsWith(currentPath)) {
       return null;
     }
 

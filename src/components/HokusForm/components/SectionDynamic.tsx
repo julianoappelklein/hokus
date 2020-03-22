@@ -28,7 +28,7 @@ class SectionDynamic extends BaseDynamic<SectionDynamicField, SectionDynamicStat
   crawlComponent({ form, node }: CrawlContext<SectionDynamicField>): void {
     const { field, state } = node;
     const parent = node.parent as any;
-    form.crawlLevel({fields: field.fields, state, parent});
+    form.crawlLevel({ fields: field.fields, state, parent });
   }
 
   normalizeState(x: NormalizeStateContext<SectionDynamicField>) {

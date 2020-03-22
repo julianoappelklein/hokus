@@ -310,14 +310,14 @@ class App extends React.Component<{}, AppState> {
           path="/forms-cookbook"
           exact={false}
           render={({ match, history }) => {
-            return (<FormsCookbookRouted />);
+            return <FormsCookbookRouted />;
           }}
         />
         <Route
           path="/forms-builder"
           exact={true}
           render={({ match, history }) => {
-            return (<FormsBuilder />);
+            return <FormsBuilder />;
           }}
         />
         <Route

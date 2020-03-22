@@ -28,10 +28,10 @@ class ToggleDynamic extends BaseDynamic<ToggleDynamicField, ToggleDynamicFieldSt
 
   renderComponent() {
     let { context } = this.props;
-    let { node, currentPath } = context;
+    let { node, currentPath, parentPath } = context;
     let { field } = node;
 
-    if (currentPath !== context.parentPath) {
+    if (!parentPath.startsWith(currentPath)) {
       return null;
     }
 

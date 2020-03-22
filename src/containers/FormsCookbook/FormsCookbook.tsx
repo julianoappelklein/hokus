@@ -78,7 +78,7 @@ export class FormsCookbook extends React.Component<FormsCookbookProps, FormsCook
             rootName={sample.title}
             breadcumbComponentType={FormBreadcumb}
             fields={sample.fields}
-            debug={false}
+            debug={"value-raw"}
             componentRegistry={componentRegistry}
             values={sample.values}
             plugins={{

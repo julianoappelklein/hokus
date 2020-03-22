@@ -33,7 +33,7 @@ class ReadonlyDynamic extends BaseDynamic<ReadonlyDynamicField, ReadonlyDynamicS
     let { node, currentPath, parentPath } = context;
     let { field } = node;
 
-    if (currentPath !== parentPath) {
+    if (!parentPath.startsWith(currentPath)) {
       return null;
     }
 

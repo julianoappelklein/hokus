@@ -7,6 +7,9 @@ import FlatButton from "material-ui/FlatButton";
 import IconRemove from "material-ui/svg-icons/content/clear";
 import { ComponentContext, DynamicFormNode, FieldBase, ExtendFieldContext, CrawlContext } from "../../HoForm";
 import { BaseDynamic } from "../../HoForm";
+import { MuiTheme } from "material-ui/styles";
+import MuiThemed from "../../MuiThemed";
+import { hasValidationErrorInTree2 } from "../../HoForm/utils";
 
 const regExtractExt = /[.]([^.]+)$/;
 const extractExt = (file: string) => {
@@ -34,14 +37,6 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
     extender.extendFields(field.fields);
   }
 
-  buildPathFragment(
-    node: DynamicFormNode<BundleManagerDynamicField>,
-    nodeLevel: number,
-    nodes: Array<DynamicFormNode<FieldBase>>
-  ): string | null | undefined {
-    return undefined;
-  }
-
   normalizeState({ state, field, stateBuilder }: { state: any; field: BundleManagerDynamicField; stateBuilder: any }) {
     if (!Array.isArray(state["resources"])) {
       state["resources"] = [];
@@ -58,8 +53,12 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
   }
 
   crawlComponent({ form, node }: CrawlContext<BundleManagerDynamicField>): void {
-    const { field, state } = node;
-    form.crawlLevel({ fields: field.fields, state, parent: node });
+    let value = node.state.resources || [];
+    for (let childIndex = 0; childIndex < value.length; childIndex++) {
+      const state = value[childIndex];
+      const { field } = node;
+      form.crawlLevel({ fields: field.fields, state: state, parent: node });
+    }
   }
 
   getType() {
@@ -100,11 +99,19 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
   }
 
   renderComponent() {
+    return <MuiThemed render={this.renderComponentThemed} />;
+  }
+
+  buildDisplayPathFragment(node: any, nodeLevel: any, nodes: any) {
+    return node.field.key;
+  }
+
+  renderComponentThemed = (theme: MuiTheme) => {
     let { context } = this.props;
-    let { node, currentPath, parentPath } = context;
+    let { node, currentPath, parentPath, nodePath } = context;
     let { field } = node;
 
-    if (currentPath !== parentPath) {
+    if (!parentPath.startsWith(currentPath)) {
       return null;
     }
 
@@ -132,14 +139,20 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
               let newNode = {
                 fields: field.fields,
                 state,
-                parent: node.parent as any
+                parent: node
               };
+              debugger;
+              const hasError = hasValidationErrorInTree2(state, nodePath);
               const body = context.form.renderLevel(newNode);
               return (
                 <AccordionItem
                   style={{ marginTop: childIndex ? "8px" : undefined }}
                   bodyStyle={{ padding: "16px 16px 0px 16px" }}
-                  label={state.name || state.src}
+                  label={
+                    <span style={{ color: hasError ? theme.palette?.accent1Color : undefined }}>
+                      {state.name || state.src}
+                    </span>
+                  }
                   key={field.key + "-resource-" + childIndex}
                   body={body}
                   headerRightItems={[
@@ -166,7 +179,7 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
         </div>
       </React.Fragment>
     );
-  }
+  };
 
   getValue(context: ComponentContext<BundleManagerDynamicField>) {
     return context.node.state["resources"].slice(0);

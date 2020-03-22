@@ -9,9 +9,8 @@ const componentRegistry = new ComponentRegistry(dynamicFormComponents);
 type FormsBuilderProps = {};
 type FormsBuilderState = {
   form: any;
-  formKey: number
+  formKey: number;
 };
-
 
 export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilderState> {
   formRef: any;
@@ -28,40 +27,53 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
     this.formRef = ref;
   };
 
-  handleSave = (arg1: { data: any, accept: any, reject: any }) => {
+  handleSave = (arg1: { data: any; accept: any; reject: any }) => {
     this.setState({ form: arg1.data, formKey: ++this.state.formKey });
     arg1.accept();
-  }
+  };
 
   render() {
-
     const includes = {
       fieldsAccordionInclude: [
         {
-          key: "fields", type: "accordion", title: "fields", itemTitleKey: "key", fields: [
-            { key: "anyFieldInclude", type: "include", include: "anyFieldInclude" }
-          ]
+          key: "fields",
+          type: "accordion",
+          title: "fields",
+          itemTitleKey: "key",
+          fields: [{ key: "anyFieldInclude", type: "include", include: "anyFieldInclude" }]
         }
       ],
       anyFieldInclude: [
         { key: "baseFieldInclude", type: "include", include: "baseFieldInclude" },
-        { key: "type", title: "type", type: "select", options: [{ value: "nest" }, { value: "select" }, { value: "boolean" }, { value: "string" },], default: "string", required: true },
         {
-          key: "typeExtender", type: "extend", nest: false, groupdata: false, selectorKey: "type", fields: [], clearExcept: ["key"], types: [
-            { key: "string", fields: [{ key: "textFieldInclude", type: "include", include: "textFieldInclude" },], },
-            { key: "boolean", fields: [{ key: "booleanInclude", type: "include", include: "booleanInclude" },], },
-            { key: "select", fields: [{ key: "selectInclude", type: "include", include: "selectInclude" },], },
-            { key: "nest", fields: [{ key: "nestInclude", type: "include", include: "nestInclude" },], },
+          key: "type",
+          title: "type",
+          type: "select",
+          options: [{ value: "nest" }, { value: "select" }, { value: "boolean" }, { value: "string" }],
+          default: "string",
+          required: true
+        },
+        {
+          key: "typeExtender",
+          type: "extend",
+          nest: false,
+          groupdata: false,
+          selectorKey: "type",
+          fields: [],
+          clearExcept: ["key"],
+          types: [
+            { key: "string", fields: [{ key: "textFieldInclude", type: "include", include: "textFieldInclude" }] },
+            { key: "boolean", fields: [{ key: "booleanInclude", type: "include", include: "booleanInclude" }] },
+            { key: "select", fields: [{ key: "selectInclude", type: "include", include: "selectInclude" }] },
+            { key: "nest", fields: [{ key: "nestInclude", type: "include", include: "nestInclude" }] }
           ]
         }
       ],
-      baseFieldInclude: [
-        { key: "key", type: "string", title: "key", required: true }
-      ],
+      baseFieldInclude: [{ key: "key", type: "string", title: "key", required: true }],
       booleanInclude: [
         { key: "title", title: "title", type: "string", required: true },
         { key: "default", title: "default", type: "boolean", default: false },
-        { key: "tip", title: "tip", type: "string" },
+        { key: "tip", title: "tip", type: "string" }
       ],
       nestInclude: [
         { key: "title", title: "title", type: "string", required: true },
@@ -77,54 +89,66 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
         { key: "multiline", title: "multiline", type: "boolean", default: false },
         // { key: "monospace", title: "monospace", type: "boolean", default: false },
         // { key: "margin", title: "margin", type: "select", options: [{ value: 'none' }, { value: 'dense' }, { value: 'normal' }], default: "normal" },
-        { key: "tip", title: "tip", type: "string" },
+        { key: "tip", title: "tip", type: "string" }
       ],
       selectInclude: [
         { key: "title", title: "title", type: "string", required: true },
         {
-          key: "options", title: "options", type: "accordion", itemTitleKey: "value", fields: [
+          key: "options",
+          title: "options",
+          type: "accordion",
+          itemTitleKey: "value",
+          fields: [
             { key: "value", title: "value", type: "string" },
-            { key: "text", title: "text", type: "string" },
+            { key: "text", title: "text", type: "string" }
           ]
         },
         { key: "multiple", title: "multiple", type: "boolean", default: false },
         { key: "required", title: "required", type: "boolean", default: false },
         {
-          key: "multipleExtend", selectorKey: "multiple", type: "extend", clearOnChange: ["default"], types: [
+          key: "multipleExtend",
+          selectorKey: "multiple",
+          type: "extend",
+          clearOnChange: ["default"],
+          types: [
             {
-              key: "false", fields: [
-                { key: "default", title: "default", type: "string", default: "" },
-              ]
+              key: "false",
+              fields: [{ key: "default", title: "default", type: "string", default: "" }]
             },
             {
-              key: "true", fields: [
-                { key: "default", title: "default", type: "leaf-array", field: { key: "value", title: "Value", type: "string" }, default: [] },
+              key: "true",
+              fields: [
+                {
+                  key: "default",
+                  title: "default",
+                  type: "leaf-array",
+                  field: { key: "value", title: "Value", type: "string" },
+                  default: []
+                }
               ]
             }
           ]
         },
-        { key: "tip", title: "tip", type: "string" },
-      ],
+        { key: "tip", title: "tip", type: "string" }
+      ]
     };
 
     return (
-      <div style={{ display: 'flex' }}>
-        <div style={{ flex: "1", position: 'relative' }}>
+      <div style={{ display: "flex" }}>
+        <div style={{ flex: "1", position: "relative" }}>
           <HokusForm
             onSave={this.handleSave}
             rootName={"Form Builder"}
             includes={includes}
             ref={this.handleFormRef}
-            fields={[
-              { key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }
-            ]}
+            fields={[{ key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }]}
             values={{}}
             plugins={{
-              openBundleFileDialog: function ({ title, extensions, targetPath }: any, onFilesReady: any) {
+              openBundleFileDialog: function({ title, extensions, targetPath }: any, onFilesReady: any) {
                 alert("This operation is not supported in the Cookbook. But we'll mock something for you.");
                 return Promise.resolve([`${targetPath}/some-file.${extensions[0] || "png"}`]);
               },
-              getBundleThumbnailSrc: function (targetPath: string) {
+              getBundleThumbnailSrc: function(targetPath: string) {
                 return Promise.resolve(
                   "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
                 );
@@ -139,16 +163,16 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
             includes={includes}
             ref={this.handleFormRef}
             breadcumbComponentType={FormBreadcumb}
-            fields={(this.state.form?.fields) || []}
+            fields={this.state.form?.fields || []}
             debug={false}
             componentRegistry={componentRegistry}
             values={{}}
             plugins={{
-              openBundleFileDialog: function ({ title, extensions, targetPath }: any, onFilesReady: any) {
+              openBundleFileDialog: function({ title, extensions, targetPath }: any, onFilesReady: any) {
                 alert("This operation is not supported in the FormBuilder. But we'll mock something for you.");
                 return Promise.resolve([`${targetPath}/some-file.${extensions[0] || "png"}`]);
               },
-              getBundleThumbnailSrc: function (targetPath: string) {
+              getBundleThumbnailSrc: function(targetPath: string) {
                 return Promise.resolve(
                   "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
                 );

@@ -38,13 +38,13 @@ class TextFieldDynamic extends BaseDynamic<TextFieldDynamicField, TextFieldDynam
   crawlComponent({ form, node }: CrawlContext<TextFieldDynamicField>): void {
     const value = this.getValueFromNode(node);
     if (node.field.required || node.field.pattern) {
-      let validationError = '';
+      let validationError = "";
       if (node.field.required) {
-        const invalid = value == null || value === '';
-        validationError += invalid ? `The field is required.` : '';
+        const invalid = value == null || value === "";
+        validationError += invalid ? `The field is required.` : "";
       }
       if (value && node.field.pattern) {
-        if (!(new RegExp(node.field.pattern).test(value))) {
+        if (!new RegExp(node.field.pattern).test(value)) {
           validationError += `The value format is invalid.`;
         }
       }
@@ -57,7 +57,7 @@ class TextFieldDynamic extends BaseDynamic<TextFieldDynamicField, TextFieldDynam
     let { node, currentPath, parentPath, nodePath } = context;
     let { field } = node;
 
-    if (currentPath !== parentPath) {
+    if (!parentPath.startsWith(currentPath)) {
       return null;
     }
 
@@ -70,10 +70,10 @@ class TextFieldDynamic extends BaseDynamic<TextFieldDynamicField, TextFieldDynam
       <FormItemWrapper
         control={
           <TextField
-            errorText={ error }
+            errorText={error}
             id={`text-field-${field.key}`}
             onChange={this.handleChange}
-            value={context.value||''}
+            value={context.value || ""}
             floatingLabelFixed={true}
             multiLine={field.multiLine === true}
             underlineShow={true}
