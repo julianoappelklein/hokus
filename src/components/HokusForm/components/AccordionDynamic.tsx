@@ -25,7 +25,6 @@ const Fragment = React.Fragment;
 type AccordionDynamicField = {
   title: string;
   fields: Array<any>;
-  groupdata: boolean | null;
   itemTitleKey?: string;
   itemTitleFallbackKey?: string;
 } & FieldBase;

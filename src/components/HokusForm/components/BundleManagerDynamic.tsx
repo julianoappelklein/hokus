@@ -19,7 +19,6 @@ const extractExt = (file: string) => {
 type BundleManagerDynamicField = {
   key: string;
   type: string;
-  src: string;
   fields: Array<any>;
   path: string;
   extensions: string[];
@@ -141,7 +140,6 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
                 state,
                 parent: node
               };
-              debugger;
               const hasError = hasValidationErrorInTree2(state, nodePath);
               const body = context.form.renderLevel(newNode);
               return (

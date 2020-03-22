@@ -21,6 +21,7 @@ export class FormStateBuilder {
   }
 
   setLevelState(state: any, fields: any) {
+    if (!fields) return;
     for (let i = 0; i < fields.length; i++) {
       let field = fields[i];
       let cState = state;

@@ -49,7 +49,14 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
           key: "type",
           title: "type",
           type: "select",
-          options: [{ value: "nest" }, { value: "select" }, { value: "boolean" }, { value: "string" }],
+          options: [
+            { value: "accordion" },
+            { value: "boolean" },
+            { value: "bundle-manager" },
+            { value: "nest" },
+            { value: "select" },
+            { value: "string" }
+          ],
           default: "string",
           required: true
         },
@@ -62,18 +69,45 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
           fields: [],
           clearExcept: ["key"],
           types: [
-            { key: "string", fields: [{ key: "textFieldInclude", type: "include", include: "textFieldInclude" }] },
+            { key: "accordion", fields: [{ key: "accordionInclude", type: "include", include: "accordionInclude" }] },
             { key: "boolean", fields: [{ key: "booleanInclude", type: "include", include: "booleanInclude" }] },
+            {
+              key: "bundle-manager",
+              fields: [{ key: "bundleManagerInclude", type: "include", include: "bundleManagerInclude" }]
+            },
+            { key: "string", fields: [{ key: "textFieldInclude", type: "include", include: "textFieldInclude" }] },
             { key: "select", fields: [{ key: "selectInclude", type: "include", include: "selectInclude" }] },
             { key: "nest", fields: [{ key: "nestInclude", type: "include", include: "nestInclude" }] }
           ]
         }
       ],
       baseFieldInclude: [{ key: "key", type: "string", title: "key", required: true }],
+      accordionInclude: [
+        { key: "title", title: "title", type: "string", required: true },
+        { key: "itemTitleKey", title: "itemTitleKey", type: "string" },
+        { key: "itemTitleFallbackKey", title: "itemTitleFallbackKey", type: "string" },
+        { key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }
+      ],
       booleanInclude: [
         { key: "title", title: "title", type: "string", required: true },
         { key: "default", title: "default", type: "boolean", default: false },
         { key: "tip", title: "tip", type: "string" }
+      ],
+      bundleManagerInclude: [
+        { key: "title", title: "title", type: "string", required: true },
+        { key: "path", title: "path", type: "string" },
+        {
+          key: "extensions",
+          title: "extensions",
+          type: "leaf-array",
+          field: {
+            key: "item",
+            type: "string",
+            required: true
+          }
+        },
+        { key: "default", title: "default", type: "boolean", default: false },
+        { key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }
       ],
       nestInclude: [
         { key: "title", title: "title", type: "string", required: true },
@@ -85,7 +119,7 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
         { key: "title", title: "title", type: "string", required: true },
         { key: "required", title: "required", type: "boolean", default: false },
         { key: "default", title: "default", type: "string" },
-        // { key: "pattern", title: "pattern", type: "string", required: false },
+        { key: "pattern", title: "pattern", type: "string", required: false },
         { key: "multiline", title: "multiline", type: "boolean", default: false },
         // { key: "monospace", title: "monospace", type: "boolean", default: false },
         // { key: "margin", title: "margin", type: "select", options: [{ value: 'none' }, { value: 'dense' }, { value: 'normal' }], default: "normal" },
