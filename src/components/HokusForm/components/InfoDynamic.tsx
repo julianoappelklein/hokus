@@ -34,7 +34,7 @@ type InfoDynamicField = {
 type InfoDynamicState = {};
 
 class InfoDynamic extends BaseDynamic<InfoDynamicField, InfoDynamicState> {
-  normalizeState({ state, field }: { state: any; field: InfoDynamicField }) { }
+  normalizeState({ state, field }: { state: any; field: InfoDynamicField }) {}
 
   getType() {
     return "info";

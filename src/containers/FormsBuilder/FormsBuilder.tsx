@@ -133,12 +133,11 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
       infoInclude: [
         { key: "content", title: "content", type: "markdown", multiLine: true },
         {
-          key: "size", title: "size", type: "select", default: "default",
-          options: [
-            { value: "small" },
-            { value: "default" },
-            { value: "large" },
-          ]
+          key: "size",
+          title: "size",
+          type: "select",
+          default: "default",
+          options: [{ value: "small" }, { value: "default" }, { value: "large" }]
         },
         { key: "lineHeight", title: "lineHeight", type: "number", default: 1.2 },
         {
@@ -231,11 +230,11 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
             fields={[{ key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }]}
             values={{}}
             plugins={{
-              openBundleFileDialog: function ({ title, extensions, targetPath }: any, onFilesReady: any) {
+              openBundleFileDialog: function({ title, extensions, targetPath }: any, onFilesReady: any) {
                 alert("This operation is not supported in the Cookbook. But we'll mock something for you.");
                 return Promise.resolve([`${targetPath}/some-file.${extensions[0] || "png"}`]);
               },
-              getBundleThumbnailSrc: function (targetPath: string) {
+              getBundleThumbnailSrc: function(targetPath: string) {
                 return Promise.resolve(
                   "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
                 );
@@ -255,11 +254,11 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
             componentRegistry={componentRegistry}
             values={{}}
             plugins={{
-              openBundleFileDialog: function ({ title, extensions, targetPath }: any, onFilesReady: any) {
+              openBundleFileDialog: function({ title, extensions, targetPath }: any, onFilesReady: any) {
                 alert("This operation is not supported in the FormBuilder. But we'll mock something for you.");
                 return Promise.resolve([`${targetPath}/some-file.${extensions[0] || "png"}`]);
               },
-              getBundleThumbnailSrc: function (targetPath: string) {
+              getBundleThumbnailSrc: function(targetPath: string) {
                 return Promise.resolve(
                   "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
                 );
