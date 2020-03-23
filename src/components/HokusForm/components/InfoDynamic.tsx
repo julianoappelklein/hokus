@@ -26,7 +26,7 @@ type InfoDynamicField = {
   type: string;
   key: string;
   content: string;
-  size: number;
+  size: "small" | "large";
   lineHeight: string;
   theme: "default" | "bare" | "warn" | "warn-bare" | "black" | "black-bare" | "gray" | "gray-bare";
 };
@@ -34,7 +34,7 @@ type InfoDynamicField = {
 type InfoDynamicState = {};
 
 class InfoDynamic extends BaseDynamic<InfoDynamicField, InfoDynamicState> {
-  normalizeState({ state, field }: { state: any; field: InfoDynamicField }) {}
+  normalizeState({ state, field }: { state: any; field: InfoDynamicField }) { }
 
   getType() {
     return "info";

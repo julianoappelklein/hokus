@@ -15,6 +15,7 @@ class EmptyLineDynamic extends BaseDynamic<EmptyLineDynamicField, EmptyLineDynam
   }
 
   renderComponent() {
+    debugger;
     let { context } = this.props;
     let { node, currentPath, parentPath } = context;
     let { field } = node;
@@ -23,13 +24,7 @@ class EmptyLineDynamic extends BaseDynamic<EmptyLineDynamicField, EmptyLineDynam
       return null;
     }
 
-    return (
-      <div>
-        {new Array(field.amount || 1).map((d, i) => (
-          <br key={i} />
-        ))}
-      </div>
-    );
+    return <div style={{ height: (field.amount || 1) + "em" }}></div>;
   }
 }
 

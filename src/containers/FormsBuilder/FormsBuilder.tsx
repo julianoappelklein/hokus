@@ -53,7 +53,12 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
             { value: "accordion" },
             { value: "boolean" },
             { value: "bundle-manager" },
+            { value: "chips" },
+            { value: "date" },
+            { value: "empty-line" },
+            { value: "info" },
             { value: "nest" },
+            { value: "number" },
             { value: "select" },
             { value: "string" }
           ],
@@ -75,9 +80,14 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
               key: "bundle-manager",
               fields: [{ key: "bundleManagerInclude", type: "include", include: "bundleManagerInclude" }]
             },
+            { key: "chips", fields: [{ key: "chipsInclude", type: "include", include: "chipsInclude" }] },
+            { key: "date", fields: [{ key: "dateInclude", type: "include", include: "dateInclude" }] },
+            { key: "empty-line", fields: [{ key: "emptyLineInclude", type: "include", include: "emptyLineInclude" }] },
+            { key: "info", fields: [{ key: "infoInclude", type: "include", include: "infoInclude" }] },
+            { key: "number", fields: [{ key: "numberInclude", type: "include", include: "numberInclude" }] },
+            { key: "nest", fields: [{ key: "nestInclude", type: "include", include: "nestInclude" }] },
             { key: "string", fields: [{ key: "textFieldInclude", type: "include", include: "textFieldInclude" }] },
-            { key: "select", fields: [{ key: "selectInclude", type: "include", include: "selectInclude" }] },
-            { key: "nest", fields: [{ key: "nestInclude", type: "include", include: "nestInclude" }] }
+            { key: "select", fields: [{ key: "selectInclude", type: "include", include: "selectInclude" }] }
           ]
         }
       ],
@@ -109,11 +119,56 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
         { key: "default", title: "default", type: "boolean", default: false },
         { key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }
       ],
+      chipsInclude: [
+        { key: "title", title: "title", type: "string", required: true },
+        { key: "default", title: "default", type: "chips" }
+      ],
+      dateInclude: [
+        { key: "title", title: "title", type: "string", required: true },
+        // { key: "required", title: "required", type: "boolean", default: false },
+        { key: "default", title: "default", type: "date" },
+        { key: "tip", title: "tip", type: "string" }
+      ],
+      emptyLineInclude: [{ key: "amount", title: "amount", type: "number" }],
+      infoInclude: [
+        { key: "content", title: "content", type: "markdown", multiLine: true },
+        {
+          key: "size", title: "size", type: "select", default: "default",
+          options: [
+            { value: "small" },
+            { value: "default" },
+            { value: "large" },
+          ]
+        },
+        { key: "lineHeight", title: "lineHeight", type: "number", default: 1.2 },
+        {
+          key: "theme",
+          title: "theme",
+          type: "select",
+          default: "default",
+          options: [
+            { value: "default" },
+            { value: "bare" },
+            { value: "warn" },
+            { value: "warn-bare" },
+            { value: "black" },
+            { value: "black-bare" },
+            { value: "gray" },
+            { value: "gray-bare" }
+          ]
+        }
+      ],
       nestInclude: [
         { key: "title", title: "title", type: "string", required: true },
         { key: "default", title: "default", type: "boolean", default: false },
         { key: "groupdata", title: "groupdata", type: "boolean", default: false },
         { key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }
+      ],
+      numberInclude: [
+        { key: "title", title: "title", type: "string", required: true },
+        // { key: "required", title: "required", type: "boolean", default: false },
+        { key: "default", title: "default", type: "number" },
+        { key: "tip", title: "tip", type: "string" }
       ],
       textFieldInclude: [
         { key: "title", title: "title", type: "string", required: true },
@@ -121,8 +176,6 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
         { key: "default", title: "default", type: "string" },
         { key: "pattern", title: "pattern", type: "string", required: false },
         { key: "multiline", title: "multiline", type: "boolean", default: false },
-        // { key: "monospace", title: "monospace", type: "boolean", default: false },
-        // { key: "margin", title: "margin", type: "select", options: [{ value: 'none' }, { value: 'dense' }, { value: 'normal' }], default: "normal" },
         { key: "tip", title: "tip", type: "string" }
       ],
       selectInclude: [
@@ -178,11 +231,11 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
             fields={[{ key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }]}
             values={{}}
             plugins={{
-              openBundleFileDialog: function({ title, extensions, targetPath }: any, onFilesReady: any) {
+              openBundleFileDialog: function ({ title, extensions, targetPath }: any, onFilesReady: any) {
                 alert("This operation is not supported in the Cookbook. But we'll mock something for you.");
                 return Promise.resolve([`${targetPath}/some-file.${extensions[0] || "png"}`]);
               },
-              getBundleThumbnailSrc: function(targetPath: string) {
+              getBundleThumbnailSrc: function (targetPath: string) {
                 return Promise.resolve(
                   "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
                 );
@@ -202,11 +255,11 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
             componentRegistry={componentRegistry}
             values={{}}
             plugins={{
-              openBundleFileDialog: function({ title, extensions, targetPath }: any, onFilesReady: any) {
+              openBundleFileDialog: function ({ title, extensions, targetPath }: any, onFilesReady: any) {
                 alert("This operation is not supported in the FormBuilder. But we'll mock something for you.");
                 return Promise.resolve([`${targetPath}/some-file.${extensions[0] || "png"}`]);
               },
-              getBundleThumbnailSrc: function(targetPath: string) {
+              getBundleThumbnailSrc: function (targetPath: string) {
                 return Promise.resolve(
                   "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
                 );
