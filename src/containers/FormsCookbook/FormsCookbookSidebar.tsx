@@ -38,6 +38,20 @@ export class FormsCookbookSidebar extends React.Component<FormsCookbookSidebarPr
       })
     };
 
-    return <Sidebar {...this.props} menus={[menu]} />;
+    let menuBeta: SidebarMenu = {
+      title: "Other",
+      items: [
+        {
+          active: false,
+          label: 'Form Builder (Beta)',
+          onClick: () => {
+            history.push("/forms-cookbook/builder/");
+          }
+        }
+      ]
+    };
+
+
+    return <Sidebar {...this.props} menus={[menu, menuBeta]} />;
   }
 }

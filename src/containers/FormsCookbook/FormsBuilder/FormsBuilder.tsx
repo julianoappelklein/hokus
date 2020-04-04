@@ -1,8 +1,10 @@
 import * as React from "react";
-import { HoForm, ComponentRegistry } from "./../../components/HoForm";
-import dynamicFormComponents from "./../../components/HokusForm/components/all";
-import { FormBreadcumb } from "./../../components/Breadcumb";
-import { HokusForm } from "../../components/HokusForm";
+import { HoForm, ComponentRegistry } from "./../../../components/HoForm";
+import { MultiFormatDataDisplay } from "./../../../components/MultiFormatDataDisplay";
+import dynamicFormComponents from "./../../../components/HokusForm/components/all";
+import { FormBreadcumb } from "./../../../components/Breadcumb";
+import { HokusForm } from "../../../components/HokusForm";
+import { Tabs, Tab } from "material-ui";
 
 const componentRegistry = new ComponentRegistry(dynamicFormComponents);
 
@@ -16,7 +18,7 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
   formRef: any;
   state: FormsBuilderState = {
     form: {},
-    formKey: 1
+    formKey: 1,
   };
 
   constructor(props: FormsBuilderProps) {
@@ -54,6 +56,7 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
             { value: "boolean" },
             { value: "bundle-manager" },
             { value: "chips" },
+            { value: "data-nest" },
             { value: "date" },
             { value: "empty-line" },
             { value: "info" },
@@ -81,6 +84,7 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
               fields: [{ key: "bundleManagerInclude", type: "include", include: "bundleManagerInclude" }]
             },
             { key: "chips", fields: [{ key: "chipsInclude", type: "include", include: "chipsInclude" }] },
+            { key: "dataNest", fields: [{ key: "dataNestInclude", type: "include", include: "dateNestInclude" }] },
             { key: "date", fields: [{ key: "dateInclude", type: "include", include: "dateInclude" }] },
             { key: "empty-line", fields: [{ key: "emptyLineInclude", type: "include", include: "emptyLineInclude" }] },
             { key: "info", fields: [{ key: "infoInclude", type: "include", include: "infoInclude" }] },
@@ -123,6 +127,9 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
         { key: "title", title: "title", type: "string", required: true },
         { key: "default", title: "default", type: "chips" }
       ],
+      dataNestInclude: [
+        { key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" },
+      ],
       dateInclude: [
         { key: "title", title: "title", type: "string", required: true },
         // { key: "required", title: "required", type: "boolean", default: false },
@@ -159,7 +166,6 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
       ],
       nestInclude: [
         { key: "title", title: "title", type: "string", required: true },
-        { key: "default", title: "default", type: "boolean", default: false },
         { key: "groupdata", title: "groupdata", type: "boolean", default: false },
         { key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }
       ],
@@ -219,6 +225,8 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
       ]
     };
 
+    const fields = this.state.form?.fields || [];
+
     return (
       <div style={{ display: "flex" }}>
         <div style={{ flex: "1", position: "relative" }}>
@@ -230,11 +238,11 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
             fields={[{ key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }]}
             values={{}}
             plugins={{
-              openBundleFileDialog: function({ title, extensions, targetPath }: any, onFilesReady: any) {
+              openBundleFileDialog: function ({ title, extensions, targetPath }: any, onFilesReady: any) {
                 alert("This operation is not supported in the Cookbook. But we'll mock something for you.");
                 return Promise.resolve([`${targetPath}/some-file.${extensions[0] || "png"}`]);
               },
-              getBundleThumbnailSrc: function(targetPath: string) {
+              getBundleThumbnailSrc: function (targetPath: string) {
                 return Promise.resolve(
                   "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
                 );
@@ -249,22 +257,24 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
             includes={includes}
             ref={this.handleFormRef}
             breadcumbComponentType={FormBreadcumb}
-            fields={this.state.form?.fields || []}
+            fields={fields.length===0? [ {key:'emptyInfo', content:"Your form is empty. Add fields to it to see a preview.", type:"info"} ]: fields}
             debug={false}
             componentRegistry={componentRegistry}
             values={{}}
             plugins={{
-              openBundleFileDialog: function({ title, extensions, targetPath }: any, onFilesReady: any) {
+              openBundleFileDialog: function ({ title, extensions, targetPath }: any, onFilesReady: any) {
                 alert("This operation is not supported in the FormBuilder. But we'll mock something for you.");
                 return Promise.resolve([`${targetPath}/some-file.${extensions[0] || "png"}`]);
               },
-              getBundleThumbnailSrc: function(targetPath: string) {
+              getBundleThumbnailSrc: function (targetPath: string) {
                 return Promise.resolve(
                   "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="
                 );
               }
             }}
           />
+          <br />
+          <MultiFormatDataDisplay data={{ fields }} />
         </div>
       </div>
     );
