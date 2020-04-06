@@ -250,7 +250,7 @@ Install NPM dependencies and build:
 
 Right now, Hokus is almost a one-man project. When I (Juliano Appel Klein) started to develop it, I was trying to create a simple tool to let customers edit their Hugo websites. But soon I figured out this was not a simple task.
 
-I believe Hokus can become a great project. The Hugo community is large and there is a lack os simple tools to use.
+I believe Hokus can become a great project. The Hugo community is large and there is a lack of simple tools to use.
 
 If you want to contribute, please let me know. You can [create an issue](https://github.com/julianoappelklein/hokus/issues) or reach me through the website [contact page](https://www.hokuscms.com/contact/).
 
