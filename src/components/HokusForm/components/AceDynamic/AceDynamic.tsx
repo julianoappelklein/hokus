@@ -17,7 +17,6 @@ type AceDynamicField = {
   type: string;
   default: string;
   tip: string;
-  multiLine: boolean;
   language: string;
   lightTheme: boolean;
 };

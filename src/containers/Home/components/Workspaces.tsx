@@ -152,7 +152,7 @@ export function Workspaces(props: {
           <AccordionItem
             key={i}
             label={workspace.key}
-            headStyle={{ paddingLeft: "8px", paddingRight: "8px", fontWeight: active ? "bold" : undefined }}
+            headStyle={{ paddingLeft: "8px", paddingRight: "8px", textDecoration: active ? "underline" : undefined }}
             headerLeftItems={[
               <FlatButton
                 style={{ minWidth: "40px" }}

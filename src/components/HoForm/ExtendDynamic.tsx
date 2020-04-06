@@ -84,12 +84,10 @@ export class ExtendDynamic extends BaseDynamic<ExtendDynamicField, {}> {
     return "extend";
   }
 
-  buildBreadcumbFragment(node: any, buttons: Array<{ label: string; node: any }>) {
-    buttons.push({ label: this.getTitle(node.field, node.state), node });
-  }
+  buildBreadcumbFragment(node: any, buttons: Array<{ label: string; node: any }>) {}
 
   buildDisplayPathFragment(node: any) {
-    return node.field.key;
+    return null;
   }
 
   crawlComponent({ form, node }: CrawlContext<ExtendDynamicField>): void {
@@ -99,23 +97,6 @@ export class ExtendDynamic extends BaseDynamic<ExtendDynamicField, {}> {
     form.crawlLevel({ fields: field.fields, state, parent });
     const selectedTypeField = this.getSelectedTypeField(field, state) as any;
     if (selectedTypeField) form.crawlLevel({ fields: selectedTypeField.fields, state, parent });
-  }
-
-  getTitle(field: ExtendDynamicField, state: any): string {
-    let title = "";
-    if (field.titleKey != null) {
-      if (Array.isArray(field.titleKey)) {
-        for (let i = 0; i < field.titleKey.length; i++) {
-          const key = field.titleKey[i];
-          title = (state[key] || "").toString();
-          if (title) break;
-        }
-      } else {
-        title = state[field.titleKey];
-      }
-    }
-    if (title) return title;
-    return field.title || "Unnamed";
   }
 
   renderComponent() {

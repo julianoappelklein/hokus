@@ -25,7 +25,6 @@ import service from "./services/service";
 import { EmptyConfigurations, Configurations } from "./types";
 
 import "./css/App.css";
-import { FormsBuilder } from "./containers/FormsBuilder/FormsBuilder";
 
 //the default locked UI style
 const style: { [k: string]: CSSProperties } = {

@@ -4,6 +4,7 @@ import { HoForm, ComponentRegistry } from "./../../components/HoForm";
 import dynamicFormComponents from "./../../components/HokusForm/components/all";
 import { FormBreadcumb } from "./../../components/Breadcumb";
 import { Dialog, RaisedButton } from "material-ui";
+import { MultiFormatDataDisplay } from "../../components/MultiFormatDataDisplay";
 
 const componentRegistry = new ComponentRegistry(dynamicFormComponents);
 
@@ -112,8 +113,9 @@ export class FormsCookbook extends React.Component<FormsCookbookProps, FormsCook
             open={this.state.modal === "config"}
             autoScrollBodyContent={true}
             onRequestClose={this.handleModalClose}
+            bodyStyle={{ padding: 0 }}
           >
-            {this.state.modal === "config" ? <pre>{JSON.stringify(sample.fields, null, " ")}</pre> : null}
+            {this.state.modal === "config" ? <MultiFormatDataDisplay data={{ fields: sample.fields }} /> : null}
           </Dialog>
         </div>
       );

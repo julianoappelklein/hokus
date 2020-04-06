@@ -9,7 +9,6 @@ import IconNavigationCheck from "material-ui/svg-icons/navigation/check";
 import IconAdd from "material-ui/svg-icons/content/add";
 import IconFileFolder from "material-ui/svg-icons/file/folder";
 import TextField from "material-ui/TextField";
-import muiThemeable from "material-ui/styles/muiThemeable";
 import { Wrapper, InfoLine, InfoBlock, MessageBlock } from "./components/shared";
 import { Workspaces } from "./components/Workspaces";
 import CreateSiteDialog from "./components/CreateSiteDialog";
@@ -18,7 +17,6 @@ import BlockDialog from "./components/BlockDialog";
 import Spinner from "./../../components/Spinner";
 
 import { EmptyConfigurations, Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from "./../../types";
-import { MuiTheme } from "material-ui/styles";
 
 const styles: { [k: string]: CSSProperties } = {
   container: {
@@ -53,7 +51,6 @@ const styles: { [k: string]: CSSProperties } = {
 type HomeProps = {
   siteKey: string;
   workspaceKey: string;
-  muiTheme?: MuiTheme | undefined;
 };
 
 type HomeState = {
@@ -67,7 +64,7 @@ type HomeState = {
   blockingOperation: string | null | undefined; //this should be moved to a UI service
 };
 
-class Home extends React.Component<HomeProps, HomeState> {
+export default class Home extends React.Component<HomeProps, HomeState> {
   history: any;
 
   constructor(props: HomeProps) {
@@ -273,9 +270,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                 <ListItem
                   key={index}
                   style={selected ? styles.siteActiveStyle : styles.siteInactiveStyle}
-                  rightIcon={
-                    <IconNavigationCheck color={active ? this.props.muiTheme?.palette?.primary1Color : undefined} />
-                  }
+                  rightIcon={<IconNavigationCheck color={active ? "rgb(0, 188, 212)" : undefined} />}
                   onClick={() => {
                     this.selectSite(item);
                   }}
@@ -328,6 +323,3 @@ class Home extends React.Component<HomeProps, HomeState> {
     );
   }
 }
-
-//TODO - fix "as any" below
-export default muiThemeable()(Home as any);
