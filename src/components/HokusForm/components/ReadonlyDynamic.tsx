@@ -9,18 +9,22 @@ type ReadonlyDynamicField = {
   key: string;
   type: string;
   title: string;
-  tip: string | null | undefined;
-  default: string | null | undefined;
-  multiLine: boolean | null | undefined;
+  tip?: string;
+  value?: string;
+  default?: string;
+  multiLine?: boolean;
 };
 
 type ReadonlyDynamicState = {};
 
 class ReadonlyDynamic extends BaseDynamic<ReadonlyDynamicField, ReadonlyDynamicState> {
-  normalizeState(x: NormalizeStateContext<ReadonlyDynamicField>) {
-    let key = x.field.key;
-    if (x.state[key] === undefined) {
-      x.state[key] = x.field.default || "";
+  normalizeState({ state, field }: NormalizeStateContext<ReadonlyDynamicField>) {
+    let key = field.key;
+    if (field.value != undefined) {
+      state[key] = field.value;
+    }
+    if (state[key] == null) {
+      state[key] = field.default || "";
     }
   }
 

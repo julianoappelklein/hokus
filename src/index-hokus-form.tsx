@@ -21,6 +21,7 @@ import logo from "./img/logo.svg";
 //STYLE STUFF
 import "./css/index.css";
 import "./css/bootstrap-grid.css";
+import { FormsBuilder } from "./containers/FormsCookbook/FormsBuilder/FormsBuilder";
 
 let samplesExt = [
   {
@@ -67,7 +68,7 @@ To throw me a challenge, just create an issue: [https://github.com/julianoappelk
 
 For more informations, access our website [https://hokus.netlify.com](https://hokus.netlify.com) or our repository: [https://github.com/julianoappelklein/hokus](https://github.com/julianoappelklein/hokus).
 
-If you have any doubts, please, reach me by using the website contact form or from our repo.
+If you have any doubts, please, reach me by using the website contact form or through our GitHub page.
 
 *Juliano Appel Klein*  
 *Hokus Author*
@@ -84,14 +85,18 @@ const Container = (props: any) => {
   return <div style={{ margin: "0px auto", maxWidth: "50em", padding: "0 0.5em" }}>{props.children}</div>;
 };
 
+const ContainerWide = (props: any) => {
+  return <div style={{ margin: "0px auto", maxWidth: "90em", padding: "0 0.5em" }}>{props.children}</div>;
+};
+
 class FormsCookbookWeb extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = { index: 0 };
   }
 
-  handleChange = (e: any, index: any) => {
-    this.setState({ index });
+  handleChange = (e: any, index: any, value: string) => {
+    this.setState({ index: value });
   };
 
   render() {
@@ -112,15 +117,23 @@ class FormsCookbookWeb extends React.Component<any, any> {
                   {samplesExt.map((x, i) => (
                     <MenuItem key={x.key} value={i} primaryText={x.title} />
                   ))}
+                  <MenuItem key={"form-builder"} value={"form-builder"} primaryText={"Form Builder (Beta)"} />
                 </SelectField>
               </div>
             </Container>
           </div>
         </MuiThemeProvider>
         <div style={{ height: 130 }}></div>
-        <Container>
-          <FormsCookbook samples={samplesExt} sampleKey={samplesExt[this.state.index].key} />
-        </Container>
+
+        {this.state.index === "form-builder" ? (
+          <ContainerWide>
+            <FormsBuilder />
+          </ContainerWide>
+        ) : (
+          <Container>
+            <FormsCookbook samples={samplesExt} sampleKey={samplesExt[this.state.index].key} />
+          </Container>
+        )}
       </React.Fragment>
     );
   }

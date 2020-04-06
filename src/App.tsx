@@ -245,7 +245,7 @@ class App extends React.Component<{}, AppState> {
           path="/"
           exact
           render={() => {
-            return <Home key={"home"} siteKey={""} workspaceKey={""} muiTheme />;
+            return <Home key={"home"} siteKey={""} workspaceKey={""} />;
           }}
         />
         <Route
@@ -257,7 +257,6 @@ class App extends React.Component<{}, AppState> {
                 key={"home"}
                 siteKey={decodeURIComponent(match.params.site)}
                 workspaceKey={decodeURIComponent(match.params.workspace)}
-                muiTheme
               />
             );
           }}

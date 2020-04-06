@@ -4,7 +4,8 @@ import { NormalizeStateContext } from "./types";
 type HiddenDynamicField = {
   type: string;
   key: string;
-  default: string | null;
+  value?: string;
+  default?: string;
 };
 
 type HiddenDynamicState = {};
@@ -14,6 +15,9 @@ export class HiddenDynamic extends BaseDynamic<HiddenDynamicField, HiddenDynamic
     let key = field.key;
     if (state[key] == null) {
       state[key] = field.default || "";
+    }
+    if (field.value != undefined) {
+      state[key] = field.value;
     }
   }
 

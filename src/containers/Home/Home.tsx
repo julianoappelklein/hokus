@@ -15,8 +15,11 @@ import CreateSiteDialog from "./components/CreateSiteDialog";
 import PublishSiteDialog from "./components/PublishSiteDialog";
 import BlockDialog from "./components/BlockDialog";
 import Spinner from "./../../components/Spinner";
+import muiThemeable from "material-ui/styles/muiThemeable";
+import { MuiTheme } from "material-ui/styles";
 
 import { EmptyConfigurations, Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from "./../../types";
+import MuiThemed from "../../components/MuiThemed";
 
 const styles: { [k: string]: CSSProperties } = {
   container: {
@@ -48,12 +51,13 @@ const styles: { [k: string]: CSSProperties } = {
   }
 };
 
-type HomeProps = {
+interface HomeProps {
   siteKey: string;
   workspaceKey: string;
-};
+  muiTheme?: MuiTheme | undefined;
+}
 
-type HomeState = {
+interface HomeState {
   configurations?: Configurations | EmptyConfigurations;
   selectedSite?: SiteConfig;
   selectedSiteWorkspaces?: Array<WorkspaceHeader>;
@@ -62,9 +66,9 @@ type HomeState = {
   createSiteDialog: boolean;
   publishSiteDialog?: { workspace: WorkspaceConfig; workspaceHeader: WorkspaceHeader; open: boolean };
   blockingOperation: string | null | undefined; //this should be moved to a UI service
-};
+}
 
-export default class Home extends React.Component<HomeProps, HomeState> {
+class Home extends React.Component<HomeProps, HomeState> {
   history: any;
 
   constructor(props: HomeProps) {
@@ -270,7 +274,9 @@ export default class Home extends React.Component<HomeProps, HomeState> {
                 <ListItem
                   key={index}
                   style={selected ? styles.siteActiveStyle : styles.siteInactiveStyle}
-                  rightIcon={<IconNavigationCheck color={active ? "rgb(0, 188, 212)" : undefined} />}
+                  rightIcon={
+                    <IconNavigationCheck color={active ? this.props.muiTheme?.palette?.primary1Color : undefined} />
+                  }
                   onClick={() => {
                     this.selectSite(item);
                   }}
@@ -323,3 +329,5 @@ export default class Home extends React.Component<HomeProps, HomeState> {
     );
   }
 }
+
+export default muiThemeable()(Home as any);

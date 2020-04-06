@@ -10,10 +10,10 @@ import { accordionTest } from "./accordion-test";
 export const samples = [
   allComponents,
   //   accordionTest,
+  extend,
   blogPost,
   lotsOfString,
   //   nestTest,
   pizzaDeliveryMenu,
-  websiteConfiguration,
-  extend
+  websiteConfiguration
 ];

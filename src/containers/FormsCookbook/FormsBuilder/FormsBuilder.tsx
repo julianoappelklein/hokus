@@ -55,18 +55,20 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
             { value: "accordion" },
             { value: "boolean" },
             { value: "bundle-manager" },
+            { value: "bundle-image-thumbnail" },
             { value: "chips" },
             { value: "code-editor" },
             { value: "data-nest" },
             { value: "date" },
             { value: "empty-line" },
-            { value: "extend", text: "extend" },
-            { value: "hidden", text: "hidden (ToDo)" },
+            { value: "extend" },
+            { value: "hidden" },
             { value: "info" },
             { value: "markdown" },
             { value: "nest" },
             { value: "number" },
-            { value: "readonly", text: "readonly (ToDo)" },
+            { value: "readonly" },
+            { value: "section" },
             { value: "select" },
             { value: "string" }
           ],
@@ -88,6 +90,10 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
               key: "bundle-manager",
               fields: [{ key: "bundleManagerInclude", type: "include", include: "bundleManagerInclude" }]
             },
+            {
+              key: "bundle-image-thumbnail",
+              fields: [{ key: "bundleImageThumbnailInclude", type: "include", include: "bundleImageThumbnailInclude" }]
+            },
             { key: "chips", fields: [{ key: "chipsInclude", type: "include", include: "chipsInclude" }] },
             {
               key: "code-editor",
@@ -97,12 +103,15 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
             { key: "date", fields: [{ key: "dateInclude", type: "include", include: "dateInclude" }] },
             { key: "empty-line", fields: [{ key: "emptyLineInclude", type: "include", include: "emptyLineInclude" }] },
             { key: "extend", fields: [{ key: "extendInclude", type: "include", include: "extendInclude" }] },
+            { key: "hidden", fields: [{ key: "hiddenInclude", type: "include", include: "hiddenInclude" }] },
             { key: "info", fields: [{ key: "infoInclude", type: "include", include: "infoInclude" }] },
             { key: "markdown", fields: [{ key: "markdownInclude", type: "include", include: "markdownInclude" }] },
             { key: "number", fields: [{ key: "numberInclude", type: "include", include: "numberInclude" }] },
             { key: "nest", fields: [{ key: "nestInclude", type: "include", include: "nestInclude" }] },
-            { key: "string", fields: [{ key: "textFieldInclude", type: "include", include: "textFieldInclude" }] },
-            { key: "select", fields: [{ key: "selectInclude", type: "include", include: "selectInclude" }] }
+            { key: "readonly", fields: [{ key: "readonlyInclude", type: "include", include: "readonlyInclude" }] },
+            { key: "section", fields: [{ key: "sectionInclude", type: "include", include: "sectionInclude" }] },
+            { key: "select", fields: [{ key: "selectInclude", type: "include", include: "selectInclude" }] },
+            { key: "string", fields: [{ key: "textFieldInclude", type: "include", include: "textFieldInclude" }] }
           ]
         }
       ],
@@ -131,9 +140,9 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
             required: true
           }
         },
-        { key: "default", title: "default", type: "boolean", default: false },
         { key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }
       ],
+      bundleImageThumbnailInclude: [{ key: "src", title: "src", type: "string", required: false }],
       chipsInclude: [
         { key: "title", title: "title", type: "string", required: true },
         { key: "default", title: "default", type: "chips" }
@@ -196,6 +205,10 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
           ]
         }
       ],
+      hiddenInclude: [
+        { key: "value", title: "value", type: "string", required: false },
+        { key: "default", title: "default", type: "string", required: false }
+      ],
       markdownInclude: [
         { key: "title", title: "title", type: "string", required: true },
         { key: "multiLine", title: "multiLine", type: "boolean", default: true },
@@ -213,13 +226,57 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
         { key: "default", title: "default", type: "number" },
         { key: "tip", title: "tip", type: "string" }
       ],
+      readonlyInclude: [
+        { key: "title", title: "title", type: "string", required: true },
+        { key: "required", title: "required", type: "boolean", default: false },
+        { key: "value", title: "default", type: "string" },
+        { key: "default", title: "default", type: "string" },
+        { key: "multiLine", title: "multiLine", type: "boolean", default: false },
+        {
+          key: "defaultExtend",
+          type: "extend",
+          selectorKey: "multiLine",
+          clearOnChange: [],
+          types: [
+            {
+              key: "true",
+              fields: [{ key: "default", title: "default", type: "string", multiLine: true }]
+            },
+            {
+              key: "false",
+              fields: [{ key: "default", title: "default", type: "string" }]
+            }
+          ]
+        },
+        { key: "tip", title: "tip", type: "string" }
+      ],
       textFieldInclude: [
         { key: "title", title: "title", type: "string", required: true },
         { key: "required", title: "required", type: "boolean", default: false },
-        { key: "default", title: "default", type: "string" },
         { key: "pattern", title: "pattern", type: "string", required: false },
         { key: "multiLine", title: "multiLine", type: "boolean", default: false },
+        {
+          key: "defaultExtend",
+          type: "extend",
+          selectorKey: "multiLine",
+          clearOnChange: [],
+          types: [
+            {
+              key: "true",
+              fields: [{ key: "default", title: "default", type: "string", multiLine: true }]
+            },
+            {
+              key: "false",
+              fields: [{ key: "default", title: "default", type: "string" }]
+            }
+          ]
+        },
         { key: "tip", title: "tip", type: "string" }
+      ],
+      sectionInclude: [
+        { key: "title", title: "title", type: "string", required: true },
+        { key: "groupdata", title: "groupdata", type: "boolean", default: false },
+        { key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }
       ],
       selectInclude: [
         { key: "title", title: "title", type: "string", required: true },
@@ -306,7 +363,7 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
                   ]
                 : fields
             }
-            debug={false}
+            debug={true}
             componentRegistry={componentRegistry}
             values={{}}
             plugins={{
