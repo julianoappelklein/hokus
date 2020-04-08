@@ -93,7 +93,7 @@ export default class CreateSiteDialog extends React.Component<CreateSiteDialogPr
     let { open } = this.props;
     let { model, sourceIndex, key } = this.state;
     let source = SITE_SOURCES[sourceIndex];
-    let SourceForm: any = source ? source.form : null;
+    let SourceForm: any = source && source.enabled ? source.form : null;
 
     let errors = this.validate();
     const valid = Object.keys(errors).length === 0;
