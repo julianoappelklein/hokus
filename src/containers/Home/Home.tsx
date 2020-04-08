@@ -53,7 +53,7 @@ const styles: { [k: string]: CSSProperties } = {
 type HomeProps = {
   siteKey: string;
   workspaceKey: string;
-  muiTheme?: MuiTheme | undefined;
+  muiTheme?: MuiTheme;
 };
 
 type HomeState = {
@@ -329,5 +329,4 @@ class Home extends React.Component<HomeProps, HomeState> {
   }
 }
 
-//TODO - fix "as any" below
-export default muiThemeable()(Home as any);
+export default muiThemeable()<typeof Home, HomeProps>(Home);
