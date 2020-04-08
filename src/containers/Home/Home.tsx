@@ -54,8 +54,8 @@ const styles: { [k: string]: CSSProperties } = {
 interface HomeProps {
   siteKey: string;
   workspaceKey: string;
-  muiTheme?: MuiTheme | undefined;
-}
+  muiTheme?: MuiTheme;
+};
 
 interface HomeState {
   configurations?: Configurations | EmptyConfigurations;
@@ -330,4 +330,5 @@ class Home extends React.Component<HomeProps, HomeState> {
   }
 }
 
-export default muiThemeable()(Home as any);
+export default muiThemeable()<typeof Home, HomeProps>(Home);
+
