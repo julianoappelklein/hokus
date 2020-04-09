@@ -34,9 +34,8 @@ class SiteService {
     return workspaces.find((x: any) => x.key === workspaceKey);
   }
 
-  async mountWorkspace(siteKey: string, workspaceKey: string): Promise<void> {
+  async touchSite(siteKey: string): Promise<void> {
     const siteSource = await this._getSiteSource(siteKey);
-    await siteSource.mountWorkspace(workspaceKey);
   }
 
   async initializeSite(config: any) {

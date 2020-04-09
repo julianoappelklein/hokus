@@ -11,6 +11,7 @@ import { globJob, createThumbnailJob } from "./../../jobs";
 import HugoBuilder from "../../hugo/hugo-builder.js";
 import pathHelper from "../../path-helper.js";
 import HugoServer from "../../hugo/hugo-server.js";
+import { appEventEmitter } from "../../app-event-emmiter.js";
 
 class WorkspaceService {
   workspacePath: string;
@@ -100,6 +101,11 @@ class WorkspaceService {
 
     let stringData = await this._smartDump(filePath, [path.extname(single.file).replace(".", "")], document);
     fs.writeFileSync(filePath, stringData);
+    appEventEmitter.emit("onWorkspaceFileChanged", {
+      siteKey: this.siteKey,
+      workspaceKey: this.workspaceKey,
+      files: [filePath]
+    });
     return document;
   }
 
@@ -158,6 +164,11 @@ class WorkspaceService {
     await fs.ensureDir(path.dirname(filePath));
     let stringData = await this._smartDump(filePath, [collection.dataformat], {});
     await fs.writeFile(filePath, stringData, { encoding: "utf8" });
+    appEventEmitter.emit("onWorkspaceFileChanged", {
+      siteKey: this.siteKey,
+      workspaceKey: this.workspaceKey,
+      files: [filePath]
+    });
 
     return { key: returnedKey.replace(/\\/g, "/") };
   }
@@ -227,6 +238,11 @@ class WorkspaceService {
       return { renamed: false };
     }
     fs.renameSync(filePath, newFilePath);
+    appEventEmitter.emit("onWorkspaceFileChanged", {
+      siteKey: this.siteKey,
+      workspaceKey: this.workspaceKey,
+      files: [filePath, newFilePath]
+    });
     return { renamed: true, item: { key: newFileKey.replace(/\\/g, "/"), label: collectionItemNewKey } };
   }
 
@@ -239,6 +255,11 @@ class WorkspaceService {
     if (fs.existsSync(filePath)) {
       //TODO: use async await with a promise to test if deletion succeded
       fs.unlink(filePath);
+      appEventEmitter.emit("onWorkspaceFileChanged", {
+        siteKey: this.siteKey,
+        workspaceKey: this.workspaceKey,
+        files: [filePath]
+      });
       return true;
     }
     return false;
@@ -258,6 +279,12 @@ class WorkspaceService {
     this._stripNonDocumentData(documentClone);
     let stringData = await this._smartDump(filePath, [collection.dataformat], documentClone);
     fs.writeFileSync(filePath, stringData);
+    
+    appEventEmitter.emit("onWorkspaceFileChanged", {
+      siteKey: this.siteKey,
+      workspaceKey: this.workspaceKey,
+      files: [filePath]
+    });
 
     //preparing return
     if (document.resources) {
@@ -297,6 +324,13 @@ class WorkspaceService {
       }
 
       await fs.copy(from, to);
+    }
+    if (files.length > 0) {
+      appEventEmitter.emit("onWorkspaceFileChanged", {
+        siteKey: this.siteKey,
+        workspaceKey: this.workspaceKey,
+        files: files
+      });
     }
 
     return files.map(x => {

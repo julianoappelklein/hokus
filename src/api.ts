@@ -155,8 +155,8 @@ export class API {
     return mainProcessBridge.request("getHugoTemplates", null, { timeout: 30000 });
   }
 
-  mountWorkspace(siteKey: string, workspaceKey: string) {
-    return mainProcessBridge.request("mountWorkspace", { siteKey, workspaceKey });
+  touchSite(siteKey: string) {
+    return mainProcessBridge.request("touchSite", { siteKey });
   }
 }
 

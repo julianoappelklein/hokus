@@ -103,9 +103,7 @@ export class FormsCookbook extends React.Component<FormsCookbookProps, FormsCook
             autoScrollBodyContent={true}
             onRequestClose={this.handleModalClose}
           >
-            {this.state.modal === "state" ? (
-              <pre>{JSON.stringify(this.formRef.getFormDocClone(), null, " ")}</pre>
-            ) : null}
+            {this.state.modal === "state" ? <MultiFormatDataDisplay data={this.formRef.getFormDocClone()} /> : null}
           </Dialog>
           <Dialog
             title="Config"

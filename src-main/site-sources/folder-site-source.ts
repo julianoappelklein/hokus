@@ -17,14 +17,6 @@ class FolderSiteSource implements SiteSource {
     return Promise.resolve([{ key: "source", path: this.config.path, state: "mounted" }]);
   }
 
-  mountWorkspace(key: string): Promise<void> {
-    return Promise.resolve(undefined);
-  }
-
-  unmountWorkspace(key: string): Promise<void> {
-    return Promise.resolve(undefined);
-  }
-
   update(): Promise<void> {
     return Promise.resolve();
   }

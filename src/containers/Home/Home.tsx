@@ -55,7 +55,7 @@ interface HomeProps {
   siteKey: string;
   workspaceKey: string;
   muiTheme?: MuiTheme;
-};
+}
 
 interface HomeState {
   configurations?: Configurations | EmptyConfigurations;
@@ -168,7 +168,7 @@ class Home extends React.Component<HomeProps, HomeState> {
       activeSiteKey != siteKey;
 
     if (select) {
-      await service.api.mountWorkspace(siteKey, workspace.key);
+      await service.api.touchSite(siteKey);
       this.history.push(`/sites/${decodeURIComponent(siteKey)}/workspaces/${decodeURIComponent(workspace.key)}`);
     } else {
       this.history.push(`/`);
@@ -331,4 +331,3 @@ class Home extends React.Component<HomeProps, HomeState> {
 }
 
 export default muiThemeable()<typeof Home, HomeProps>(Home);
-

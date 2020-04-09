@@ -5,14 +5,11 @@ import { SiteSource } from "./types";
 import { WorkspaceHeader } from "./../../global-types";
 import pathHelper from "../path-helper";
 import jobManager from "../jobs/job-manager";
+import { appEventEmitter } from "../app-event-emmiter";
+import * as nodePath from "path";
 
 type GitSiteSourceConfig = {
   key: string;
-  // credentials: {
-  //   sshPrivateKey: string;
-  //   sshPublicKey: string;
-  //   username: string;
-  // };
   url: string;
 };
 
@@ -79,12 +76,38 @@ class GitSiteSource implements SiteSource {
     return workspaces;
   }
 
-  async mountWorkspace(key: string): Promise<void> {
+  async initialize() {
+    appEventEmitter.on("onWorkspaceFileChanged", async d => {
+      await this.ensureMountedWorkspace(d.workspaceKey);
+      this.stageCommitAndPush(d.workspaceKey, d.files);
+    });
+  }
+
+  dispose() {}
+
+  async stageCommitAndPush(workspaceKey: string, files: string[]) {
+    let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      await git.add({ fs, dir: repositoryPath, filepath: nodePath.relative(repositoryPath, file) });
+    }
+    await git.commit({ fs, dir: repositoryPath, message: "Files commited automatically.", author:{name:"hokus", email:"commiter@hokus.com"}, });
+    await git.push({ fs, dir: repositoryPath, http: gitHttp });
+  }
+
+  async ensureMountedWorkspace(workspaceKey: string) {
+    let repositoryPath = pathHelper.getSiteWorkspacesRoot(workspaceKey);
+    // let branch = await git.currentBranch({ fs, dir: repositoryPath, fullname: false });
+    // if (branch !== workspaceKey)
+    await this.mountWorkspace(workspaceKey);
+  }
+
+  async mountWorkspace(workspaceKey: string): Promise<void> {
     await this._ensureRepo();
     let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
     let branches: string[] = await git.listBranches({ fs, dir: repositoryPath });
-    let refName = branches.find(x => x.endsWith("/" + key) && x.indexOf("/remotes/") !== -1);
-    if (refName == null) refName = branches.find(x => x.endsWith("/" + key)) || "master";
+    let refName = branches.find(x => x.endsWith("/" + workspaceKey) && x.indexOf("/remotes/") !== -1);
+    if (refName == null) refName = branches.find(x => x.endsWith("/" + workspaceKey)) || "master";
     await git.checkout({ fs, dir: repositoryPath, ref: refName });
 
     //do a regular pull
@@ -92,10 +115,6 @@ class GitSiteSource implements SiteSource {
     //let remote = await NodeGit.Remote.create(repo, "origin", this.config.url);
     // await repo.pull(this._getNodeGitFetchOptions());
     // await repo.push(this._getNodeGitFetchOptions());
-  }
-
-  async unmountWorkspace(key: string): Promise<void> {
-    //won't be necessary
   }
 
   async update(): Promise<void> {
