@@ -69,6 +69,9 @@ function createWindow() {
     frame: false,
     backgroundColor: "#ffffff",
     minWidth: 1024,
+    webPreferences: {
+      nodeIntegration: true
+    },
     //webPreferences:{webSecurity:false },
     icon
   });

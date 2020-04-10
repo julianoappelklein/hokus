@@ -1,7 +1,7 @@
 import { IPublisher } from "./types";
 import { PublisherConfig } from "./../types";
 import FolderPublisher from "./folder-publisher";
-import S3Publisher from "./s3-publisher";
+// import S3Publisher from "./s3-publisher";
 
 //Not a real factory, yet!
 class PublisherFactory {
@@ -11,9 +11,9 @@ class PublisherFactory {
     if (type === "folder") {
       return new FolderPublisher(genericPublisherConfig);
     }
-    if (type === "s3") {
-      return new S3Publisher(genericPublisherConfig);
-    }
+    // if (type === "s3") {
+    //   return new S3Publisher(genericPublisherConfig);
+    // }
     if (type === "void") {
       let VoidPublisher = require("./void-publisher");
       return new VoidPublisher();
