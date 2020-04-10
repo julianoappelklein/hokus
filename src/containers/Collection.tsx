@@ -21,6 +21,7 @@ import {
 import { Debounce } from "./../utils/debounce";
 import { WorkspaceConfig } from "../../global-types";
 
+
 const Fragment = React.Fragment;
 
 const MAX_RECORDS = 200;
@@ -459,8 +460,7 @@ class Collection extends React.Component<CollectionProps, CollectionState> {
           this.history = history;
           return (
             <div style={{ padding: "20px" }}>
-              <Breadcumb items={[<BreadcumbItem label={collection.title} />]} />
-              <br />
+              <h2>{collection.title}</h2>
               <div>
                 <RaisedButton
                   label="New Item"
