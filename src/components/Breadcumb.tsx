@@ -14,10 +14,16 @@ type BreadcumbItemState = {};
 
 export class BreadcumbItem extends React.Component<BreadcumbItemProps, BreadcumbItemState> {
   render() {
+
+    const style: React.CSSProperties = { minWidth: "30px", borderRadius: "0px" };
+    if(this.props.disabled===true){
+      style.color = '#000';
+    }
+
     return (
       <FlatButton
         primary={true}
-        style={{ minWidth: "30px", borderRadius: "0px" }}
+        style={style}
         disabled={this.props.disabled}
         label={this.props.label}
         onClick={this.props.onClick}

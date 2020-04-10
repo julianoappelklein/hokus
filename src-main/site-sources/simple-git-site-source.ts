@@ -4,7 +4,7 @@ import { WorkspaceHeader } from "./../../global-types";
 import pathHelper from "../path-helper";
 import jobManager from "../jobs/job-manager";
 import { appEventEmitter } from "../app-event-emmiter";
-import * as simpleGit from 'simple-git/promise';
+import * as simpleGit from "simple-git/promise";
 
 type GitSiteSourceConfig = {
   key: string;
@@ -43,7 +43,16 @@ class SimpleGitSiteSource implements SiteSource {
       let repoNamePrefix = /^(refs\/heads|refs\/remotes\/origin)\//i;
       await this._ensureRepo();
       const branchInfo = await simpleGit(repositoryPath).branch();
-      let branchesInfo: Array<{name: string, current: boolean}> = Object.entries(branchInfo.branches).map(x => ({name: x[1].name, current: x[1].current}));
+      let branchesInfo: Array<{ name: string; current: boolean }> = Object.entries(branchInfo.branches).map(x => ({
+        name: x[1].name.split("/").slice(-1)[0],
+        current: x[1].current
+      }));
+      var uniqueBranches: { [key: string]: boolean } = {};
+      branchesInfo = branchesInfo.filter(x => {
+        const isDup = uniqueBranches[x.name] == null;
+        uniqueBranches[x.name] = true;
+        return !isDup;
+      });
 
       try {
         jobManager.runSharedJob(`git-site-source:fetch:${this.config.key}`, async () => {
@@ -85,14 +94,14 @@ class SimpleGitSiteSource implements SiteSource {
     const sGit = simpleGit(repositoryPath);
     await sGit.pull();
     await sGit.add(".");
-    await sGit.commit("Files commited automatically.", [], {  });
+    await sGit.commit("Files commited automatically.", [], {});
     await sGit.push();
   }
 
   async ensureMountedWorkspace(workspaceKey: string) {
     let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
     let branch = await simpleGit(repositoryPath).branch();
-    if (branch.current!==workspaceKey){
+    if (branch.current !== workspaceKey) {
       await this.mountWorkspace(workspaceKey);
     }
   }
@@ -102,7 +111,7 @@ class SimpleGitSiteSource implements SiteSource {
     let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
     let branches = await simpleGit(repositoryPath).branch();
     let currentBranchEntry = Object.entries(branches.branches).find(x => x[1].name === workspaceKey);
-    const refName = currentBranchEntry?.[1].name || 'master';
+    const refName = currentBranchEntry?.[1].name || "master";
     await simpleGit(repositoryPath).checkout(refName);
   }
 
