@@ -23,7 +23,7 @@ function NotImplementedSourceForm() {
 
 const SITE_SOURCES = [
   { key: "folder", title: "Folder", enabled: true, form: FolderSourceForm, description: "" },
-  { key: "git", title: "Git" /*(Beta)*/, enabled: false, form: GitSourceForm, description: "" },
+  { key: "git", title: "Git (Beta)", enabled: true, form: GitSourceForm, description: "" },
   { key: "ftp", title: "FTP", enabled: false, form: NotImplementedSourceForm, description: "" },
   { key: "aws-s3", title: "AWS S3", enabled: false, form: NotImplementedSourceForm, description: "" }
 ];

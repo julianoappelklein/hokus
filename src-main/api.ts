@@ -63,8 +63,8 @@ api.getWorkspaceDetails = async function({ siteKey, workspaceKey }: any) {
   return configuration;
 };
 
-api.touchSite = async function({ siteKey }: any) {
-  siteService.touchSite(siteKey);
+api.touchSite = async function({ siteKey, workspaceKey }: any) {
+  siteService.touchSite(siteKey, workspaceKey);
 };
 
 api.serveWorkspace = async function({ siteKey, workspaceKey, serveKey }: any) {

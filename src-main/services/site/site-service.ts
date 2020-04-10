@@ -4,6 +4,7 @@ import pathHelper from "../../path-helper";
 import publisherFactory from "../../publishers/publisher-factory";
 import configurationDataProvider from "./../../configuration-data-provider";
 import siteInitializerFactory from "../../site-sources/initializers/site-initializer-factory";
+import { appEventEmitter } from "../../app-event-emmiter";
 
 class SiteService {
   async _getSiteConfig(siteKey: string): Promise<SiteConfig> {
@@ -34,8 +35,9 @@ class SiteService {
     return workspaces.find((x: any) => x.key === workspaceKey);
   }
 
-  async touchSite(siteKey: string): Promise<void> {
+  async touchSite(siteKey: string, workspaceKey: string): Promise<void> {
     const siteSource = await this._getSiteSource(siteKey);
+    appEventEmitter.emit("onSiteTouched", {siteKey, workspaceKey});
   }
 
   async initializeSite(config: any) {

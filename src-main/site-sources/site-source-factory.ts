@@ -1,7 +1,6 @@
 import { SiteSource } from "./types";
 import FolderSiteSource from "./folder-site-source";
-import GitSiteSource from "./git-site-source";
-import { appEventEmitter } from "../app-event-emmiter";
+import SimpleGitSiteSource from "./simple-git-site-source";
 
 class SiteSourceFactory {
 
@@ -25,7 +24,7 @@ class SiteSourceFactory {
 
   getType(type: string): any {
     if (type === "folder") return FolderSiteSource;
-    else if (type === "git") return GitSiteSource;
+    else if (type === "git") return SimpleGitSiteSource;
     else throw new Error(`Site source (${type}) not implemented.`);
   }
 

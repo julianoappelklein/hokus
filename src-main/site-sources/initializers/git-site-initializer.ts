@@ -1,9 +1,8 @@
-import git from "isomorphic-git";
-import gitHttp from "isomorphic-git/http/node";
 import { SiteInitializer } from "./types";
 import { RawSiteConfig } from "./../../../global-types";
 import * as fs from "fs-extra";
 import pathHelper from "../../path-helper";
+import * as simpleGit from 'simple-git/promise';
 
 type BuildConfig = {
   key: string;
@@ -32,7 +31,7 @@ export default class GitSiteInitializer implements SiteInitializer {
       throw new Error("Folder was not empty.");
     }
     try {
-      const cloneResult = git.clone({ fs, http: gitHttp, dir: repositoryPath, url: config.url });
+      const cloneResult = simpleGit().clone(config.url, repositoryPath);
       await cloneResult;
     } catch (e) {
       await fs.remove(siteRootPath);

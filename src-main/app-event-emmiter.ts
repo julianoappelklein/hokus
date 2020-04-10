@@ -12,12 +12,16 @@ interface WorkspaceEvent extends SiteEvent {
   workspaceKey: string;
 }
 
+interface SiteTouchedEvent extends WorkspaceEvent {
+}
+
 interface WorkspaceFileChangedEvent extends WorkspaceEvent {
   files: string[];
 }
 
 interface AppEvents {
   onWorkspaceFileChanged: (payload: WorkspaceFileChangedEvent) => void;
+  onSiteTouched: (payload: SiteTouchedEvent) => void;
 }
 
 export interface AppEventEmitter extends TypedEventEmitter<AppEvents> {}

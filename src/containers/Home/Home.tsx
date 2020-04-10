@@ -168,7 +168,7 @@ class Home extends React.Component<HomeProps, HomeState> {
       activeSiteKey != siteKey;
 
     if (select) {
-      await service.api.touchSite(siteKey);
+      await service.api.touchSite(siteKey, workspace.key);
       this.history.push(`/sites/${decodeURIComponent(siteKey)}/workspaces/${decodeURIComponent(workspace.key)}`);
     } else {
       this.history.push(`/`);

@@ -1,9 +1,8 @@
-import git from "isomorphic-git";
-import gitHttp from "isomorphic-git/http/node";
 const _fs = require("fs");
 import * as fs from "fs-extra";
 import * as glob from "glob";
 import * as path from "path";
+import * as simpleGit from 'simple-git/promise';
 import formatProviderResolver from "../format-provider-resolver";
 
 class ThemeInstaller {
@@ -24,7 +23,7 @@ class ThemeInstaller {
     let themePath = path.join(destPath, "themes", themeKey);
     await fs.ensureDir(themePath);
 
-    await git.clone({ fs: _fs, http: gitHttp, dir: themePath, url: repoUrl });
+    await simpleGit().clone(repoUrl, themePath);
 
     //copy "sample" or "example" site to dest
     let sampleSitesPath = ["exampleSite", "sampleSite"].map(x => path.join(themePath, x));

@@ -1,19 +1,17 @@
-import git from "isomorphic-git";
-import gitHttp from "isomorphic-git/http/node";
 import * as fs from "fs-extra";
 import { SiteSource } from "./types";
 import { WorkspaceHeader } from "./../../global-types";
 import pathHelper from "../path-helper";
 import jobManager from "../jobs/job-manager";
 import { appEventEmitter } from "../app-event-emmiter";
-import * as nodePath from "path";
+import * as simpleGit from 'simple-git/promise';
 
 type GitSiteSourceConfig = {
   key: string;
   url: string;
 };
 
-class GitSiteSource implements SiteSource {
+class SimpleGitSiteSource implements SiteSource {
   config: GitSiteSourceConfig;
 
   constructor(config: any) {
@@ -35,10 +33,7 @@ class GitSiteSource implements SiteSource {
     fs.ensureDir(siteRootPath);
 
     if (await this._isEmptyDir(siteRootPath)) {
-      await git.clone({ fs: fs, http: gitHttp, dir: repositoryPath, url: this.config.url });
-    } else {
-      //so?
-      //return NodeGit.Repository.open(repositoryPath);
+      await simpleGit(repositoryPath).clone(this.config.url);
     }
   }
 
@@ -47,14 +42,12 @@ class GitSiteSource implements SiteSource {
       let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
       let repoNamePrefix = /^(refs\/heads|refs\/remotes\/origin)\//i;
       await this._ensureRepo();
-      let branches: string[] = await git.listBranches({ fs, dir: repositoryPath });
-      let currentBranchRef = await git.currentBranch({ fs, dir: repositoryPath });
-      if (currentBranchRef == null) throw new Error();
-      let currentBranchName = currentBranchRef.replace(repoNamePrefix, "");
+      const branchInfo = await simpleGit(repositoryPath).branch();
+      let branchesInfo: Array<{name: string, current: boolean}> = Object.entries(branchInfo.branches).map(x => ({name: x[1].name, current: x[1].current}));
 
       try {
         jobManager.runSharedJob(`git-site-source:fetch:${this.config.key}`, async () => {
-          await git.fetch({ fs, dir: repositoryPath, http: gitHttp, url: this.config.url });
+          await simpleGit(repositoryPath).fetch(this.config.url);
         });
       } catch (e) {
         //ignore?
@@ -64,11 +57,10 @@ class GitSiteSource implements SiteSource {
         return self.indexOf(value) === index;
       }
 
-      branches = branches.map(branch => branch.replace(repoNamePrefix, "")).filter(onlyUnique);
-      let data = branches.map(branch => ({
-        key: branch,
+      let data = branchesInfo.map(branch => ({
+        key: branch.name,
         path: pathHelper.getSiteWorkspacesRoot(this.config.key),
-        state: branch === currentBranchName ? "mounted" : "unmounted"
+        state: branch.current ? "mounted" : "unmounted"
       }));
 
       return data;
@@ -77,6 +69,9 @@ class GitSiteSource implements SiteSource {
   }
 
   async initialize() {
+    appEventEmitter.on("onSiteTouched", async d => {
+      await this.ensureMountedWorkspace(d.workspaceKey);
+    });
     appEventEmitter.on("onWorkspaceFileChanged", async d => {
       await this.ensureMountedWorkspace(d.workspaceKey);
       this.stageCommitAndPush(d.workspaceKey, d.files);
@@ -87,34 +82,28 @@ class GitSiteSource implements SiteSource {
 
   async stageCommitAndPush(workspaceKey: string, files: string[]) {
     let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      await git.add({ fs, dir: repositoryPath, filepath: nodePath.relative(repositoryPath, file) });
-    }
-    await git.commit({ fs, dir: repositoryPath, message: "Files commited automatically.", author:{name:"hokus", email:"commiter@hokus.com"}, });
-    await git.push({ fs, dir: repositoryPath, http: gitHttp });
+    const sGit = simpleGit(repositoryPath);
+    await sGit.pull();
+    await sGit.add(".");
+    await sGit.commit("Files commited automatically.", [], {  });
+    await sGit.push();
   }
 
   async ensureMountedWorkspace(workspaceKey: string) {
-    let repositoryPath = pathHelper.getSiteWorkspacesRoot(workspaceKey);
-    // let branch = await git.currentBranch({ fs, dir: repositoryPath, fullname: false });
-    // if (branch !== workspaceKey)
-    await this.mountWorkspace(workspaceKey);
+    let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
+    let branch = await simpleGit(repositoryPath).branch();
+    if (branch.current!==workspaceKey){
+      await this.mountWorkspace(workspaceKey);
+    }
   }
 
   async mountWorkspace(workspaceKey: string): Promise<void> {
     await this._ensureRepo();
     let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
-    let branches: string[] = await git.listBranches({ fs, dir: repositoryPath });
-    let refName = branches.find(x => x.endsWith("/" + workspaceKey) && x.indexOf("/remotes/") !== -1);
-    if (refName == null) refName = branches.find(x => x.endsWith("/" + workspaceKey)) || "master";
-    await git.checkout({ fs, dir: repositoryPath, ref: refName });
-
-    //do a regular pull
-
-    //let remote = await NodeGit.Remote.create(repo, "origin", this.config.url);
-    // await repo.pull(this._getNodeGitFetchOptions());
-    // await repo.push(this._getNodeGitFetchOptions());
+    let branches = await simpleGit(repositoryPath).branch();
+    let currentBranchEntry = Object.entries(branches.branches).find(x => x[1].name === workspaceKey);
+    const refName = currentBranchEntry?.[1].name || 'master';
+    await simpleGit(repositoryPath).checkout(refName);
   }
 
   async update(): Promise<void> {
@@ -122,4 +111,4 @@ class GitSiteSource implements SiteSource {
   }
 }
 
-export default GitSiteSource;
+export default SimpleGitSiteSource;
