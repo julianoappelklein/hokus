@@ -14,6 +14,11 @@ module.exports = {
         }
     },
     rules: {
+        "prefer-const": "warn",
+        "eqeqeq": "warn",
+        "no-multi-spaces": "warn",
+        "no-undef-init": "warn",
+        "no-var": "warn"
         // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
         // e.g. "@typescript-eslint/explicit-function-return-type": "off",
     },

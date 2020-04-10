@@ -4,17 +4,20 @@ import * as crypto from "crypto";
 class BackgroundJobRunner {
   run(action: string, params: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      let actionWindow = new BrowserWindow({
+      const actionWindow = new BrowserWindow({
         show: false, //set it to true if you need to debug the window javascript
-        backgroundColor: "#ffffff"
+        backgroundColor: "#ffffff",
+        webPreferences: {
+          nodeIntegration: true,
+        }
       });
-      let html = `<html><body><p>Running Action.</p></body></html>`;
+      const html = `<html><body><p>Running Action.</p></body></html>`;
       actionWindow.loadURL("data:text/html;charset=utf-8," + encodeURIComponent(html));
 
-      let channel = crypto.randomBytes(16).toString("hex");
+      const channel = crypto.randomBytes(16).toString("hex");
       ipcMain.once(channel, (event: any, { response, e }: any) => {
         actionWindow.close();
-        if (e == null) resolve(response);
+        if (!e) resolve(response);
         else reject(e);
       });
 
