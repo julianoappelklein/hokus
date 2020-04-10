@@ -3,7 +3,7 @@ import { SiteSource } from "./types";
 import { WorkspaceHeader } from "./../../global-types";
 import pathHelper from "../path-helper";
 import jobManager from "../jobs/job-manager";
-import { appEventEmitter } from "../app-event-emmiter";
+import { appEventEmitter, WorkspaceFileChangedEvent, SiteTouchedEvent } from "../app-event-emmiter";
 import * as simpleGit from "simple-git/promise";
 
 type GitSiteSourceConfig = {
@@ -18,7 +18,7 @@ class SimpleGitSiteSource implements SiteSource {
     this.config = config;
   }
 
-  async _isEmptyDir(path: string): Promise<boolean> {
+  private async isEmptyDir(path: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       fs.readdir(path, function(err: Error, files: string[]) {
         if (err) reject(err);
@@ -27,21 +27,20 @@ class SimpleGitSiteSource implements SiteSource {
     });
   }
 
-  async _ensureRepo(): Promise<void> {
-    let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
-    let siteRootPath = pathHelper.getSiteRoot(this.config.key);
-    fs.ensureDir(siteRootPath);
-
-    if (await this._isEmptyDir(siteRootPath)) {
-      await simpleGit(repositoryPath).clone(this.config.url);
+  private async ensureRepo(workspaceKey: string): Promise<void> {
+    let repositoryPath = pathHelper.getSiteWorkspaceRoot(this.config.key, workspaceKey);
+    let workspacesRoot = pathHelper.getSiteWorkspacesRoot(this.config.key);
+    fs.ensureDir(repositoryPath);
+    if (await this.isEmptyDir(repositoryPath)) {
+      await simpleGit(workspacesRoot).clone(this.config.url, repositoryPath);
     }
+    await simpleGit(repositoryPath).checkout(workspaceKey);
   }
 
   async listWorkspaces(): Promise<Array<WorkspaceHeader>> {
     const workspaces = await jobManager.runSharedJob(`git-site-source:list-workspaces:${this.config.key}`, async () => {
-      let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
-      let repoNamePrefix = /^(refs\/heads|refs\/remotes\/origin)\//i;
-      await this._ensureRepo();
+      let repositoryPath = pathHelper.getSiteWorkspaceRoot(this.config.key, "master");
+      await this.ensureRepo("master");
       const branchInfo = await simpleGit(repositoryPath).branch();
       let branchesInfo: Array<{ name: string; current: boolean }> = Object.entries(branchInfo.branches).map(x => ({
         name: x[1].name.split("/").slice(-1)[0],
@@ -49,7 +48,7 @@ class SimpleGitSiteSource implements SiteSource {
       }));
       var uniqueBranches: { [key: string]: boolean } = {};
       branchesInfo = branchesInfo.filter(x => {
-        const isDup = uniqueBranches[x.name] == null;
+        const isDup = uniqueBranches[x.name] === true;
         uniqueBranches[x.name] = true;
         return !isDup;
       });
@@ -62,14 +61,10 @@ class SimpleGitSiteSource implements SiteSource {
         //ignore?
       }
 
-      function onlyUnique<T>(value: T, index: number, self: Array<T>) {
-        return self.indexOf(value) === index;
-      }
-
       let data = branchesInfo.map(branch => ({
         key: branch.name,
-        path: pathHelper.getSiteWorkspacesRoot(this.config.key),
-        state: branch.current ? "mounted" : "unmounted"
+        path: pathHelper.getSiteWorkspaceRoot(this.config.key, branch.name),
+        state: (branch.current ? "mounted" : "unmounted") as any
       }));
 
       return data;
@@ -77,42 +72,32 @@ class SimpleGitSiteSource implements SiteSource {
     return workspaces;
   }
 
+  handleSiteTouched = async (d: SiteTouchedEvent) => {
+    await this.ensureRepo(d.workspaceKey);
+  };
+
+  handleWorkspaceFileChanged = async (d: WorkspaceFileChangedEvent) => {
+    await this.ensureRepo(d.workspaceKey);
+    this.stageCommitAndPush(d.workspaceKey, d.files);
+  };
+
   async initialize() {
-    appEventEmitter.on("onSiteTouched", async d => {
-      await this.ensureMountedWorkspace(d.workspaceKey);
-    });
-    appEventEmitter.on("onWorkspaceFileChanged", async d => {
-      await this.ensureMountedWorkspace(d.workspaceKey);
-      this.stageCommitAndPush(d.workspaceKey, d.files);
-    });
+    appEventEmitter.on("onSiteTouched", this.handleSiteTouched);
+    appEventEmitter.on("onWorkspaceFileChanged", this.handleWorkspaceFileChanged);
   }
 
-  dispose() {}
+  dispose() {
+    appEventEmitter.off("onSiteTouched", this.handleSiteTouched);
+    appEventEmitter.off("onWorkspaceFileChanged", this.handleWorkspaceFileChanged);
+  }
 
   async stageCommitAndPush(workspaceKey: string, files: string[]) {
-    let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
+    let repositoryPath = pathHelper.getSiteWorkspaceRoot(this.config.key, workspaceKey);
     const sGit = simpleGit(repositoryPath);
     await sGit.pull();
     await sGit.add(".");
     await sGit.commit("Files commited automatically.", [], {});
     await sGit.push();
-  }
-
-  async ensureMountedWorkspace(workspaceKey: string) {
-    let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
-    let branch = await simpleGit(repositoryPath).branch();
-    if (branch.current !== workspaceKey) {
-      await this.mountWorkspace(workspaceKey);
-    }
-  }
-
-  async mountWorkspace(workspaceKey: string): Promise<void> {
-    await this._ensureRepo();
-    let repositoryPath = pathHelper.getSiteWorkspacesRoot(this.config.key);
-    let branches = await simpleGit(repositoryPath).branch();
-    let currentBranchEntry = Object.entries(branches.branches).find(x => x[1].name === workspaceKey);
-    const refName = currentBranchEntry?.[1].name || "master";
-    await simpleGit(repositoryPath).checkout(refName);
   }
 
   async update(): Promise<void> {

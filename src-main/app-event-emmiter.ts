@@ -12,10 +12,10 @@ interface WorkspaceEvent extends SiteEvent {
   workspaceKey: string;
 }
 
-interface SiteTouchedEvent extends WorkspaceEvent {
+export interface SiteTouchedEvent extends WorkspaceEvent {
 }
 
-interface WorkspaceFileChangedEvent extends WorkspaceEvent {
+export interface WorkspaceFileChangedEvent extends WorkspaceEvent {
   files: string[];
 }
 
