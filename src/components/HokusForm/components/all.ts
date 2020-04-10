@@ -23,6 +23,7 @@ import SelectDynamic from "./SelectDynamic";
 import BundleImgThumbDynamic from "./BundleImgThumbDynamic";
 import { ComponentProps } from "react";
 import * as React from "react";
+import DateTimeDynamic from "./DateTimeDynamic";
 
 // Explicitly specify type so the compiler can help.
 const allComponents: Array<React.ComponentClass<ComponentProps<any>, any>> = [
@@ -33,6 +34,7 @@ const allComponents: Array<React.ComponentClass<ComponentProps<any>, any>> = [
   ChipsDynamic,
   DataNestDynamic,
   DateDynamic,
+  DateTimeDynamic,
   ExtendDynamic,
   EmptyLineDynamic,
   LeafArrayDynamic,
