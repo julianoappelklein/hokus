@@ -158,6 +158,10 @@ export class API {
   touchSite(siteKey: string, workspaceKey: string) {
     return mainProcessBridge.request("touchSite", { siteKey, workspaceKey });
   }
+
+  gitExists(): Promise<boolean> {
+    return mainProcessBridge.request("gitExists", {});
+  }
 }
 
 export const instance = new API();

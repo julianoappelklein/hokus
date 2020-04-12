@@ -1,7 +1,7 @@
 import * as React from "react";
 import { TextField } from "material-ui";
-import FolderPicker from "./../../../../../components/FolderPicker";
 import { FormItem } from "../../../../../components/FormItem";
+import GitWarning from "../../../../../components/GitWarning";
 
 type GitSourceFormModel = {
   folderPath: string;
@@ -56,6 +56,7 @@ export default class GitSourceForm extends React.Component<GitSourceFormProps, G
             fullWidth={true}
             floatingLabelText={"Website Repository URL"}
           />
+          <GitWarning />
         </FormItem>
       </React.Fragment>
     );

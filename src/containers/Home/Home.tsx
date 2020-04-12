@@ -81,7 +81,6 @@ class Home extends React.Component<HomeProps, HomeState> {
   }
 
   componentDidMount() {
-    console.log("HOME MOUNTED");
     service.registerListener(this);
 
     var { siteKey, workspaceKey } = this.props;

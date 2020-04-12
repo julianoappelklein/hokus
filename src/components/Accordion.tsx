@@ -85,6 +85,7 @@ class AccordionItem extends React.Component<AccordionItemProps, {}> {
 
     let _headStyle = Object.assign(
       {
+        color: '#000',
         border: "solid 1px #e8e8e8",
         padding: "16px",
         display: "block",

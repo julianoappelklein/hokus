@@ -35,6 +35,22 @@ class SiteService {
     return workspaces.find((x: any) => x.key === workspaceKey);
   }
 
+  async canSyncWorkspace(siteKey: string, workspaceKey: string): Promise<boolean|null> {
+    const siteSource = await this._getSiteSource(siteKey);
+    if(siteSource.canSyncWorkspace==null){ return false; }
+    else{
+      return await siteSource.canSyncWorkspace(workspaceKey);
+    }
+  }
+
+  async syncWorkspace(siteKey: string, workspaceKey: string): Promise<void> {
+    const siteSource = await this._getSiteSource(siteKey);
+    if(siteSource.syncWorkspace==null){ return; }
+    else{
+      return await siteSource.syncWorkspace(workspaceKey);
+    }
+  }
+
   async touchSite(siteKey: string, workspaceKey: string): Promise<void> {
     const siteSource = await this._getSiteSource(siteKey);
     appEventEmitter.emit("onSiteTouched", {siteKey, workspaceKey});

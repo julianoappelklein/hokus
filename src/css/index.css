@@ -5,6 +5,13 @@ body {
   /* overflow-x: hidden; */
 }
 
+a{
+  color: #5848f6;
+}
+a:active{
+  color: #3c4c72;
+}
+
 h1,h2,h3,h4,h5{
   font-family: 'Roboto', sans-serif;
   font-weight: 400;

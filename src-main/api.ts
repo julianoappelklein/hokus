@@ -9,6 +9,7 @@ import * as fs from "fs-extra";
 import { hugoDownloader } from "./hugo/hugo-downloader";
 import { dirname } from "path";
 import { shell } from "electron";
+const commandExists = require("command-exists");
 
 const siteService = new SiteService();
 
@@ -61,6 +62,14 @@ api.getWorkspaceDetails = async function({ siteKey, workspaceKey }: any) {
     // warn about HugoDownloader error?
   }
   return configuration;
+};
+
+api.canSyncWorkspace = async function({ siteKey, workspaceKey }: any) {
+  return siteService.canSyncWorkspace(siteKey, workspaceKey);
+};
+
+api.syncWorkspace = async function({ siteKey, workspaceKey }: any) {
+  return siteService.syncWorkspace(siteKey, workspaceKey);
 };
 
 api.touchSite = async function({ siteKey, workspaceKey }: any) {
@@ -163,6 +172,15 @@ api.createSite = async function(config: any) {
 
 api.publishSite = async function({ siteKey, publishKey }: any) {
   await siteService.publish(siteKey, publishKey);
+};
+
+api.gitExists = async function({ siteKey, publishKey }: any) {
+  try {
+    const exists = await commandExists("git");
+    return !!exists;
+  } catch(e) {
+    return false;
+  }
 };
 
 export default api;

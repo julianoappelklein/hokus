@@ -2,6 +2,8 @@ import { SiteSource } from "./types";
 import FolderSiteSource from "./folder-site-source";
 import SimpleGitSiteSource from "./simple-git-site-source";
 
+
+
 class SiteSourceFactory {
 
   _activeSiteSource?: SiteSource;

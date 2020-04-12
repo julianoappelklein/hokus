@@ -4,5 +4,6 @@ export interface SiteSource {
   initialize?(): void;
   dispose?(): void;
   listWorkspaces(): Promise<Array<WorkspaceHeader>>;
-  update(): Promise<void>;
+  canSyncWorkspace?(workspaceKey: string): Promise<boolean>;
+  syncWorkspace?(workspaceKey: string): Promise<void>;
 }

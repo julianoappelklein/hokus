@@ -9,13 +9,26 @@ import * as simpleGit from "simple-git/promise";
 type GitSiteSourceConfig = {
   key: string;
   url: string;
+  autoSync?: boolean
 };
 
 class SimpleGitSiteSource implements SiteSource {
   config: GitSiteSourceConfig;
+  autoSync: boolean;
 
-  constructor(config: any) {
+  constructor(config: GitSiteSourceConfig) {
     this.config = config;
+    this.autoSync = config.autoSync??true;
+  }
+
+  async canSyncWorkspace(workspaceKey: string){
+    let repositoryPath = pathHelper.getSiteWorkspaceRoot(this.config.key, workspaceKey);
+    const diff = await simpleGit(repositoryPath).diff(["--stat", "origin/"+workspaceKey]);
+    return diff.length == 0;
+  }
+
+  async sync(workspaceKey: string){
+    this.stageCommitAndPush(workspaceKey);
   }
 
   private async isEmptyDir(path: string): Promise<boolean> {
@@ -77,8 +90,10 @@ class SimpleGitSiteSource implements SiteSource {
   };
 
   handleWorkspaceFileChanged = async (d: WorkspaceFileChangedEvent) => {
-    await this.ensureRepo(d.workspaceKey);
-    this.stageCommitAndPush(d.workspaceKey, d.files);
+    if(this.autoSync){
+      await this.ensureRepo(d.workspaceKey);
+      this.stageCommitAndPush(d.workspaceKey);
+    }
   };
 
   async initialize() {
@@ -91,17 +106,13 @@ class SimpleGitSiteSource implements SiteSource {
     appEventEmitter.off("onWorkspaceFileChanged", this.handleWorkspaceFileChanged);
   }
 
-  async stageCommitAndPush(workspaceKey: string, files: string[]) {
+  async stageCommitAndPush(workspaceKey: string) {
     let repositoryPath = pathHelper.getSiteWorkspaceRoot(this.config.key, workspaceKey);
     const sGit = simpleGit(repositoryPath);
     await sGit.pull();
     await sGit.add(".");
     await sGit.commit("Files commited automatically.", [], {});
     await sGit.push();
-  }
-
-  async update(): Promise<void> {
-    //huuumm...
   }
 }
 
