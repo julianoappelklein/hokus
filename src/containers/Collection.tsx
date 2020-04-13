@@ -21,7 +21,6 @@ import {
 import { Debounce } from "./../utils/debounce";
 import { WorkspaceConfig } from "../../global-types";
 
-
 const Fragment = React.Fragment;
 
 const MAX_RECORDS = 200;

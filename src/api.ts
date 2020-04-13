@@ -159,8 +159,12 @@ export class API {
     return mainProcessBridge.request("touchSite", { siteKey, workspaceKey });
   }
 
-  gitExists(): Promise<boolean> {
-    return mainProcessBridge.request("gitExists", {});
+  getSiteDependencyStatus(siteKey: string): Promise<any> {
+    return mainProcessBridge.request("getSiteDependencyStatus", { siteKey });
+  }
+
+  getSiteSourceDependencyStatus(siteSourceType: string): Promise<any> {
+    return mainProcessBridge.request("getSiteSourceDependencyStatus", { siteSourceType });
   }
 }
 

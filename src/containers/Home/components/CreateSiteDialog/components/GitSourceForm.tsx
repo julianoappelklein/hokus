@@ -1,7 +1,6 @@
 import * as React from "react";
 import { TextField } from "material-ui";
 import { FormItem } from "../../../../../components/FormItem";
-import GitWarning from "../../../../../components/GitWarning";
 
 type GitSourceFormModel = {
   folderPath: string;
@@ -22,7 +21,7 @@ export default class GitSourceForm extends React.Component<GitSourceFormProps, G
     //     errors.folderPath = 'Website folder is required.';
     // }
     if (model.url == null || model.url.trim().length === 0) {
-      errors.url = "Repository URL is required.";
+      errors.url = "Repository URL - with credentials - is required. Sample: https://USER:PASSWORD@github.com/REPOSITORY.git";
     }
     return errors;
   }
@@ -56,7 +55,6 @@ export default class GitSourceForm extends React.Component<GitSourceFormProps, G
             fullWidth={true}
             floatingLabelText={"Website Repository URL"}
           />
-          <GitWarning />
         </FormItem>
       </React.Fragment>
     );

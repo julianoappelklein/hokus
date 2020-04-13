@@ -1,7 +1,14 @@
 import * as React from "react";
 import { ComponentContext } from "./component-context";
 import { Debounce } from "./debounce";
-import { FieldBase, DynamicFormNode, ComponentProps, BreadcumbComponentType, FormIncludes, BreadcumbNode } from "./types";
+import {
+  FieldBase,
+  DynamicFormNode,
+  ComponentProps,
+  BreadcumbComponentType,
+  FormIncludes,
+  BreadcumbNode
+} from "./types";
 import { ComponentRegistry } from "./component-registry";
 import { FormStateBuilder } from "./form-state-builder";
 import { FieldsExtender } from "./fields-extender";
@@ -320,12 +327,11 @@ export class HoForm extends React.Component<FormProps, FormState> {
       items.push({ label: "Error", node: this.root });
     }
 
-    if(items.length>0){
+    if (items.length > 0) {
       items[0].node = null;
     }
 
     items.reverse();
-    
 
     let Breadcumb = this.props.breadcumbComponentType;
     return <Breadcumb items={items} onNodeSelected={this.setPath.bind(this)} />;

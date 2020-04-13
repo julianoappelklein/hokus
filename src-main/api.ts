@@ -9,7 +9,7 @@ import * as fs from "fs-extra";
 import { hugoDownloader } from "./hugo/hugo-downloader";
 import { dirname } from "path";
 import { shell } from "electron";
-const commandExists = require("command-exists");
+import { getSiteDependencyStatus, getSiteSourceDependencyStatus } from "./services/site/dependency-status";
 
 const siteService = new SiteService();
 
@@ -174,13 +174,14 @@ api.publishSite = async function({ siteKey, publishKey }: any) {
   await siteService.publish(siteKey, publishKey);
 };
 
-api.gitExists = async function({ siteKey, publishKey }: any) {
-  try {
-    const exists = await commandExists("git");
-    return !!exists;
-  } catch(e) {
-    return false;
-  }
+api.getSiteDependencyStatus = async function({ siteKey }: any) {
+  const dependencies = await getSiteDependencyStatus(siteKey);
+  return dependencies;
+};
+
+api.getSiteSourceDependencyStatus = async function({ siteSourceType }: any) {
+  const dependencies = await getSiteSourceDependencyStatus(siteSourceType);
+  return dependencies;
 };
 
 export default api;

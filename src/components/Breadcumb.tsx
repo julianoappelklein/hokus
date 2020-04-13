@@ -14,10 +14,9 @@ type BreadcumbItemState = {};
 
 export class BreadcumbItem extends React.Component<BreadcumbItemProps, BreadcumbItemState> {
   render() {
-
     const style: React.CSSProperties = { minWidth: "30px", borderRadius: "0px" };
-    if(this.props.disabled===true){
-      style.color = '#000';
+    if (this.props.disabled === true) {
+      style.color = "#000";
     }
 
     return (

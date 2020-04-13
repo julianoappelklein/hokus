@@ -60,9 +60,9 @@ export default class FolderSourceForm extends React.Component<FolderSourceFormPr
             onChange={this.handleRepoURLChange}
             errorText={errors.theme}
             fullWidth={true}
-            placeholder="Only for empty site folders"
             floatingLabelText={"Theme Repository URL"}
           />
+          <div><small>A Hugo theme repository URL. It only works if Git is installed on your computer and if the provided site folder is empty.</small></div>
         </FormItem>
       </React.Fragment>
     );

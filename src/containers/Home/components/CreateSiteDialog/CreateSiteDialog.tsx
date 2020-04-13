@@ -3,6 +3,7 @@ import { Dialog, FlatButton, MenuItem, SelectField, TextField } from "material-u
 import FolderSourceForm from "./components/FolderSourceForm";
 import GitSourceForm from "./components/GitSourceForm";
 import { FormItem } from "../../../../components/FormItem";
+import service from "../../../../services/service"; //not cool
 
 type CreateSiteDialogProps = {
   open: boolean;
@@ -15,6 +16,7 @@ type CreateSiteDialogState = {
   model: any;
   sourceIndex: number;
   key: string;
+  dependencies?: Array<{program: string, exists: boolean}>;
 };
 
 function NotImplementedSourceForm() {
@@ -63,8 +65,10 @@ export default class CreateSiteDialog extends React.Component<CreateSiteDialogPr
     }
   };
 
-  handleSourceChange = (e: any, index: number) => {
-    this.setState({ sourceIndex: index, formIsValid: false });
+  handleSourceChange = async (e: any, index: number) => {
+    this.setState({ sourceIndex: index, formIsValid: false, dependencies: null });
+    const dependencies = (await service.api.getSiteSourceDependencyStatus(SITE_SOURCES[index].key))||[];
+    this.setState({ dependencies });
   };
 
   handleKeyChange = (e: any, value: string) => {
@@ -86,6 +90,12 @@ export default class CreateSiteDialog extends React.Component<CreateSiteDialogPr
     if (key.length === 0 || VALID_KEY.test(key)) {
       errors.key = 'Key is required. Only lowercase letters, numbers, "-" and "_" are allowed.';
     }
+    
+    const invalidDependencies = (this.state.dependencies||[]).filter(x => x.exists===false).map(x => x.program);
+    if(invalidDependencies.length>0){
+      errors.dependencies = `To use this site source, the following dependencies must be installed on your computer: ${invalidDependencies.join(', ')}.`;
+    }
+
     return errors;
   }
 
@@ -119,7 +129,7 @@ export default class CreateSiteDialog extends React.Component<CreateSiteDialogPr
           <SelectField
             onChange={this.handleSourceChange}
             fullWidth
-            errorText={errors.source}
+            errorText={errors.source || errors.dependencies}
             value={sourceIndex}
             floatingLabelText="Source Type *"
           >

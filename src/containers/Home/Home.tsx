@@ -32,7 +32,7 @@ const styles: { [k: string]: CSSProperties } = {
     overflowX: "hidden",
     userSelect: "none",
     borderRight: "solid 1px #e0e0e0",
-    background: "#fafafa"
+    background: "#fafafa",
   },
   selectedSiteCol: {
     flex: "auto",
@@ -63,6 +63,7 @@ interface HomeState {
   selectedSiteWorkspaces?: Array<WorkspaceHeader>;
   selectedWorkspace?: WorkspaceHeader;
   selectedWorkspaceDetails?: WorkspaceConfig;
+  selectedSiteDependencies?: Array<{ program: string, exists: boolean }>;
   createSiteDialog: boolean;
   publishSiteDialog?: { workspace: WorkspaceConfig; workspaceHeader: WorkspaceHeader; open: boolean };
   blockingOperation: string | null | undefined; //this should be moved to a UI service
@@ -95,6 +96,7 @@ class Home extends React.Component<HomeProps, HomeState> {
         this.setState(stateUpdate);
         return service.getWorkspaceDetails(siteKey, workspaceKey);
       });
+      this.checkDependencies(siteKey);
     } else {
       service.getConfigurations().then(c => {
         var stateUpdate = {} as HomeState;
@@ -105,14 +107,20 @@ class Home extends React.Component<HomeProps, HomeState> {
   }
 
   selectSite(site: SiteConfig) {
-    this.setState({ selectedSite: site, selectedSiteWorkspaces: [] });
+    this.setState({ selectedSite: site, selectedSiteWorkspaces: [], selectedSiteDependencies: null });
     //load all site configuration to enforce validation
     service.api.listWorkspaces(site.key).then(workspaces => {
       if (workspaces.length === 1) {
         this.selectWorkspace(site.key, workspaces[0]);
       }
-
       this.setState({ selectedSiteWorkspaces: workspaces });
+    });
+    this.checkDependencies(site.key);
+  }
+
+  checkDependencies(siteKey: string){
+    service.api.getSiteDependencyStatus(siteKey).then(selectedSiteDependencies => {
+      this.setState({ selectedSiteDependencies });
     });
   }
 
@@ -126,11 +134,15 @@ class Home extends React.Component<HomeProps, HomeState> {
   }
 
   renderSelectedSiteContent(configurations: Configurations, site: SiteConfig) {
+    const dependencies = (this.state.selectedSiteDependencies || []).filter(x => x.exists === false).map(x => x.program);
     return (
       <Wrapper style={{ maxWidth: "1000px" }} key={site.key} title="Site Management">
         <InfoLine label="Name">{site.name}</InfoLine>
         <InfoLine label="Key">{site.key}</InfoLine>
-        <InfoLine label="Source Type">{site.source.type}</InfoLine>
+        <InfoLine label="Source Type">
+          {site.source.type}
+          {(dependencies.length > 0) && <div><small style={{color: this.props.muiTheme?.textField.errorColor}}>The following dependencies are not satisfied: {dependencies.join(', ')}.<br />Please, install all programs.</small></div>}
+        </InfoLine>
         <InfoLine label="Publish Options">
           {site.publish && site.publish.length > 0 ? site.publish.map(x => x.key).join(", ") : "EMPTY"}
         </InfoLine>
@@ -300,8 +312,8 @@ class Home extends React.Component<HomeProps, HomeState> {
               <MessageBlock>Please, select a site.</MessageBlock>
             </Wrapper>
           ) : (
-            this.renderSelectedSiteContent(_configurations, selectedSite)
-          )}
+              this.renderSelectedSiteContent(_configurations, selectedSite)
+            )}
         </div>
         <CreateSiteDialog
           open={createSiteDialog}

@@ -15,7 +15,6 @@ class EmptyLineDynamic extends BaseDynamic<EmptyLineDynamicField, EmptyLineDynam
   }
 
   renderComponent() {
-    debugger;
     let { context } = this.props;
     let { node, currentPath, parentPath } = context;
     let { field } = node;

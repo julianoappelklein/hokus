@@ -4,11 +4,24 @@ import * as glob from "glob";
 import * as path from "path";
 import * as simpleGit from 'simple-git/promise';
 import formatProviderResolver from "../format-provider-resolver";
+const commandExists = require("command-exists");
+
+
+async function gitDependency(): Promise<boolean> {
+  try {
+    return await commandExists("git");
+  } catch (e) {
+    return false;
+  }
+}
 
 class ThemeInstaller {
   constructor() {}
 
   async siteFromTheme(repoUrl: string, destPath: string, options?: { force: boolean }) {
+    if(!(await gitDependency())){
+      return;
+    }
     let opts = Object.assign({}, { force: false }, options);
 
     if (fs.existsSync(destPath)) {
