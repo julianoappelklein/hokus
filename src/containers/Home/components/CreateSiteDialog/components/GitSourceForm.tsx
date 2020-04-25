@@ -21,7 +21,8 @@ export default class GitSourceForm extends React.Component<GitSourceFormProps, G
     //     errors.folderPath = 'Website folder is required.';
     // }
     if (model.url == null || model.url.trim().length === 0) {
-      errors.url = "Repository URL - with credentials - is required. Sample: https://USER:PASSWORD@github.com/REPOSITORY.git";
+      errors.url =
+        "Repository URL - with credentials - is required. Sample: https://USER:PASSWORD@github.com/REPOSITORY.git";
     }
     return errors;
   }

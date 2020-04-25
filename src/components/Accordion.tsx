@@ -167,7 +167,7 @@ class Accordion extends React.Component<AccordionProps, AccordionState> {
           let active = index === openedIndex;
           return React.cloneElement(item, {
             active,
-            onHeadClick: this.getHandleChange(index)
+            onHeadClick: item.props.onHeadClick ? item.props.onHeadClick : this.getHandleChange(index)
           });
         })}
       </div>

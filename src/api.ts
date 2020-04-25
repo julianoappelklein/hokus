@@ -159,6 +159,10 @@ export class API {
     return mainProcessBridge.request("touchSite", { siteKey, workspaceKey });
   }
 
+  mountWorkspace(siteKey: string, workspaceKey: string) {
+    return mainProcessBridge.request("mountWorkspace", { siteKey, workspaceKey });
+  }
+
   getSiteDependencyStatus(siteKey: string): Promise<any> {
     return mainProcessBridge.request("getSiteDependencyStatus", { siteKey });
   }

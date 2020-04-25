@@ -28,7 +28,7 @@ export async function getSiteSourceDependencyStatus(siteSourceType: string): Pro
 }
 
 export async function getSiteDependencyStatus(siteKey: string): Promise<Array<DependencyStatus>> {
-  const config = await configurationDataProvider.getPromise();
+  const config = await configurationDataProvider.get();
   if (config.type !== "Configurations") {
     throw new Error("Configuration is not valid.");
   }

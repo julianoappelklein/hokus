@@ -16,7 +16,7 @@ type CreateSiteDialogState = {
   model: any;
   sourceIndex: number;
   key: string;
-  dependencies?: Array<{program: string, exists: boolean}>;
+  dependencies?: Array<{ program: string; exists: boolean }> | null;
 };
 
 function NotImplementedSourceForm() {
@@ -67,7 +67,7 @@ export default class CreateSiteDialog extends React.Component<CreateSiteDialogPr
 
   handleSourceChange = async (e: any, index: number) => {
     this.setState({ sourceIndex: index, formIsValid: false, dependencies: null });
-    const dependencies = (await service.api.getSiteSourceDependencyStatus(SITE_SOURCES[index].key))||[];
+    const dependencies = (await service.api.getSiteSourceDependencyStatus(SITE_SOURCES[index].key)) || [];
     this.setState({ dependencies });
   };
 
@@ -90,10 +90,12 @@ export default class CreateSiteDialog extends React.Component<CreateSiteDialogPr
     if (key.length === 0 || VALID_KEY.test(key)) {
       errors.key = 'Key is required. Only lowercase letters, numbers, "-" and "_" are allowed.';
     }
-    
-    const invalidDependencies = (this.state.dependencies||[]).filter(x => x.exists===false).map(x => x.program);
-    if(invalidDependencies.length>0){
-      errors.dependencies = `To use this site source, the following dependencies must be installed on your computer: ${invalidDependencies.join(', ')}.`;
+
+    const invalidDependencies = (this.state.dependencies || []).filter(x => x.exists === false).map(x => x.program);
+    if (invalidDependencies.length > 0) {
+      errors.dependencies = `To use this site source, the following dependencies must be installed on your computer: ${invalidDependencies.join(
+        ", "
+      )}.`;
     }
 
     return errors;

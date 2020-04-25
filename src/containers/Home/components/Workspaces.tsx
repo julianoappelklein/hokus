@@ -131,6 +131,7 @@ export function Workspaces(props: {
   onStartServerClick: (workspace: WorkspaceHeader, config: string) => void;
   onSelectWorkspaceClick: (e: any, siteKey: string, workspace: WorkspaceHeader) => void;
   getWorkspaceDetails: (workspace: WorkspaceHeader) => Promise<WorkspaceConfig>;
+  onUnmountedWorkspaceClick?: (workspace: WorkspaceHeader) => void;
 }) {
   let {
     workspaces,
@@ -141,24 +142,39 @@ export function Workspaces(props: {
     onStartServerClick,
     onSelectWorkspaceClick,
     getWorkspaceDetails,
+    onUnmountedWorkspaceClick,
     site
   } = props;
 
   return (
     <Accordion style={{ margin: "0 8px" }}>
       {(workspaces || []).map((workspace, i) => {
-        let active = activeSiteKey === site.key && workspace.key === activeWorkspaceKey;
+        const mounted = workspace.state === "mounted";
+        const active = activeSiteKey === site.key && workspace.key === activeWorkspaceKey;
         return (
           <AccordionItem
             key={i}
-            label={workspace.key}
+            label={`${workspace.key} ${!mounted ? "(unmounted)" : ""}`}
             headStyle={{ paddingLeft: "8px", paddingRight: "8px", textDecoration: active ? "underline" : undefined }}
+            onHeadClick={
+              !mounted
+                ? () => {
+                    onUnmountedWorkspaceClick && onUnmountedWorkspaceClick(workspace);
+                  }
+                : undefined
+            }
             headerLeftItems={[
               <FlatButton
                 style={{ minWidth: "40px" }}
                 icon={<IconNavigationCheck />}
                 primary={active}
-                onClick={e => onSelectWorkspaceClick(e, site.key, workspace)}
+                onClick={e => {
+                  if (mounted) {
+                    onSelectWorkspaceClick(e, site.key, workspace);
+                  } else {
+                    onUnmountedWorkspaceClick && onUnmountedWorkspaceClick(workspace);
+                  }
+                }}
               />
             ]}
             body={

@@ -1,25 +1,19 @@
-import { Route } from "react-router-dom";
+import { Route, withRouter, RouteComponentProps } from "react-router-dom";
 import React, { CSSProperties } from "react";
 import service from "./../../services/service";
-import { snackMessageService } from "./../../services/ui-service";
-import FlatButton from "material-ui/FlatButton";
 import { List, ListItem } from "material-ui/List";
 import Subheader from "material-ui/Subheader";
 import IconNavigationCheck from "material-ui/svg-icons/navigation/check";
 import IconAdd from "material-ui/svg-icons/content/add";
-import IconFileFolder from "material-ui/svg-icons/file/folder";
-import TextField from "material-ui/TextField";
 import { Wrapper, InfoLine, InfoBlock, MessageBlock } from "./components/shared";
-import { Workspaces } from "./components/Workspaces";
 import CreateSiteDialog from "./components/CreateSiteDialog";
-import PublishSiteDialog from "./components/PublishSiteDialog";
 import BlockDialog from "./components/BlockDialog";
 import Spinner from "./../../components/Spinner";
 import muiThemeable from "material-ui/styles/muiThemeable";
 import { MuiTheme } from "material-ui/styles";
 
 import { EmptyConfigurations, Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from "./../../types";
-import MuiThemed from "../../components/MuiThemed";
+import SiteDetails from "./components/SiteDetails";
 
 const styles: { [k: string]: CSSProperties } = {
   container: {
@@ -32,7 +26,7 @@ const styles: { [k: string]: CSSProperties } = {
     overflowX: "hidden",
     userSelect: "none",
     borderRight: "solid 1px #e0e0e0",
-    background: "#fafafa",
+    background: "#fafafa"
   },
   selectedSiteCol: {
     flex: "auto",
@@ -51,7 +45,7 @@ const styles: { [k: string]: CSSProperties } = {
   }
 };
 
-interface HomeProps {
+interface HomeProps extends RouteComponentProps {
   siteKey: string;
   workspaceKey: string;
   muiTheme?: MuiTheme;
@@ -60,18 +54,13 @@ interface HomeProps {
 interface HomeState {
   configurations?: Configurations | EmptyConfigurations;
   selectedSite?: SiteConfig;
-  selectedSiteWorkspaces?: Array<WorkspaceHeader>;
   selectedWorkspace?: WorkspaceHeader;
-  selectedWorkspaceDetails?: WorkspaceConfig;
-  selectedSiteDependencies?: Array<{ program: string, exists: boolean }>;
   createSiteDialog: boolean;
   publishSiteDialog?: { workspace: WorkspaceConfig; workspaceHeader: WorkspaceHeader; open: boolean };
   blockingOperation: string | null | undefined; //this should be moved to a UI service
 }
 
 class Home extends React.Component<HomeProps, HomeState> {
-  history: any;
-
   constructor(props: HomeProps) {
     super(props);
     this.state = {
@@ -85,18 +74,18 @@ class Home extends React.Component<HomeProps, HomeState> {
     service.registerListener(this);
 
     var { siteKey, workspaceKey } = this.props;
+    this.load(siteKey, workspaceKey);
+  }
+
+  private load(siteKey?: string, workspaceKey?: string) {
     if (siteKey && workspaceKey) {
       service.getSiteAndWorkspaceData(siteKey, workspaceKey).then(bundle => {
         var stateUpdate = {} as HomeState;
         stateUpdate.configurations = bundle.configurations;
         stateUpdate.selectedSite = bundle.site;
-        stateUpdate.selectedSiteWorkspaces = bundle.siteWorkspaces;
         stateUpdate.selectedWorkspace = bundle.workspace;
-        stateUpdate.selectedWorkspaceDetails = bundle.workspaceDetails;
         this.setState(stateUpdate);
-        return service.getWorkspaceDetails(siteKey, workspaceKey);
       });
-      this.checkDependencies(siteKey);
     } else {
       service.getConfigurations().then(c => {
         var stateUpdate = {} as HomeState;
@@ -106,73 +95,29 @@ class Home extends React.Component<HomeProps, HomeState> {
     }
   }
 
-  selectSite(site: SiteConfig) {
-    this.setState({ selectedSite: site, selectedSiteWorkspaces: [], selectedSiteDependencies: null });
-    //load all site configuration to enforce validation
-    service.api.listWorkspaces(site.key).then(workspaces => {
-      if (workspaces.length === 1) {
-        this.selectWorkspace(site.key, workspaces[0]);
-      }
-      this.setState({ selectedSiteWorkspaces: workspaces });
-    });
-    this.checkDependencies(site.key);
+  private selectSite(site: SiteConfig) {
+    this.setState({ selectedSite: site });
   }
-
-  checkDependencies(siteKey: string){
-    service.api.getSiteDependencyStatus(siteKey).then(selectedSiteDependencies => {
-      this.setState({ selectedSiteDependencies });
-    });
-  }
-
-  getWorkspaceDetails = (workspace: WorkspaceHeader) => {
-    if (this.state.selectedSite == null) throw new Error("Invalid operation.");
-    return service.getWorkspaceDetails(this.state.selectedSite.key, workspace.key);
-  };
 
   componentWillUnmount() {
     service.unregisterListener(this);
   }
 
-  renderSelectedSiteContent(configurations: Configurations, site: SiteConfig) {
-    const dependencies = (this.state.selectedSiteDependencies || []).filter(x => x.exists === false).map(x => x.program);
-    return (
-      <Wrapper style={{ maxWidth: "1000px" }} key={site.key} title="Site Management">
-        <InfoLine label="Name">{site.name}</InfoLine>
-        <InfoLine label="Key">{site.key}</InfoLine>
-        <InfoLine label="Source Type">
-          {site.source.type}
-          {(dependencies.length > 0) && <div><small style={{color: this.props.muiTheme?.textField.errorColor}}>The following dependencies are not satisfied: {dependencies.join(', ')}.<br />Please, install all programs.</small></div>}
-        </InfoLine>
-        <InfoLine label="Publish Options">
-          {site.publish && site.publish.length > 0 ? site.publish.map(x => x.key).join(", ") : "EMPTY"}
-        </InfoLine>
-        {configurations.global.siteManagementEnabled ? (
-          <InfoLine label="Config Location">
-            <TextField id="config-location" value={site.configPath} />
-            <FlatButton
-              style={{ minWidth: "40px" }}
-              icon={<IconFileFolder />}
-              onClick={() => {
-                service.api.openFileExplorer(site.configPath.replace(/(\\|\/)[^\/\\]+$/, ""));
-              }}
-            />
-          </InfoLine>
-        ) : null}
-        <InfoBlock label="Workspaces">{this.renderWorkspaces(site, this.state.selectedSiteWorkspaces)}</InfoBlock>
-      </Wrapper>
-    );
-  }
-
-  handleSelectWorkspaceClick = (e: Event, siteKey: string, workspace: WorkspaceHeader) => {
+  private handleSelectWorkspaceClick = (e: Event, siteKey: string, workspace: WorkspaceHeader) => {
     e.stopPropagation();
     this.selectWorkspace(siteKey, workspace);
   };
+
+  async mountWorkspace(siteKey: string, workspace: WorkspaceHeader) {
+    await service.api.mountWorkspace(siteKey, workspace.key);
+    this.load(siteKey, workspace.key);
+  }
 
   async selectWorkspace(siteKey: string, workspace: WorkspaceHeader) {
     let activeWorkspaceKey = this.props.workspaceKey;
     let activeSiteKey = this.props.siteKey;
 
-    let select =
+    const select =
       activeWorkspaceKey == null ||
       activeSiteKey == null ||
       activeWorkspaceKey != workspace.key ||
@@ -180,43 +125,10 @@ class Home extends React.Component<HomeProps, HomeState> {
 
     if (select) {
       await service.api.touchSite(siteKey, workspace.key);
-      this.history.push(`/sites/${decodeURIComponent(siteKey)}/workspaces/${decodeURIComponent(workspace.key)}`);
+      this.props.history.push(`/sites/${decodeURIComponent(siteKey)}/workspaces/${decodeURIComponent(workspace.key)}`);
     } else {
-      this.history.push(`/`);
+      this.props.history.push(`/`);
     }
-    console.log(window.location.toString());
-  }
-
-  renderWorkspaces(site: SiteConfig, workspaces: Array<WorkspaceHeader> | null | undefined) {
-    return (
-      <Route
-        render={({ history }) => {
-          this.history = history; //ugly
-
-          if (workspaces == null) return <Wrapper></Wrapper>;
-
-          return (
-            <Workspaces
-              getWorkspaceDetails={this.getWorkspaceDetails}
-              workspaces={workspaces}
-              activeSiteKey={this.props.siteKey}
-              activeWorkspaceKey={this.props.workspaceKey}
-              onLocationClick={location => {
-                service.api.openFileExplorer(location);
-              }}
-              onPublishClick={(workspaceHeader, workspace) => {
-                this.setState({ publishSiteDialog: { workspace, workspaceHeader, open: true } });
-              }}
-              onStartServerClick={(workspace, serveKey) => {
-                service.api.serveWorkspace(site.key, workspace.key, serveKey);
-              }}
-              onSelectWorkspaceClick={this.handleSelectWorkspaceClick}
-              site={site}
-            />
-          );
-        }}
-      />
-    );
   }
 
   handleAddSiteClick() {
@@ -235,32 +147,6 @@ class Home extends React.Component<HomeProps, HomeState> {
       this.setState({ blockingOperation: null });
       return false;
     }
-  };
-
-  handlePublishSiteCancelClick = () => {
-    this.setState(s => {
-      const x = { ...s.publishSiteDialog!, open: false };
-      return { ...s, publishSiteDialog: x };
-    });
-  };
-
-  handleBuildAndPublishClick = ({ siteKey, workspaceKey, build, publish }: any) => {
-    this.setState({ blockingOperation: "Building site...", publishSiteDialog: undefined });
-    service.api
-      .buildWorkspace(siteKey, workspaceKey, build)
-      .then(() => {
-        this.setState({ blockingOperation: "Publishing site..." });
-        return service.api.publishSite(siteKey, publish);
-      })
-      .then(() => {
-        snackMessageService.addSnackMessage("Site successfully published.");
-      })
-      .catch(() => {
-        snackMessageService.addSnackMessage("Publish failed.");
-      })
-      .then(() => {
-        this.setState({ blockingOperation: null });
-      });
   };
 
   render() {
@@ -312,24 +198,21 @@ class Home extends React.Component<HomeProps, HomeState> {
               <MessageBlock>Please, select a site.</MessageBlock>
             </Wrapper>
           ) : (
-              this.renderSelectedSiteContent(_configurations, selectedSite)
-            )}
+            <SiteDetails
+              key={selectedSite.key}
+              activeSiteKey={this.props.siteKey}
+              activeWorkspaceKey={this.props.workspaceKey}
+              configurations={_configurations}
+              site={selectedSite}
+              onSelectWorkspace={this.handleSelectWorkspaceClick}
+            />
+          )}
         </div>
         <CreateSiteDialog
           open={createSiteDialog}
           onCancelClick={() => this.setState({ createSiteDialog: false })}
           onSubmitClick={this.handleCreateSiteSubmit}
         />
-        {selectedSite != null && this.state.publishSiteDialog != null ? (
-          <PublishSiteDialog
-            site={selectedSite}
-            workspace={this.state.publishSiteDialog.workspace}
-            workspaceHeader={this.state.publishSiteDialog.workspaceHeader}
-            onCancelClick={this.handlePublishSiteCancelClick}
-            onBuildAndPublishClick={this.handleBuildAndPublishClick}
-            open={publishSiteDialog != null && publishSiteDialog.open}
-          />
-        ) : null}
 
         {/*this should be moved to a UI service*/}
         <BlockDialog open={this.state.blockingOperation != null}>
@@ -341,4 +224,4 @@ class Home extends React.Component<HomeProps, HomeState> {
   }
 }
 
-export default muiThemeable()<typeof Home, HomeProps>(Home);
+export default withRouter(muiThemeable()<typeof Home, HomeProps>(Home));

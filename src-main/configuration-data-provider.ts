@@ -6,6 +6,7 @@ import { EmptyConfigurations, SiteConfig, Configurations } from "./../global-typ
 import formatProviderResolver from "./format-provider-resolver";
 import pathHelper from "./path-helper";
 import outputConsole from "./output-console";
+import { siteSourceFactory } from "./site-sources";
 
 let configurationCache: Configurations | undefined = undefined;
 
@@ -52,15 +53,11 @@ function invalidateCache() {
   configurationCache = undefined;
 }
 
-function get(
-  callback: (err: Error | undefined, data: Configurations | EmptyConfigurations) => void,
-  { invalidateCache }: { invalidateCache?: boolean } = {}
-) {
+async function get({ invalidateCache }: { invalidateCache?: boolean } = {}): Promise<(Configurations|EmptyConfigurations)> {
   if (invalidateCache === true) configurationCache = undefined;
 
   if (configurationCache) {
-    callback(undefined, configurationCache);
-    return;
+    return configurationCache;
   }
 
   let files = glob
@@ -72,15 +69,17 @@ function get(
 
   for (let i = 0; i < files.length; i++) {
     let file = files[i];
-    if (fs.existsSync(file)) {
+    if (await fs.pathExists(file)) {
       try {
         let strData = fs.readFileSync(file, { encoding: "utf-8" });
         let formatProvider = formatProviderResolver.resolveForFilePath(file);
         if (formatProvider == null) throw new Error(`Could not resolve a format provider for file ${file}.`);
-        let site = formatProvider.parse(strData);
+        let site: SiteConfig = formatProvider.parse(strData);
         validateSite(site);
         normalizeSite(site);
         site.configPath = file;
+        const siteSource = siteSourceFactory.get(site.key, site.source);
+        site.canCreateWorkspaces = siteSource.canCreateWorkspaces();
         configurations.sites.push(site);
       } catch (e) {
         outputConsole.appendLine(`Configuration file is invalid '${file}': ${e.toString()}`);
@@ -112,18 +111,10 @@ function get(
 
   if (configurations.sites.length > 0) {
     configurationCache = configurations;
-    callback(undefined, configurations);
+    return configurations;
   } else {
-    callback(undefined, EMPTY_CFG);
+    return EMPTY_CFG;
   }
 }
-function getPromise(options?: { invalidateCache?: boolean }): Promise<Configurations | EmptyConfigurations> {
-  return new Promise((resolve, reject) => {
-    get((err, data) => {
-      if (err) reject(err);
-      else resolve(data);
-    }, options);
-  });
-}
 
-export default { get, getPromise, invalidateCache };
+export default { get, invalidateCache };

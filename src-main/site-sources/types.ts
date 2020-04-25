@@ -6,4 +6,6 @@ export interface SiteSource {
   listWorkspaces(): Promise<Array<WorkspaceHeader>>;
   canSyncWorkspace?(workspaceKey: string): Promise<boolean>;
   syncWorkspace?(workspaceKey: string): Promise<void>;
+  mountWorkspace?(workspaceKey: string): Promise<void>;
+  canCreateWorkspaces(): boolean;
 }

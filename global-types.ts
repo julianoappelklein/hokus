@@ -31,6 +31,7 @@ export type RawSiteConfig = {
 
 export type SiteConfig = RawSiteConfig & {
   configPath: string;
+  canCreateWorkspaces: boolean;
 };
 
 export type WorkspaceConfigRaw = {

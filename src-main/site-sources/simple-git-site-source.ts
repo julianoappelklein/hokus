@@ -5,6 +5,7 @@ import pathHelper from "../path-helper";
 import jobManager from "../jobs/job-manager";
 import { appEventEmitter, WorkspaceFileChangedEvent, SiteTouchedEvent } from "../app-event-emmiter";
 import * as simpleGit from "simple-git/promise";
+import * as glob from "glob";
 
 type GitSiteSourceConfig = {
   key: string;
@@ -15,6 +16,10 @@ type GitSiteSourceConfig = {
 class SimpleGitSiteSource implements SiteSource {
   config: GitSiteSourceConfig;
   autoSync: boolean;
+
+  canCreateWorkspaces(){
+    return true;
+  }
 
   constructor(config: GitSiteSourceConfig) {
     this.config = config;
@@ -50,6 +55,10 @@ class SimpleGitSiteSource implements SiteSource {
     await simpleGit(repositoryPath).checkout(workspaceKey);
   }
 
+  async mountWorkspace(workspaceKey: string): Promise<void> {
+    await this.ensureRepo(workspaceKey||"master");
+  }
+
   async listWorkspaces(): Promise<Array<WorkspaceHeader>> {
     const workspaces = await jobManager.runSharedJob(`git-site-source:list-workspaces:${this.config.key}`, async () => {
       let repositoryPath = pathHelper.getSiteWorkspaceRoot(this.config.key, "master");
@@ -74,10 +83,18 @@ class SimpleGitSiteSource implements SiteSource {
         //ignore?
       }
 
+      const globExpression = pathHelper.getSiteWorkspacesRoot(this.config.key) +'*/.git/';
+      const localWorkspacesFolders: string[] = await new Promise((resolve, reject)=>glob(globExpression, (err, folders)=>{
+        if(err) reject(err);
+        else resolve(folders);
+      }));
+      const localWorkspaces: {[key: string]: true} = {};
+      localWorkspacesFolders.map(x => x.split('/').slice(-3,-2)[0]).forEach(x => localWorkspaces[x] = true);
+
       let data = branchesInfo.map(branch => ({
         key: branch.name,
         path: pathHelper.getSiteWorkspaceRoot(this.config.key, branch.name),
-        state: (branch.current ? "mounted" : "unmounted") as any
+        state: (localWorkspaces[branch.name] ? "mounted" : "unmounted") as any
       }));
 
       return data;

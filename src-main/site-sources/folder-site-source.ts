@@ -7,6 +7,11 @@ type FolderSiteSourceConfig = {
 };
 
 class FolderSiteSource implements SiteSource {
+
+  canCreateWorkspaces(){
+    return false;
+  }
+
   config: FolderSiteSourceConfig;
 
   constructor(config: FolderSiteSourceConfig) {

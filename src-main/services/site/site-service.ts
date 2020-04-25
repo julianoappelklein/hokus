@@ -8,7 +8,7 @@ import { appEventEmitter } from "../../app-event-emmiter";
 
 class SiteService {
   async _getSiteConfig(siteKey: string): Promise<SiteConfig> {
-    const config = await configurationDataProvider.getPromise();
+    const config = await configurationDataProvider.get();
     if (config.type === "EmptyConfigurations") throw new Error("The configuration is empty.");
     const cfg = config as Configurations;
     const siteConfig = cfg.sites.find(x => x.key === siteKey);
@@ -52,8 +52,14 @@ class SiteService {
   }
 
   async touchSite(siteKey: string, workspaceKey: string): Promise<void> {
-    const siteSource = await this._getSiteSource(siteKey);
     appEventEmitter.emit("onSiteTouched", {siteKey, workspaceKey});
+  }
+
+  async mountWorkspace(siteKey: string, workspaceKey: string): Promise<void> {
+    const siteSource = await this._getSiteSource(siteKey);
+    if(siteSource.mountWorkspace){
+      await siteSource.mountWorkspace(workspaceKey);
+    }
   }
 
   async initializeSite(config: any) {

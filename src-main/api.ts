@@ -28,7 +28,7 @@ async function getWorkspaceService(
 }
 
 api.getConfigurations = async function(options: any) {
-  return configurationDataProvider.getPromise(options);
+  return configurationDataProvider.get(options);
 };
 
 api.openFileExplorer = async function({ path }: any) {
@@ -74,6 +74,10 @@ api.syncWorkspace = async function({ siteKey, workspaceKey }: any) {
 
 api.touchSite = async function({ siteKey, workspaceKey }: any) {
   siteService.touchSite(siteKey, workspaceKey);
+};
+
+api.mountWorkspace = async function({ siteKey, workspaceKey }: any) {
+  siteService.mountWorkspace(siteKey, workspaceKey);
 };
 
 api.serveWorkspace = async function({ siteKey, workspaceKey, serveKey }: any) {
