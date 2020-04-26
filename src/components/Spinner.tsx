@@ -1,6 +1,14 @@
 import React, { CSSProperties } from "react";
 
-class Spinner extends React.Component<any, any> {
+interface Props{
+  color?: string;
+  margin?: string;
+  size?: number;
+  time?: number;
+  spins?: number;
+}
+
+class Spinner extends React.Component<Props, any> {
   timeout?: any;
   constructor(props: any) {
     super(props);

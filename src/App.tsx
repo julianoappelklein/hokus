@@ -25,6 +25,7 @@ import service from "./services/service";
 import { EmptyConfigurations, Configurations } from "./types";
 
 import "./css/App.css";
+import BlockDialog from "./components/BlockDialog";
 
 //the default locked UI style
 const style: { [k: string]: CSSProperties } = {
@@ -388,6 +389,7 @@ class App extends React.Component<{}, AppState> {
             </div>
           </div>
           <NotificationUI />
+          <BlockDialog />
         </div>
       </MuiThemeProvider>
     );

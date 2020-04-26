@@ -107,5 +107,30 @@ class ConsoleService extends BaseService {
   }
 }
 
+class BlockingOperationService extends BaseService{
+  _operations: Array<{key: string, title: string}> = [];
+  
+  startOperation(config: {key: string, title: string, maxDuration?: number}){
+    this._operations = this._operations.filter(x => x.key !== config.key);
+    this._operations.push(config);
+    if(config.maxDuration){
+      setTimeout(function(){
+        this.endOperation(config.key);
+      });
+    }
+    this._notifyChanges();
+  }
+
+  endOperation(key: string){
+    this._operations = this._operations.filter(x => x.key !== key);
+    this._notifyChanges();
+  }
+
+  getRunningBlockingOperations(){
+    return this._operations;
+  }
+}
+
 export const snackMessageService = new SnackMessageService();
 export const consoleService = new ConsoleService();
+export const blockingOperationService = new BlockingOperationService();

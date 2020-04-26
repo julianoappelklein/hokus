@@ -8,7 +8,7 @@ import muiThemeable from "material-ui/styles/muiThemeable";
 import { MuiTheme } from "material-ui/styles";
 import { Workspaces } from "./Workspaces";
 import PublishSiteDialog from "./PublishSiteDialog";
-import { snackMessageService } from "../../../services/ui-service";
+import { snackMessageService, blockingOperationService } from "../../../services/ui-service";
 
 interface Props {
   activeSiteKey: string;
@@ -42,11 +42,12 @@ class SiteDetails extends React.Component<Props, State> {
   }
 
   handleBuildAndPublishClick = ({ siteKey, workspaceKey, build, publish }: any) => {
-    //this.setState({ blockingOperation: "Building site...", publishSiteDialog: undefined });
+    const operationKey = `build-and-publish-${siteKey}`;
+    blockingOperationService.startOperation({key: operationKey, title: "Building site..."});
     service.api
       .buildWorkspace(siteKey, workspaceKey, build)
       .then(() => {
-        //this.setState({ blockingOperation: "Publishing site..." });
+        blockingOperationService.startOperation({key: operationKey, title: "Publishing site..."});
         return service.api.publishSite(siteKey, publish);
       })
       .then(() => {
@@ -56,7 +57,7 @@ class SiteDetails extends React.Component<Props, State> {
         snackMessageService.addSnackMessage("Publish failed.");
       })
       .then(() => {
-        //this.setState({ blockingOperation: null });
+        blockingOperationService.endOperation(operationKey);
       });
   };
 
@@ -95,7 +96,9 @@ class SiteDetails extends React.Component<Props, State> {
         )}
         <InfoBlock label="Workspaces">
           {this.renderWorkspaces()}
+          <div style={{margin: '8px'}}>
           { site.canCreateWorkspaces && <FlatButton label="New Workspace" />}
+          </div>
         </InfoBlock>
         {this.state.publishSiteDialog != null ? (
           <PublishSiteDialog

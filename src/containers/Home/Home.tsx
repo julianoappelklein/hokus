@@ -7,13 +7,13 @@ import IconNavigationCheck from "material-ui/svg-icons/navigation/check";
 import IconAdd from "material-ui/svg-icons/content/add";
 import { Wrapper, InfoLine, InfoBlock, MessageBlock } from "./components/shared";
 import CreateSiteDialog from "./components/CreateSiteDialog";
-import BlockDialog from "./components/BlockDialog";
 import Spinner from "./../../components/Spinner";
 import muiThemeable from "material-ui/styles/muiThemeable";
 import { MuiTheme } from "material-ui/styles";
 
 import { EmptyConfigurations, Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from "./../../types";
 import SiteDetails from "./components/SiteDetails";
+import { blockingOperationService } from "../../services/ui-service";
 
 const styles: { [k: string]: CSSProperties } = {
   container: {
@@ -57,14 +57,12 @@ interface HomeState {
   selectedWorkspace?: WorkspaceHeader;
   createSiteDialog: boolean;
   publishSiteDialog?: { workspace: WorkspaceConfig; workspaceHeader: WorkspaceHeader; open: boolean };
-  blockingOperation: string | null | undefined; //this should be moved to a UI service
 }
 
 class Home extends React.Component<HomeProps, HomeState> {
   constructor(props: HomeProps) {
     super(props);
     this.state = {
-      blockingOperation: null,
       createSiteDialog: false,
       publishSiteDialog: undefined
     };
@@ -72,7 +70,6 @@ class Home extends React.Component<HomeProps, HomeState> {
 
   componentDidMount() {
     service.registerListener(this);
-
     var { siteKey, workspaceKey } = this.props;
     this.load(siteKey, workspaceKey);
   }
@@ -136,15 +133,17 @@ class Home extends React.Component<HomeProps, HomeState> {
   }
 
   handleCreateSiteSubmit = async (data: any) => {
-    this.setState({ blockingOperation: "Creating site..." });
+    const operationKey = `create-site-${data.key}`;
+    blockingOperationService.startOperation({key: operationKey, title: 'Creating site...'});
     try {
       await service.api.createSite(data);
       const configurations = await service.getConfigurations(true);
-      this.setState({ configurations, blockingOperation: null, createSiteDialog: false });
+      this.setState({ configurations, createSiteDialog: false });
+      blockingOperationService.endOperation(operationKey);
       return true;
     } catch {
       alert("Failed to create site");
-      this.setState({ blockingOperation: null });
+      blockingOperationService.endOperation(operationKey);
       return false;
     }
   };
@@ -213,12 +212,6 @@ class Home extends React.Component<HomeProps, HomeState> {
           onCancelClick={() => this.setState({ createSiteDialog: false })}
           onSubmitClick={this.handleCreateSiteSubmit}
         />
-
-        {/*this should be moved to a UI service*/}
-        <BlockDialog open={this.state.blockingOperation != null}>
-          {this.state.blockingOperation}
-          <span> </span>
-        </BlockDialog>
       </div>
     );
   }
