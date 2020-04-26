@@ -114,7 +114,7 @@ class BlockingOperationService extends BaseService{
     this._operations = this._operations.filter(x => x.key !== config.key);
     this._operations.push(config);
     if(config.maxDuration){
-      setTimeout(function(){
+      setTimeout(() => {
         this.endOperation(config.key);
       });
     }

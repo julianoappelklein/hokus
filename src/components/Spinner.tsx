@@ -2,7 +2,7 @@ import React, { CSSProperties } from "react";
 
 interface Props{
   color?: string;
-  margin?: string;
+  margin?: string|number;
   size?: number;
   time?: number;
   spins?: number;
