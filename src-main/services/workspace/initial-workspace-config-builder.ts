@@ -112,7 +112,7 @@ class InitialWorkspaceConfigBuilder {
     let data = this.getConfig({
       configFile: relHugoConfigPath,
       ext: formatProvider.defaultExt(),
-      hugover: "0.50",
+      hugover: "0.69.0",
       hugoConfigData
     });
 
