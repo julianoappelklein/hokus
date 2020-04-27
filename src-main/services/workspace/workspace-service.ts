@@ -152,7 +152,10 @@ class WorkspaceService {
     if (collection == null) throw new Error("Could not find collection.");
     let filePath;
     let returnedKey;
-    if (collection.folder.startsWith("content")) {
+    
+    const isContentFile = collection.folder.startsWith("content");
+    
+    if (isContentFile) {
       returnedKey = path.join(collectionItemKey, "index." + collection.extension);
       filePath = path.join(this.workspacePath, collection.folder, returnedKey);
     } else {
@@ -162,7 +165,8 @@ class WorkspaceService {
     if (fs.existsSync(filePath)) return { unavailableReason: "already-exists" };
 
     await fs.ensureDir(path.dirname(filePath));
-    let stringData = await this._smartDump(filePath, [collection.dataformat], {});
+    const initialContent = isContentFile ? {draft: true} : {};
+    let stringData = await this._smartDump(filePath, [collection.dataformat], initialContent);
     await fs.writeFile(filePath, stringData, { encoding: "utf8" });
     appEventEmitter.emit("onWorkspaceFileChanged", {
       siteKey: this.siteKey,

@@ -147,7 +147,7 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
                   style={{ marginTop: childIndex ? "8px" : undefined }}
                   bodyStyle={{ padding: "16px 16px 0px 16px" }}
                   label={
-                    <span style={{ color: hasError ? theme.palette?.accent1Color : undefined }}>
+                    <span style={{ color: hasError ? theme.textField?.errorColor : undefined }}>
                       {state.name || state.src}
                     </span>
                   }

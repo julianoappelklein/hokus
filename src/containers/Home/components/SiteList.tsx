@@ -43,7 +43,7 @@ class SiteList extends React.Component<Props> {
               key={index}
               style={selected ? styles.siteActiveStyle : styles.siteInactiveStyle}
               rightIcon={
-                <IconNavigationCheck color={active ? this.props.muiTheme?.palette?.primary1Color : undefined} />
+                <IconNavigationCheck color={active ? this.props.muiTheme?.palette?.accent1Color : undefined} />
               }
               onClick={() => {
                 this.props.onSelectSiteClick && this.props.onSelectSiteClick(item);

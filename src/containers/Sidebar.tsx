@@ -10,6 +10,7 @@ import darkBaseTheme from "material-ui/styles/baseThemes/darkBaseTheme";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
 import { FlatButton, IconButton } from "material-ui";
+import { darkMuiTheme } from "../theme";
 
 const Fragment = React.Fragment;
 const translucentColor = "RGBA(255,255,255,.2)";
@@ -87,7 +88,7 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
     });
 
     return (
-      <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
+      <MuiThemeProvider muiTheme={darkMuiTheme}>
         <React.Fragment>
           <div className={"slideFadeInRight animated"} style={{ position: "relative", opacity: 1 }}>
             <IconMenu style={{ position: "absolute", right: "21px", top: "15px" }} />

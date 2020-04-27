@@ -9,15 +9,13 @@ import Single from "./containers/Single";
 import Header from "./containers/Header";
 import NotificationUI from "./containers/NotificationUI";
 import WorkspaceSidebar from "./containers/WorkspaceSidebar";
-import { Sidebar } from "./containers/Sidebar";
+import { lightMuiTheme } from "./theme";
 import ExtraOptions from "./containers/ExtraOptions";
 import { FormsCookbookSidebar, FormsCookbookRouted } from "./containers/FormsCookbook";
 
 //MATERIAL UI
 import { MenuItem } from "material-ui";
-import lightBaseTheme from "material-ui/styles/baseThemes/lightBaseTheme";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
-import getMuiTheme from "material-ui/styles/getMuiTheme";
 import { Redirect } from "react-router-dom";
 
 import service from "./services/service";
@@ -368,7 +366,7 @@ class App extends React.Component<{}, AppState> {
     }
 
     return (
-      <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
+      <MuiThemeProvider muiTheme={lightMuiTheme}>
         <div className="App">
           {header}
           <div style={containerStyle}>

@@ -10,10 +10,7 @@ import { BrowserRouter } from "react-router-dom";
 import { FormsCookbook } from "./containers/FormsCookbook";
 import { samples } from "./containers/FormsCookbook/samples";
 
-import lightBaseTheme from "material-ui/styles/baseThemes/lightBaseTheme";
-import darkBaseTheme from "material-ui/styles/baseThemes/lightBaseTheme";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
-import getMuiTheme from "material-ui/styles/getMuiTheme";
 import { MenuItem, SelectField } from "material-ui";
 // @ts-ignore
 import logo from "./img/logo.svg";
@@ -22,6 +19,7 @@ import logo from "./img/logo.svg";
 import "./css/index.css";
 import "./css/bootstrap-grid.css";
 import { FormsBuilder } from "./containers/FormsCookbook/FormsBuilder/FormsBuilder";
+import { darkMuiTheme, lightMuiTheme } from "./theme";
 
 let samplesExt = [
   {
@@ -102,7 +100,7 @@ class FormsCookbookWeb extends React.Component<any, any> {
   render() {
     return (
       <React.Fragment>
-        <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
+        <MuiThemeProvider muiTheme={darkMuiTheme}>
           <div style={{ width: "100%", position: "fixed", background: "#16062f", zIndex: 10 }}>
             <Container>
               <div style={{ padding: "20px 20px 0 20px" }}>
@@ -141,7 +139,7 @@ class FormsCookbookWeb extends React.Component<any, any> {
 
 ReactDOM.render(
   <BrowserRouter>
-    <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
+    <MuiThemeProvider muiTheme={lightMuiTheme}>
       <FormsCookbookWeb />
     </MuiThemeProvider>
   </BrowserRouter>,

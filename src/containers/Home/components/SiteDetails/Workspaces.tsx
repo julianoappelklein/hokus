@@ -49,13 +49,13 @@ export function Workspaces(props: {
                 headStyle={{
                   paddingLeft: "8px",
                   paddingRight: "8px",
-                  textDecoration: active ? "underline" : undefined
+                  fontWeight: active ? "bold" : undefined
                 }}
                 headerLeftItems={[
                   <FlatButton
                     style={{ minWidth: "40px" }}
                     icon={<IconNavigationCheck />}
-                    primary={active}
+                    secondary={active}
                     onClick={e => {
                       onSelectWorkspaceClick(e, site.key, workspace);
                     }}

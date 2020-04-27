@@ -232,7 +232,7 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
               context.setPath(node);
             }}
             primaryText={
-              <span style={{ color: hasError ? theme.palette?.accent1Color : undefined }}>{`${field.title} (${
+              <span style={{ color: hasError ? theme.textField?.errorColor : undefined }}>{`${field.title} (${
                 (context.value || []).length
               })`}</span>
             }
@@ -271,7 +271,7 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
         return (
           <AccordionItem
             key={componentKey}
-            label={<span style={{ color: hasError ? theme.palette?.accent1Color : undefined }}>{label}</span>}
+            label={<span style={{ color: hasError ? theme.textField?.errorColor : undefined }}>{label}</span>}
             style={{ background }}
             bodyStyle={body == null ? { display: "none" } : { padding: "16px 16px 16px 16px" }}
             body={body}
