@@ -67,7 +67,7 @@ export default class PublishSiteDialog extends React.Component<PublishSiteDialog
     ];
 
     return (
-      <Dialog title="Publish Site" open={open} actions={actions}>
+      <Dialog title="Publish Site" contentStyle={{ maxWidth: 500 }} open={open} actions={actions}>
         <TextField floatingLabelText={"Site"} fullWidth value={this.props.site.key} />
         <TextField floatingLabelText={"Workspace"} fullWidth value={this.props.workspaceHeader.key} />
         <SelectField

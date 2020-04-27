@@ -107,13 +107,13 @@ class ConsoleService extends BaseService {
   }
 }
 
-class BlockingOperationService extends BaseService{
-  _operations: Array<{key: string, title: string}> = [];
-  
-  startOperation(config: {key: string, title: string, maxDuration?: number}){
+class BlockingOperationService extends BaseService {
+  _operations: Array<{ key: string; title: string }> = [];
+
+  startOperation(config: { key: string; title: string; maxDuration?: number }) {
     this._operations = this._operations.filter(x => x.key !== config.key);
     this._operations.push(config);
-    if(config.maxDuration){
+    if (config.maxDuration) {
       setTimeout(() => {
         this.endOperation(config.key);
       });
@@ -121,12 +121,12 @@ class BlockingOperationService extends BaseService{
     this._notifyChanges();
   }
 
-  endOperation(key: string){
+  endOperation(key: string) {
     this._operations = this._operations.filter(x => x.key !== key);
     this._notifyChanges();
   }
 
-  getRunningBlockingOperations(){
+  getRunningBlockingOperations() {
     return this._operations;
   }
 }

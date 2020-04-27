@@ -4,7 +4,6 @@ import Spinner from "./Spinner";
 import { blockingOperationService } from "../services/ui-service";
 
 export default class BlockDialog extends React.Component<{}, {}> {
-
   componentDidMount() {
     blockingOperationService.registerListener(this);
   }
@@ -17,10 +16,12 @@ export default class BlockDialog extends React.Component<{}, {}> {
     var operations = blockingOperationService.getRunningBlockingOperations();
 
     return (
-      <Dialog open={operations.length>0} modal={true}>
-        <div style={{textAlign: 'center'}}>
+      <Dialog contentStyle={{ maxWidth: "500px" }} open={operations.length > 0} modal={true}>
+        <div style={{ textAlign: "center" }}>
           <Spinner margin="2rem auto" spins={6} />
-          {operations.map(x => (<div>{x.title}</div>))}
+          {operations.map(x => (
+            <div>{x.title}</div>
+          ))}
         </div>
       </Dialog>
     );

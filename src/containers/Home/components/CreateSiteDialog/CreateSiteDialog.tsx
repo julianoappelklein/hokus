@@ -116,7 +116,7 @@ export default class CreateSiteDialog extends React.Component<CreateSiteDialogPr
     ];
 
     return (
-      <Dialog title="New Site" open={open} actions={actions}>
+      <Dialog title="New Site" open={open} contentStyle={{ maxWidth: 500 }} actions={actions}>
         <FormItem>
           <TextField
             floatingLabelText="Key *"

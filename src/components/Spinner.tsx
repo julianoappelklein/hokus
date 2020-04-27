@@ -1,8 +1,8 @@
 import React, { CSSProperties } from "react";
 
-interface Props{
+interface Props {
   color?: string;
-  margin?: string|number;
+  margin?: string | number;
   size?: number;
   time?: number;
   spins?: number;

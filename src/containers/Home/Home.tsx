@@ -1,19 +1,16 @@
-import { Route, withRouter, RouteComponentProps } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import React, { CSSProperties } from "react";
 import service from "./../../services/service";
-import { List, ListItem } from "material-ui/List";
-import Subheader from "material-ui/Subheader";
-import IconNavigationCheck from "material-ui/svg-icons/navigation/check";
-import IconAdd from "material-ui/svg-icons/content/add";
-import { Wrapper, InfoLine, InfoBlock, MessageBlock } from "./components/shared";
+import { Wrapper, MessageBlock } from "./components/shared";
 import CreateSiteDialog from "./components/CreateSiteDialog";
 import Spinner from "./../../components/Spinner";
 import muiThemeable from "material-ui/styles/muiThemeable";
 import { MuiTheme } from "material-ui/styles";
 
 import { EmptyConfigurations, Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from "./../../types";
-import SiteDetails from "./components/SiteDetails";
+import SiteDetails from "./components/SiteDetails/SiteDetails";
 import { blockingOperationService } from "../../services/ui-service";
+import SiteList from "./components/SiteList";
 
 const styles: { [k: string]: CSSProperties } = {
   container: {
@@ -31,17 +28,6 @@ const styles: { [k: string]: CSSProperties } = {
   selectedSiteCol: {
     flex: "auto",
     overflow: "auto"
-  },
-  siteActiveStyle: {
-    fontWeight: "bold",
-    backgroundColor: "white",
-    borderBottom: "solid 1px #e0e0e0",
-    borderTop: "solid 1px #e0e0e0",
-    position: "relative"
-  },
-  siteInactiveStyle: {
-    borderBottom: "solid 1px transparent",
-    borderTop: "solid 1px transparent"
   }
 };
 
@@ -56,15 +42,13 @@ interface HomeState {
   selectedSite?: SiteConfig;
   selectedWorkspace?: WorkspaceHeader;
   createSiteDialog: boolean;
-  publishSiteDialog?: { workspace: WorkspaceConfig; workspaceHeader: WorkspaceHeader; open: boolean };
 }
 
 class Home extends React.Component<HomeProps, HomeState> {
   constructor(props: HomeProps) {
     super(props);
     this.state = {
-      createSiteDialog: false,
-      publishSiteDialog: undefined
+      createSiteDialog: false
     };
   }
 
@@ -92,9 +76,9 @@ class Home extends React.Component<HomeProps, HomeState> {
     }
   }
 
-  private selectSite(site: SiteConfig) {
+  private selectSite = (site: SiteConfig) => {
     this.setState({ selectedSite: site });
-  }
+  };
 
   componentWillUnmount() {
     service.unregisterListener(this);
@@ -128,13 +112,13 @@ class Home extends React.Component<HomeProps, HomeState> {
     }
   }
 
-  handleAddSiteClick() {
+  handleCreateSiteClick = () => {
     this.setState({ createSiteDialog: true });
-  }
+  };
 
   handleCreateSiteSubmit = async (data: any) => {
     const operationKey = `create-site-${data.key}`;
-    blockingOperationService.startOperation({key: operationKey, title: 'Creating site...'});
+    blockingOperationService.startOperation({ key: operationKey, title: "Creating site..." });
     try {
       await service.api.createSite(data);
       const configurations = await service.getConfigurations(true);
@@ -150,7 +134,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 
   render() {
     let { siteKey } = this.props;
-    let { selectedSite, configurations, createSiteDialog, publishSiteDialog } = this.state;
+    let { selectedSite, configurations, createSiteDialog } = this.state;
 
     let _configurations = (configurations as any) as Configurations;
 
@@ -158,38 +142,21 @@ class Home extends React.Component<HomeProps, HomeState> {
       return <Spinner />;
     }
 
+    const handleCreateSiteClick =
+      configurations.type == "EmptyConfigurations" || _configurations.global.siteManagementEnabled
+        ? this.handleCreateSiteClick
+        : undefined;
+
     return (
       <div style={styles.container}>
         <div style={styles.sitesCol}>
-          <List>
-            <Subheader>All Sites</Subheader>
-            {(_configurations.sites || []).map((item, index) => {
-              let selected = item === selectedSite;
-              let active = selectedSite && siteKey === item.key;
-              return (
-                <ListItem
-                  key={index}
-                  style={selected ? styles.siteActiveStyle : styles.siteInactiveStyle}
-                  rightIcon={
-                    <IconNavigationCheck color={active ? this.props.muiTheme?.palette?.primary1Color : undefined} />
-                  }
-                  onClick={() => {
-                    this.selectSite(item);
-                  }}
-                  primaryText={item.name}
-                />
-              );
-            })}
-            {configurations.type == "EmptyConfigurations" || _configurations.global.siteManagementEnabled ? (
-              <ListItem
-                key="add-site"
-                style={styles.siteInactiveStyle}
-                rightIcon={<IconAdd />}
-                onClick={this.handleAddSiteClick.bind(this)}
-                primaryText="New"
-              />
-            ) : null}
-          </List>
+          <SiteList
+            sites={_configurations.sites}
+            activeSiteKey={siteKey}
+            selectedSiteKey={selectedSite?.key}
+            onCreateSiteClick={handleCreateSiteClick}
+            onSelectSiteClick={this.selectSite}
+          />
         </div>
         <div style={styles.selectedSiteCol}>
           {selectedSite == null ? (

@@ -8,7 +8,7 @@ export interface DependencyStatus {
 
 async function gitDependency(): Promise<DependencyStatus> {
   try {
-    const exists = await commandExists("gito");
+    const exists = await commandExists("git");
     return { program: "git", exists: exists };
   } catch (e) {
     return { program: "git", exists: false };

@@ -10,29 +10,29 @@ import * as glob from "glob";
 type GitSiteSourceConfig = {
   key: string;
   url: string;
-  autoSync?: boolean
+  autoSync?: boolean;
 };
 
 class SimpleGitSiteSource implements SiteSource {
   config: GitSiteSourceConfig;
   autoSync: boolean;
 
-  canCreateWorkspaces(){
+  canCreateWorkspaces() {
     return true;
   }
 
   constructor(config: GitSiteSourceConfig) {
     this.config = config;
-    this.autoSync = config.autoSync??true;
+    this.autoSync = config.autoSync ?? true;
   }
 
-  async canSyncWorkspace(workspaceKey: string){
+  async canSyncWorkspace(workspaceKey: string) {
     let repositoryPath = pathHelper.getSiteWorkspaceRoot(this.config.key, workspaceKey);
-    const diff = await simpleGit(repositoryPath).diff(["--stat", "origin/"+workspaceKey]);
+    const diff = await simpleGit(repositoryPath).diff(["--stat", "origin/" + workspaceKey]);
     return diff.length == 0;
   }
 
-  async sync(workspaceKey: string){
+  async sync(workspaceKey: string) {
     this.stageCommitAndPush(workspaceKey);
   }
 
@@ -56,22 +56,56 @@ class SimpleGitSiteSource implements SiteSource {
   }
 
   async mountWorkspace(workspaceKey: string): Promise<void> {
-    await this.ensureRepo(workspaceKey||"master");
+    let repositoryPath = pathHelper.getSiteWorkspaceRoot(this.config.key, workspaceKey);
+    let workspacesRoot = pathHelper.getSiteWorkspacesRoot(this.config.key);
+    fs.ensureDir(repositoryPath);
+    if (await this.isEmptyDir(repositoryPath)) {
+      await simpleGit(workspacesRoot).clone(this.config.url, repositoryPath);
+    }
+    const repo = simpleGit(repositoryPath);
+    const branchResult = await repo.branch();
+
+    if (branchResult.all.find(x => x === workspaceKey)) {
+      await simpleGit(repositoryPath).checkout(workspaceKey);
+    } else {
+      await simpleGit(repositoryPath).checkout(['-b', workspaceKey ]);
+      await simpleGit(repositoryPath).push('origin', workspaceKey);
+      await simpleGit(repositoryPath).raw(['branch', '-u', `origin/${workspaceKey}`]);
+    }
   }
 
   async listWorkspaces(): Promise<Array<WorkspaceHeader>> {
     const workspaces = await jobManager.runSharedJob(`git-site-source:list-workspaces:${this.config.key}`, async () => {
       let repositoryPath = pathHelper.getSiteWorkspaceRoot(this.config.key, "master");
       await this.ensureRepo("master");
-      const branchInfo = await simpleGit(repositoryPath).branch();
-      let branchesInfo: Array<{ name: string; current: boolean }> = Object.entries(branchInfo.branches).map(x => ({
-        name: x[1].name.split("/").slice(-1)[0],
-        current: x[1].current
-      }));
+
+      const masterBranchInfo = await simpleGit(repositoryPath).branch();
+
+      let allBranches: Array<string> = Object.entries(masterBranchInfo.branches).map(
+        x => x[1].name.split("/").slice(-1)[0]
+      );
+
+      const globExpression = pathHelper.getSiteWorkspacesRoot(this.config.key) + "*/.git/";
+      const localWorkspacesFolders: string[] = await new Promise((resolve, reject) =>
+        glob(globExpression, (err, folders) => {
+          if (err) reject(err);
+          else resolve(folders);
+        })
+      );
+      const localWorkspacesMap: { [key: string]: true } = {};
+      const localWorkspacesArr: string[] = [];
+      localWorkspacesFolders
+        .map(x => x.split("/").slice(-3, -2)[0])
+        .forEach(x => {
+          localWorkspacesMap[x] = true;
+          localWorkspacesArr.push(x);
+        });
+      allBranches = allBranches.concat(localWorkspacesArr);
+
       var uniqueBranches: { [key: string]: boolean } = {};
-      branchesInfo = branchesInfo.filter(x => {
-        const isDup = uniqueBranches[x.name] === true;
-        uniqueBranches[x.name] = true;
+      allBranches = allBranches.filter(x => {
+        const isDup = uniqueBranches[x] === true;
+        uniqueBranches[x] = true;
         return !isDup;
       });
 
@@ -83,18 +117,13 @@ class SimpleGitSiteSource implements SiteSource {
         //ignore?
       }
 
-      const globExpression = pathHelper.getSiteWorkspacesRoot(this.config.key) +'*/.git/';
-      const localWorkspacesFolders: string[] = await new Promise((resolve, reject)=>glob(globExpression, (err, folders)=>{
-        if(err) reject(err);
-        else resolve(folders);
-      }));
-      const localWorkspaces: {[key: string]: true} = {};
-      localWorkspacesFolders.map(x => x.split('/').slice(-3,-2)[0]).forEach(x => localWorkspaces[x] = true);
+      allBranches = allBranches.filter(x => x!="master").sort();
+      allBranches = ['master'].concat(allBranches);
 
-      let data = branchesInfo.map(branch => ({
-        key: branch.name,
-        path: pathHelper.getSiteWorkspaceRoot(this.config.key, branch.name),
-        state: (localWorkspaces[branch.name] ? "mounted" : "unmounted") as any
+      let data = allBranches.map(branch => ({
+        key: branch,
+        path: pathHelper.getSiteWorkspaceRoot(this.config.key, branch),
+        state: (localWorkspacesMap[branch] ? "mounted" : "unmounted") as any
       }));
 
       return data;
@@ -107,7 +136,7 @@ class SimpleGitSiteSource implements SiteSource {
   };
 
   handleWorkspaceFileChanged = async (d: WorkspaceFileChangedEvent) => {
-    if(this.autoSync){
+    if (this.autoSync) {
       await this.ensureRepo(d.workspaceKey);
       this.stageCommitAndPush(d.workspaceKey);
     }

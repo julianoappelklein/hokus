@@ -77,7 +77,7 @@ api.touchSite = async function({ siteKey, workspaceKey }: any) {
 };
 
 api.mountWorkspace = async function({ siteKey, workspaceKey }: any) {
-  siteService.mountWorkspace(siteKey, workspaceKey);
+  await siteService.mountWorkspace(siteKey, workspaceKey);
 };
 
 api.serveWorkspace = async function({ siteKey, workspaceKey, serveKey }: any) {

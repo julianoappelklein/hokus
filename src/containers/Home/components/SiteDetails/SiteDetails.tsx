@@ -1,14 +1,14 @@
 import * as React from "react";
-import { Wrapper, InfoLine, InfoBlock } from "./shared";
+import { Wrapper, InfoLine, InfoBlock } from "../shared";
 import IconFileFolder from "material-ui/svg-icons/file/folder";
 import { FlatButton, TextField } from "material-ui";
-import { Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from "../../../../global-types";
-import service from "../../../services/service";
+import { Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from "../../../../../global-types";
+import service from "../../../../services/service";
 import muiThemeable from "material-ui/styles/muiThemeable";
 import { MuiTheme } from "material-ui/styles";
 import { Workspaces } from "./Workspaces";
-import PublishSiteDialog from "./PublishSiteDialog";
-import { snackMessageService, blockingOperationService } from "../../../services/ui-service";
+import PublishSiteDialog from "../PublishSiteDialog";
+import { snackMessageService, blockingOperationService } from "../../../../services/ui-service";
 
 interface Props {
   activeSiteKey: string;
@@ -34,20 +34,17 @@ class SiteDetails extends React.Component<Props, State> {
       this.setState({ selectedSiteDependencies });
     });
     service.api.listWorkspaces(siteKey).then(workspaces => {
-      // if (workspaces.length === 1) {
-      //     this.selectWorkspace(site.key, workspaces[0]);
-      // }
       this.setState({ selectedSiteWorkspaces: workspaces });
     });
   }
 
   handleBuildAndPublishClick = ({ siteKey, workspaceKey, build, publish }: any) => {
     const operationKey = `build-and-publish-${siteKey}`;
-    blockingOperationService.startOperation({key: operationKey, title: "Building site..."});
+    blockingOperationService.startOperation({ key: operationKey, title: "Building site..." });
     service.api
       .buildWorkspace(siteKey, workspaceKey, build)
       .then(() => {
-        blockingOperationService.startOperation({key: operationKey, title: "Publishing site..."});
+        blockingOperationService.startOperation({ key: operationKey, title: "Publishing site..." });
         return service.api.publishSite(siteKey, publish);
       })
       .then(() => {
@@ -94,12 +91,7 @@ class SiteDetails extends React.Component<Props, State> {
             </span>
           </InfoLine>
         )}
-        <InfoBlock label="Workspaces">
-          {this.renderWorkspaces()}
-          <div style={{margin: '8px'}}>
-          { site.canCreateWorkspaces && <FlatButton label="New Workspace" />}
-          </div>
-        </InfoBlock>
+        <InfoBlock label="Workspaces">{this.renderWorkspaces()}</InfoBlock>
         {this.state.publishSiteDialog != null ? (
           <PublishSiteDialog
             site={this.props.site}
@@ -130,6 +122,21 @@ class SiteDetails extends React.Component<Props, State> {
     });
   };
 
+  handleAddWorkspace = async (workspaceKey: string) => {
+    const operationKey = `add-workspace-${this.props.site.key}-${workspaceKey}`;
+    blockingOperationService.startOperation({ key: operationKey, title: `Adding workspace ${workspaceKey}` });
+    debugger;
+    try {
+      await service.api.mountWorkspace(this.props.site.key, workspaceKey);
+      const workspaces = await service.api.listWorkspaces(this.props.site.key);
+      this.setState({ selectedSiteWorkspaces: workspaces });
+    } catch {
+      alert("Failed to add workspace.");
+    } finally {
+      blockingOperationService.endOperation(operationKey);
+    }
+  };
+
   renderWorkspaces() {
     const { site } = this.props;
     const workspaces = this.state.selectedSiteWorkspaces;
@@ -155,6 +162,7 @@ class SiteDetails extends React.Component<Props, State> {
           this.mountWorkspace(site.key, workspace);
         }}
         onSelectWorkspaceClick={this.props.onSelectWorkspace}
+        onAddWorkspace={this.handleAddWorkspace}
         site={site}
       />
     );

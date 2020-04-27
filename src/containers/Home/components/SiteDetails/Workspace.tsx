@@ -1,14 +1,9 @@
 import * as React from "react";
-import { Accordion, AccordionItem } from "./../../../components/Accordion";
-import { TriggerWithOptions } from "./../../../components/TriggerWithOptions";
-import { WorkspaceHeader, SiteConfig } from "./../../../types";
-import FlatButton from "material-ui/FlatButton";
-import RaisedButton from "material-ui/RaisedButton";
-import TextField from "material-ui/TextField";
-import IconNavigationCheck from "material-ui/svg-icons/navigation/check";
+import { SiteConfig, WorkspaceHeader, WorkspaceConfig } from "../../../../../global-types";
+import { InfoLine } from "../shared";
+import { FlatButton, TextField, RaisedButton } from "material-ui";
+import { TriggerWithOptions } from "../../../../components/TriggerWithOptions";
 import IconFileFolder from "material-ui/svg-icons/file/folder";
-import { InfoLine } from "./shared";
-import { WorkspaceConfig } from "./../../../types";
 
 type WorkspaceProps = {
   site: SiteConfig;
@@ -119,79 +114,4 @@ export class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
       </div>
     );
   }
-}
-
-export function Workspaces(props: {
-  site: SiteConfig;
-  activeSiteKey: string;
-  workspaces: Array<WorkspaceHeader>;
-  activeWorkspaceKey?: string;
-  onLocationClick: (location: string) => void;
-  onPublishClick: (workspaceHeader: WorkspaceHeader, workspace: WorkspaceConfig) => void;
-  onStartServerClick: (workspace: WorkspaceHeader, config: string) => void;
-  onSelectWorkspaceClick: (e: any, siteKey: string, workspace: WorkspaceHeader) => void;
-  getWorkspaceDetails: (workspace: WorkspaceHeader) => Promise<WorkspaceConfig>;
-  onUnmountedWorkspaceClick?: (workspace: WorkspaceHeader) => void;
-}) {
-  let {
-    workspaces,
-    activeWorkspaceKey,
-    activeSiteKey,
-    onLocationClick,
-    onPublishClick,
-    onStartServerClick,
-    onSelectWorkspaceClick,
-    getWorkspaceDetails,
-    onUnmountedWorkspaceClick,
-    site
-  } = props;
-
-  return (
-    <Accordion style={{ margin: "0 8px" }}>
-      {(workspaces || []).map((workspace, i) => {
-        const mounted = workspace.state === "mounted";
-        const active = activeSiteKey === site.key && workspace.key === activeWorkspaceKey;
-        return (
-          <AccordionItem
-            key={i}
-            label={`${workspace.key} ${!mounted ? "(unmounted)" : ""}`}
-            headStyle={{ paddingLeft: "8px", paddingRight: "8px", textDecoration: active ? "underline" : undefined }}
-            onHeadClick={
-              !mounted
-                ? () => {
-                    onUnmountedWorkspaceClick && onUnmountedWorkspaceClick(workspace);
-                  }
-                : undefined
-            }
-            headerLeftItems={[
-              <FlatButton
-                style={{ minWidth: "40px" }}
-                icon={<IconNavigationCheck />}
-                primary={active}
-                onClick={e => {
-                  if (mounted) {
-                    onSelectWorkspaceClick(e, site.key, workspace);
-                  } else {
-                    onUnmountedWorkspaceClick && onUnmountedWorkspaceClick(workspace);
-                  }
-                }}
-              />
-            ]}
-            body={
-              <Workspace
-                site={site}
-                active={active}
-                header={workspace}
-                onLocationClick={onLocationClick}
-                onPublishClick={onPublishClick}
-                onStartServerClick={onStartServerClick}
-                onSelectWorkspaceClick={onSelectWorkspaceClick}
-                getWorkspaceDetails={getWorkspaceDetails}
-              />
-            }
-          />
-        );
-      })}
-    </Accordion>
-  );
 }
