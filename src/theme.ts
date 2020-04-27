@@ -32,7 +32,7 @@ const datePicker = {
 
 export const lightMuiTheme = getMuiTheme(lightBaseTheme, {
   palette: themePalette,
-  datePicker: datePicker,
+  datePicker: datePicker
 });
 export const darkMuiTheme = getMuiTheme(darkBaseTheme, {
   palette: themePalette,

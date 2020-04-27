@@ -82,8 +82,10 @@ export class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
     return (
       <div style={{ opacity: this.state.refreshing ? 0.5 : 1 }}>
         <InfoLine label="Location">
-          <TextField id="location" value={header.path} />
-          <FlatButton style={{ minWidth: "40px" }} icon={<IconFileFolder />} onClick={this.handleOpenLocation} />
+          <div style={{ display: "flex", alignItems: "baseline" }}>
+            <FlatButton style={{ minWidth: "40px" }} icon={<IconFileFolder />} onClick={this.handleOpenLocation} />
+            <TextField id="location" value={header.path} fullWidth={true} />
+          </div>
         </InfoLine>
         {error != null && (
           <InfoLine label="Validation Error">

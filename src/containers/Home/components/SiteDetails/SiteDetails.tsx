@@ -73,14 +73,16 @@ class SiteDetails extends React.Component<Props, State> {
         </InfoLine>
         {configurations.global.siteManagementEnabled ? (
           <InfoLine label="Config Location">
-            <TextField id="config-location" value={site.configPath} />
-            <FlatButton
-              style={{ minWidth: "40px" }}
-              icon={<IconFileFolder />}
-              onClick={() => {
-                service.api.openFileExplorer(site.configPath.replace(/(\\|\/)[^\/\\]+$/, ""));
-              }}
-            />
+            <div style={{ display: "flex", alignItems: "baseline" }}>
+              <FlatButton
+                style={{ minWidth: "40px" }}
+                icon={<IconFileFolder />}
+                onClick={() => {
+                  service.api.openFileExplorer(site.configPath.replace(/(\\|\/)[^\/\\]+$/, ""));
+                }}
+              />
+              <TextField id="config-location" fullWidth={true} value={site.configPath} />
+            </div>
           </InfoLine>
         ) : null}
         {dependencies.length > 0 && (
