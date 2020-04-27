@@ -34,6 +34,7 @@ export default class AddWorkspaceDialog extends React.Component<Props, State> {
   handleAddClick = () => {
     this.props.onSubmit && this.props.onSubmit(this.state.newWorkspaceKey || this.state.unmountedWorkspaceKey);
     this.props.onClose && this.props.onClose();
+    this.setState({ unmountedWorkspaceKey: "", newWorkspaceKey: "" });
   };
 
   render() {
@@ -75,7 +76,7 @@ export default class AddWorkspaceDialog extends React.Component<Props, State> {
               floatingLabelText="Unmounted Workspace"
             >
               {unmounteWorkspaces.map((key, i) => (
-                <MenuItem key={`publish-${key}`} value={i} primaryText={key} />
+                <MenuItem key={`publish-${key}`} value={key} primaryText={key} />
               ))}
             </SelectField>
           </React.Fragment>

@@ -99,7 +99,7 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
               key: "code-editor",
               fields: [{ key: "codeEditorInclude", type: "include", include: "codeEditorInclude" }]
             },
-            { key: "dataNest", fields: [{ key: "dataNestInclude", type: "include", include: "dateNestInclude" }] },
+            { key: "data-nest", fields: [{ key: "dataNestInclude", type: "include", include: "dataNestInclude" }] },
             { key: "date", fields: [{ key: "dateInclude", type: "include", include: "dateInclude" }] },
             { key: "empty-line", fields: [{ key: "emptyLineInclude", type: "include", include: "emptyLineInclude" }] },
             { key: "extend", fields: [{ key: "extendInclude", type: "include", include: "extendInclude" }] },

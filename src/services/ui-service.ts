@@ -110,6 +110,10 @@ class ConsoleService extends BaseService {
 class BlockingOperationService extends BaseService {
   _operations: Array<{ key: string; title: string }> = [];
 
+  public isBlocked = () => {
+    return this._operations.length > 0;
+  };
+
   startOperation(config: { key: string; title: string; maxDuration?: number }) {
     this._operations = this._operations.filter(x => x.key !== config.key);
     this._operations.push(config);

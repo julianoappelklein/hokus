@@ -4,6 +4,7 @@ import FolderSourceForm from "./components/FolderSourceForm";
 import GitSourceForm from "./components/GitSourceForm";
 import { FormItem } from "../../../../components/FormItem";
 import service from "../../../../services/service"; //not cool
+import { blockingOperationService } from "../../../../services/ui-service";
 
 type CreateSiteDialogProps = {
   open: boolean;
@@ -44,6 +45,14 @@ export default class CreateSiteDialog extends React.Component<CreateSiteDialogPr
     super(props);
 
     this.state = JSON.parse(JSON.stringify(INITIAL_STATE));
+  }
+
+  componentDidMount() {
+    blockingOperationService.registerListener(this);
+  }
+
+  componentWillUnmount() {
+    blockingOperationService.unregisterListener(this);
   }
 
   handleFormChange = (model: any, valid: boolean) => {
@@ -116,7 +125,12 @@ export default class CreateSiteDialog extends React.Component<CreateSiteDialogPr
     ];
 
     return (
-      <Dialog title="New Site" open={open} contentStyle={{ maxWidth: 500 }} actions={actions}>
+      <Dialog
+        title="New Site"
+        open={open && !blockingOperationService.isBlocked()}
+        contentStyle={{ maxWidth: 500 }}
+        actions={actions}
+      >
         <FormItem>
           <TextField
             floatingLabelText="Key *"
