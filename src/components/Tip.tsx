@@ -71,7 +71,7 @@ class Tip extends Component<TipProps, TipState> {
     if (markdown) {
       let tipContainerStyle: any = {
         position: "absolute",
-        width: "50vw", //this works as the max with
+        width: "40vw", //this works as the max with
         display: this.state.visible ? "block" : "none"
       };
 

@@ -24,6 +24,7 @@ import { EmptyConfigurations, Configurations } from "./types";
 
 import "./css/App.css";
 import BlockDialog from "./components/BlockDialog";
+import { WorkspaceConfig } from "./containers/WorkspaceConfig";
 
 //the default locked UI style
 const style: { [k: string]: CSSProperties } = {
@@ -310,13 +311,13 @@ class App extends React.Component<{}, AppState> {
             return <FormsCookbookRouted />;
           }}
         />
-        {/* <Route
-          path="/forms-builder"
+        <Route
+          path="/sites/:site/workspaces/:workspace/config"
           exact={true}
           render={({ match, history }) => {
-            return <FormsBuilder />;
+            return <WorkspaceConfig siteKey={match.params.site} workspaceKey={match.params.workspace} />;
           }}
-        /> */}
+        />
         <Route
           path="*"
           component={(data: any) => {

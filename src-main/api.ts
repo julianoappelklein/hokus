@@ -86,6 +86,16 @@ api.serveWorkspace = async function({ siteKey, workspaceKey, serveKey }: any) {
   shell.openItem("http://localhost:1313");
 };
 
+api.getWorkspaceConfig = async function({ siteKey, workspaceKey }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  return await workspaceService.getWorkspaceConfig();
+};
+
+api.setWorkspaceConfig = async function({ siteKey, workspaceKey, data }: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  return await workspaceService.setWorkspaceConfig(data);
+};
+
 api.buildWorkspace = async function({ siteKey, workspaceKey, buildKey }: any) {
   const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
   await workspaceService.build(buildKey);

@@ -6,8 +6,10 @@ import { TriggerWithOptions } from "../../../../components/TriggerWithOptions";
 import IconFileFolder from "material-ui/svg-icons/file/folder";
 import service from "./../../../../services/service";
 import { blockingOperationService } from "../../../../services/ui-service";
+import { NavigationMoreVert } from "material-ui/svg-icons";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
-type WorkspaceProps = {
+interface WorkspaceProps extends RouteComponentProps {
   site: SiteConfig;
   header: WorkspaceHeader;
   active: boolean;
@@ -15,16 +17,16 @@ type WorkspaceProps = {
   onStartServerClick: (workspace: WorkspaceHeader, serveKey: string) => void;
   onSelectWorkspaceClick: (e: any, siteKey: string, workspace: WorkspaceHeader) => void;
   onPublishClick: (workspaceHeader: WorkspaceHeader, workspace: WorkspaceConfig) => void;
-};
+}
 
-type WorkspaceState = {
+interface WorkspaceState {
   config?: WorkspaceConfig | null;
   error?: any;
   refreshing: boolean;
   canSync?: boolean;
-};
+}
 
-export class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
+class _Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
   constructor(props: WorkspaceProps) {
     super(props);
     this.state = { error: null, refreshing: false };
@@ -100,6 +102,19 @@ export class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
 
     return (
       <div style={{ opacity: this.state.refreshing ? 0.5 : 1 }}>
+        <div style={{ float: "right", marginRight: "6px" }}>
+          <TriggerWithOptions
+            onOptionClick={(e, index) => {
+              if(index===0){
+                this.props.history.push(`/sites/${encodeURIComponent(site.key)}/workspaces/${encodeURIComponent(header.key)}/config`);
+              }
+              return true;
+            }}
+            options={[/*"Delete Workspace",*/ "Edit Configurations"]}
+            triggerType={FlatButton}
+            triggerProps={{ icon: <NavigationMoreVert />, style: { minWidth: 40 } }}
+          />
+        </div>
         <InfoLine label="Location">
           <div style={{ display: "flex", alignItems: "baseline" }}>
             <FlatButton style={{ minWidth: "40px" }} icon={<IconFileFolder />} onClick={this.handleOpenLocation} />
@@ -142,3 +157,5 @@ export class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
     );
   }
 }
+
+export const Workspace = withRouter(_Workspace);

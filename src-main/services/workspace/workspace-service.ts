@@ -304,6 +304,36 @@ class WorkspaceService {
     return document;
   }
 
+  async getWorkspaceConfig(): Promise<any>{
+    let globExpression = path.join(pathHelper.getSiteWorkspaceRoot(this.siteKey, this.workspaceKey), `/hokus.{${formatProviderResolver.allFormatsExt().join(",")}}`);
+    const files = glob.sync(globExpression);
+    if(files.length){
+      const file = files[0];
+      const configStr = await fs.readFile(file, 'utf-8');
+      const data = formatProviderResolver.resolveForFilePath(file)?.parse(configStr);
+      const { collections, singles, hugover } = data;
+      return { collections, singles, hugover };
+    }
+    return {};
+  }
+
+  async setWorkspaceConfig(data: any): Promise<void>{
+    const workspaceRoot = pathHelper.getSiteWorkspaceRoot(this.siteKey, this.workspaceKey);
+    const globExpression = path.join(workspaceRoot, `/hokus.{${formatProviderResolver.allFormatsExt().join(",")}}`);
+    const files = glob.sync(globExpression);
+    let configFile = "hugo.toml";
+    let existentData = {};
+    if(files.length){
+      configFile = files[0];
+      const configStr = await fs.readFile(configFile, 'utf-8');
+      existentData = formatProviderResolver.resolveForFilePath(configFile)?.parse(configStr);
+    }
+    const { collections, singles, hugover } = data;
+    const updatedData = { ...existentData, hugover: hugover, collections: collections, singles: singles };
+    const dump = formatProviderResolver.resolveForFilePath(configFile)?.dump(updatedData);
+    fs.writeFile(configFile, dump, 'utf-8');
+  }
+
   async copyFilesIntoCollectionItem(
     collectionKey: string,
     collectionItemKey: string,

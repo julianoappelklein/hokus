@@ -4,7 +4,7 @@ const jsYaml = require("js-yaml");
 const tomlify = require("tomlify-j0.4");
 const toml = require("toml");
 
-interface FormatProvider {
+export interface FormatProvider {
   defaultExt(): string;
 
   matchContentFirstLine(line: string): boolean;

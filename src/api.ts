@@ -180,6 +180,14 @@ export class API {
   syncWorkspace(siteKey: string, workspaceKey: string): Promise<any> {
     return mainProcessBridge.request("syncWorkspace", { siteKey, workspaceKey });
   }
+
+  getWorkspaceConfig( siteKey: string, workspaceKey: string) {
+    return mainProcessBridge.request("getWorkspaceConfig", { siteKey, workspaceKey });
+  };
+  
+  setWorkspaceConfig( siteKey: string, workspaceKey: string, data: any) {
+    return mainProcessBridge.request("setWorkspaceConfig", { siteKey, workspaceKey, data });
+  };
 }
 
 export const instance = new API();
