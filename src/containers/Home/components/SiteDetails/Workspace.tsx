@@ -18,7 +18,7 @@ type WorkspaceProps = {
 };
 
 type WorkspaceState = {
-  config?: WorkspaceConfig;
+  config?: WorkspaceConfig | null;
   error?: any;
   refreshing: boolean;
   canSync?: boolean;
