@@ -115,17 +115,16 @@ export class API {
       properties: ["multiSelections", "openFile"],
       filters: [{ name: "Allowed Extensions", extensions: extensions }]
     };
-    const files = await new Promise(resolve => {
-      remote.dialog.showOpenDialog(remote.getCurrentWindow(), openDialogOptions, (files: string[]) => resolve(files));
-    });
-    if (files)
+    const { filePaths }: { filePaths: string[] } = await remote.dialog.showOpenDialog(remote.getCurrentWindow(), openDialogOptions);
+
+    if (filePaths)
       return mainProcessBridge.request("copyFilesIntoCollectionItem", {
         siteKey,
         workspaceKey,
         collectionKey,
         collectionItemKey,
         targetPath,
-        files
+        files: filePaths
       });
   }
 
