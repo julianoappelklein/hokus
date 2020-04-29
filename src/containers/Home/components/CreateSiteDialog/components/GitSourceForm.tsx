@@ -12,9 +12,7 @@ type GitSourceFormProps = {
   model: GitSourceFormModel;
 };
 
-interface GitSourceFormState{
-
-};
+interface GitSourceFormState {}
 
 export default class GitSourceForm extends React.Component<GitSourceFormProps, GitSourceFormState> {
   validateModel(model: GitSourceFormModel): { [key: string]: string } {
@@ -41,7 +39,7 @@ export default class GitSourceForm extends React.Component<GitSourceFormProps, G
   };
 
   handleAutoSyncClick = (e: any) => {
-    this.updateModel({ autoSync: !(this.props.model.autoSync??true) });
+    this.updateModel({ autoSync: !(this.props.model.autoSync ?? true) });
   };
 
   render() {
@@ -60,7 +58,7 @@ export default class GitSourceForm extends React.Component<GitSourceFormProps, G
             floatingLabelText={"Website Repository URL"}
           />
           <FormItem>
-            <Checkbox label="Auto Sync" onClick={this.handleAutoSyncClick} checked={model.autoSync??true} />
+            <Checkbox label="Auto Sync" onClick={this.handleAutoSyncClick} checked={model.autoSync ?? true} />
           </FormItem>
         </FormItem>
       </React.Fragment>

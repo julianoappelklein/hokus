@@ -71,7 +71,11 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
   async onButtonClick() {
     let { context } = this.props;
     let { field } = context.node;
-    const files = await context.form.props.plugins.openBundleFileDialog({ title: field.title, extensions: field.extensions, targetPath: field.path })
+    const files = await context.form.props.plugins.openBundleFileDialog({
+      title: field.title,
+      extensions: field.extensions,
+      targetPath: field.path
+    });
     if (files) {
       let currentFiles = context.value.slice();
       for (let f = 0; f < files.length; f++) {
@@ -85,10 +89,6 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
       }
       context.setValue(currentFiles);
     }
-    else{
-      console.log('No files.');
-    }
-      
   }
 
   removeItemWithValue(state: any) {

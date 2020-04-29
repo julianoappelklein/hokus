@@ -47,14 +47,13 @@ export class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
   };
   handleSyncClick = async () => {
     if (this.state.config != null) {
-      const operation = 'sync';
-      blockingOperationService.startOperation({key: operation, title: 'Syncing workspace...'});
+      const operation = "sync";
+      blockingOperationService.startOperation({ key: operation, title: "Syncing workspace..." });
       await service.api.syncWorkspace(this.props.site.key, this.props.header.key);
       await this.refreshCanSync();
       blockingOperationService.endOperation(operation);
-      
     }
-  }
+  };
   handleRefreshClick = () => {
     this.setState({ error: null, refreshing: true });
     this.load();
@@ -71,7 +70,7 @@ export class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
       const canSync = await service.api.canSyncWorkspace(siteKey, workspaceKey);
       this.setState({ canSync });
     }
-  }
+  };
 
   load = async () => {
     const siteKey = this.props.site.key;
@@ -81,11 +80,9 @@ export class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
       const config = await service.getWorkspaceDetails(siteKey, workspaceKey);
       this.setState({ config, error: null });
       await this.refreshCanSync();
-    }
-    catch (error) {
+    } catch (error) {
       this.setState({ config: null, error: error });
-    }
-    finally {
+    } finally {
       this.setState({ refreshing: false });
     }
   };
@@ -132,10 +129,12 @@ export class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
             options={config != null && config.serve != null ? config.serve.map(x => x.key || "default") : []}
             onOptionClick={this.handleOnStartServerOptionClick}
           />
-          {site.canSync && <React.Fragment>
-            &nbsp;
-            <FlatButton label="Sync" disabled={!(this.state.canSync ?? false)} onClick={this.handleSyncClick} />
-          </React.Fragment>}
+          {site.canSync && (
+            <React.Fragment>
+              &nbsp;
+              <FlatButton label="Sync" disabled={!(this.state.canSync ?? false)} onClick={this.handleSyncClick} />
+            </React.Fragment>
+          )}
           &nbsp;
           <FlatButton label="Publish" disabled={publishDisabled} onClick={this.handlePublishClick} />
         </InfoLine>

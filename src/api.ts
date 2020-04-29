@@ -115,7 +115,10 @@ export class API {
       properties: ["multiSelections", "openFile"],
       filters: [{ name: "Allowed Extensions", extensions: extensions }]
     };
-    const { filePaths }: { filePaths: string[] } = await remote.dialog.showOpenDialog(remote.getCurrentWindow(), openDialogOptions);
+    const { filePaths }: { filePaths: string[] } = await remote.dialog.showOpenDialog(
+      remote.getCurrentWindow(),
+      openDialogOptions
+    );
 
     if (filePaths)
       return mainProcessBridge.request("copyFilesIntoCollectionItem", {

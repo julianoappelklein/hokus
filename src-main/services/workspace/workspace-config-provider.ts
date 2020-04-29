@@ -33,7 +33,7 @@ export class WorkspaceConfigProvider {
         }
       }
 
-      let config = this._loadConfigurationsData(filePath, workspaceKey);
+      let config = this._loadConfigurationsData(filePath);
       config.path = workspacePath;
       config.key = workspaceKey;
       this.cache[cacheKey] = { token, config };
@@ -64,7 +64,7 @@ export class WorkspaceConfigProvider {
     return { config: data, path: filePath };
   }
 
-  _loadConfigurationsData(filePath: string, workspaceKey: string): WorkspaceConfig {
+  _loadConfigurationsData(filePath: string): WorkspaceConfig {
     let strData = fs.readFileSync(filePath, "utf8");
     let formatProvider = formatProviderResolver.resolveForFilePath(filePath);
     if (formatProvider == null) {

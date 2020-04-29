@@ -52,7 +52,8 @@ class InitialWorkspaceConfigBuilder {
               extensions: ["png", "jpg", "gif"],
               fields: [
                 { key: "title", title: "Title", type: "string" },
-                { key: "description", title: "Description", type: "string", multiLine: true }
+                { key: "description", title: "Description", type: "string", multiLine: true },
+                { key: "bundle-image-thumbnail", type: "bundle-image-thumbnail" },
               ]
             }
           ]
@@ -79,7 +80,7 @@ class InitialWorkspaceConfigBuilder {
               title: "Enable Robots",
               type: "boolean",
               default: true,
-              tip: "If you want you page to be indexed, keep this enabled."
+              tip: "If you want your page to be indexed, keep this enabled."
             }
           ]
         }

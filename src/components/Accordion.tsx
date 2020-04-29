@@ -108,9 +108,9 @@ class AccordionItem extends React.Component<AccordionItemProps, {}> {
 
     const _style = {
       //transition: 'box-shadow ease-in-out 0.15s',
-      ...(active ? { boxShadow: 'rgba(0, 0, 0, 0.1) 0px 3px 9px', margin: '18px 0' } : {}),
+      ...(active ? { boxShadow: "rgba(0, 0, 0, 0.1) 0px 3px 9px", margin: "18px 0" } : {}),
       ...style
-    }
+    };
 
     return (
       <div style={_style} className="accordion-item" {...wrapperProps}>
