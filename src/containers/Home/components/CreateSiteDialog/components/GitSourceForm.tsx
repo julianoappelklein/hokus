@@ -1,10 +1,10 @@
 import * as React from "react";
-import { TextField } from "material-ui";
+import { TextField, Checkbox } from "material-ui";
 import { FormItem } from "../../../../../components/FormItem";
 
 type GitSourceFormModel = {
-  folderPath: string;
-  url: string;
+  url?: string;
+  autoSync?: boolean;
 };
 
 type GitSourceFormProps = {
@@ -12,14 +12,13 @@ type GitSourceFormProps = {
   model: GitSourceFormModel;
 };
 
-type GitSourceFormState = {};
+interface GitSourceFormState{
+
+};
 
 export default class GitSourceForm extends React.Component<GitSourceFormProps, GitSourceFormState> {
   validateModel(model: GitSourceFormModel): { [key: string]: string } {
     const errors: any = {};
-    // if(model.folderPath==null||model.folderPath.trim().length===0){
-    //     errors.folderPath = 'Website folder is required.';
-    // }
     if (model.url == null || model.url.trim().length === 0) {
       errors.url =
         "Repository URL - with credentials - is required. Sample: https://USER:PASSWORD@github.com/REPOSITORY.git";
@@ -41,6 +40,10 @@ export default class GitSourceForm extends React.Component<GitSourceFormProps, G
     this.updateModel({ url });
   };
 
+  handleAutoSyncClick = (e: any) => {
+    this.updateModel({ autoSync: !(this.props.model.autoSync??true) });
+  };
+
   render() {
     let { model = {} as any } = this.props;
     const errors = this.validateModel(model);
@@ -56,6 +59,9 @@ export default class GitSourceForm extends React.Component<GitSourceFormProps, G
             fullWidth={true}
             floatingLabelText={"Website Repository URL"}
           />
+          <FormItem>
+            <Checkbox label="Auto Sync" onClick={this.handleAutoSyncClick} checked={model.autoSync??true} />
+          </FormItem>
         </FormItem>
       </React.Fragment>
     );

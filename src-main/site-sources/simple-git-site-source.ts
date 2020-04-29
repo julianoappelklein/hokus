@@ -21,6 +21,10 @@ class SimpleGitSiteSource implements SiteSource {
     return true;
   }
 
+  async syncWorkspace(workspaceKey: string){
+    await this.stageCommitAndPush(workspaceKey);
+  }
+
   constructor(config: GitSiteSourceConfig) {
     this.config = config;
     this.autoSync = config.autoSync ?? true;
@@ -29,12 +33,9 @@ class SimpleGitSiteSource implements SiteSource {
   async canSyncWorkspace(workspaceKey: string) {
     let repositoryPath = pathHelper.getSiteWorkspaceRoot(this.config.key, workspaceKey);
     const diff = await simpleGit(repositoryPath).diff(["--stat", "origin/" + workspaceKey]);
-    return diff.length == 0;
+    return diff.length > 0;
   }
 
-  async sync(workspaceKey: string) {
-    this.stageCommitAndPush(workspaceKey);
-  }
 
   private async isEmptyDir(path: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
@@ -58,6 +59,7 @@ class SimpleGitSiteSource implements SiteSource {
   async mountWorkspace(workspaceKey: string): Promise<void> {
     let repositoryPath = pathHelper.getSiteWorkspaceRoot(this.config.key, workspaceKey);
     let workspacesRoot = pathHelper.getSiteWorkspacesRoot(this.config.key);
+    try{
     fs.ensureDir(repositoryPath);
     if (await this.isEmptyDir(repositoryPath)) {
       await simpleGit(workspacesRoot).clone(this.config.url, repositoryPath);
@@ -65,12 +67,17 @@ class SimpleGitSiteSource implements SiteSource {
     const repo = simpleGit(repositoryPath);
     const branchResult = await repo.branch();
 
-    if (branchResult.all.find(x => x === workspaceKey)) {
+    if (branchResult.all.find(x => x.split('/').slice(-1)[0] === workspaceKey)) {
       await simpleGit(repositoryPath).checkout(workspaceKey);
+      await simpleGit(repositoryPath).raw(['branch', `--set-upstream-to=origin/${workspaceKey}`, `${workspaceKey}`]);
     } else {
       await simpleGit(repositoryPath).checkout(['-b', workspaceKey ]);
       await simpleGit(repositoryPath).push('origin', workspaceKey);
-      await simpleGit(repositoryPath).raw(['branch', '-u', `origin/${workspaceKey}`]);
+      await simpleGit(repositoryPath).raw(['branch', `--set-upstream-to=origin/${workspaceKey}`, `${workspaceKey}`]);
+    }
+    }
+    catch(e){
+      await fs.remove(repositoryPath);
     }
   }
 
@@ -155,10 +162,17 @@ class SimpleGitSiteSource implements SiteSource {
   async stageCommitAndPush(workspaceKey: string) {
     let repositoryPath = pathHelper.getSiteWorkspaceRoot(this.config.key, workspaceKey);
     const sGit = simpleGit(repositoryPath);
-    await sGit.pull();
     await sGit.add(".");
-    await sGit.commit("Files commited automatically.", [], {});
-    await sGit.push();
+    const status = await sGit.status();
+    let committed = false;
+    if(!status.isClean()){
+      await sGit.commit("Files committed automatically (HokusCMS).", [], {});
+      committed = true;
+    }
+    await sGit.pull();
+    if(committed){
+      await sGit.push();
+    }
   }
 }
 

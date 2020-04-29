@@ -80,6 +80,7 @@ async function get({ invalidateCache }: { invalidateCache?: boolean } = {}): Pro
         site.configPath = file;
         const siteSource = siteSourceFactory.get(site.key, site.source);
         site.canCreateWorkspaces = siteSource.canCreateWorkspaces();
+        site.canSync = siteSource.canSyncWorkspace!=null;
         configurations.sites.push(site);
       } catch (e) {
         outputConsole.appendLine(`Configuration file is invalid '${file}': ${e.toString()}`);

@@ -127,7 +127,6 @@ class SiteDetails extends React.Component<Props, State> {
   handleAddWorkspace = async (workspaceKey: string) => {
     const operationKey = `add-workspace-${this.props.site.key}-${workspaceKey}`;
     blockingOperationService.startOperation({ key: operationKey, title: `Adding workspace ${workspaceKey}` });
-    debugger;
     try {
       await service.api.mountWorkspace(this.props.site.key, workspaceKey);
       const workspaces = await service.api.listWorkspaces(this.props.site.key);

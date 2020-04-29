@@ -70,7 +70,6 @@ export function Workspaces(props: {
                     onPublishClick={onPublishClick}
                     onStartServerClick={onStartServerClick}
                     onSelectWorkspaceClick={onSelectWorkspaceClick}
-                    getWorkspaceDetails={getWorkspaceDetails}
                   />
                 }
               />

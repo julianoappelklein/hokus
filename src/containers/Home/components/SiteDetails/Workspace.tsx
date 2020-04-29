@@ -4,6 +4,8 @@ import { InfoLine } from "../shared";
 import { FlatButton, TextField, RaisedButton } from "material-ui";
 import { TriggerWithOptions } from "../../../../components/TriggerWithOptions";
 import IconFileFolder from "material-ui/svg-icons/file/folder";
+import service from "./../../../../services/service";
+import { blockingOperationService } from "../../../../services/ui-service";
 
 type WorkspaceProps = {
   site: SiteConfig;
@@ -13,13 +15,13 @@ type WorkspaceProps = {
   onStartServerClick: (workspace: WorkspaceHeader, serveKey: string) => void;
   onSelectWorkspaceClick: (e: any, siteKey: string, workspace: WorkspaceHeader) => void;
   onPublishClick: (workspaceHeader: WorkspaceHeader, workspace: WorkspaceConfig) => void;
-  getWorkspaceDetails: (workspace: WorkspaceHeader) => Promise<WorkspaceConfig>;
 };
 
 type WorkspaceState = {
   config?: WorkspaceConfig;
   error?: any;
   refreshing: boolean;
+  canSync?: boolean;
 };
 
 export class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
@@ -43,6 +45,16 @@ export class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
   handlePublishClick = () => {
     if (this.state.config != null) this.props.onPublishClick(this.props.header, this.state.config);
   };
+  handleSyncClick = async () => {
+    if (this.state.config != null) {
+      const operation = 'sync';
+      blockingOperationService.startOperation({key: operation, title: 'Syncing workspace...'});
+      await service.api.syncWorkspace(this.props.site.key, this.props.header.key);
+      await this.refreshCanSync();
+      blockingOperationService.endOperation(operation);
+      
+    }
+  }
   handleRefreshClick = () => {
     this.setState({ error: null, refreshing: true });
     this.load();
@@ -52,20 +64,30 @@ export class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
     this.load();
   };
 
-  load = () => {
-    this.props
-      .getWorkspaceDetails(this.props.header)
-      .then(config => {
-        this.setState({ config, error: null });
-      })
-      .catch(error => {
-        this.setState({ error: error, config: undefined });
-      })
-      .then(x => {
-        setTimeout(() => {
-          this.setState({ refreshing: false });
-        }, 300);
-      });
+  refreshCanSync = async () => {
+    const siteKey = this.props.site.key;
+    const workspaceKey = this.props.header.key;
+    if (this.props.site.canSync) {
+      const canSync = await service.api.canSyncWorkspace(siteKey, workspaceKey);
+      this.setState({ canSync });
+    }
+  }
+
+  load = async () => {
+    const siteKey = this.props.site.key;
+    const workspaceKey = this.props.header.key;
+    this.setState({ refreshing: true });
+    try {
+      const config = await service.getWorkspaceDetails(siteKey, workspaceKey);
+      this.setState({ config, error: null });
+      await this.refreshCanSync();
+    }
+    catch (error) {
+      this.setState({ config: null, error: error });
+    }
+    finally {
+      this.setState({ refreshing: false });
+    }
   };
 
   render() {
@@ -110,6 +132,10 @@ export class Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
             options={config != null && config.serve != null ? config.serve.map(x => x.key || "default") : []}
             onOptionClick={this.handleOnStartServerOptionClick}
           />
+          {site.canSync && <React.Fragment>
+            &nbsp;
+            <FlatButton label="Sync" disabled={!(this.state.canSync ?? false)} onClick={this.handleSyncClick} />
+          </React.Fragment>}
           &nbsp;
           <FlatButton label="Publish" disabled={publishDisabled} onClick={this.handlePublishClick} />
         </InfoLine>

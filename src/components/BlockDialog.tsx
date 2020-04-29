@@ -20,7 +20,7 @@ export default class BlockDialog extends React.Component<{}, {}> {
         <div style={{ textAlign: "center" }}>
           <Spinner margin="2rem auto" spins={6} />
           {operations.map(x => (
-            <div>{x.title}</div>
+            <div key={x.key}>{x.title}</div>
           ))}
         </div>
       </Dialog>

@@ -83,7 +83,7 @@ class AccordionItem extends React.Component<AccordionItemProps, {}> {
       wrapperProps
     } = this.props;
 
-    let _headStyle = Object.assign(
+    const _headStyle = Object.assign(
       {
         color: "#000",
         border: "solid 1px #e8e8e8",
@@ -96,7 +96,7 @@ class AccordionItem extends React.Component<AccordionItemProps, {}> {
       headStyle
     );
 
-    let _bodyStyle = Object.assign(
+    const _bodyStyle = Object.assign(
       {
         display: active ? "block" : "none",
         padding: "8px 0",
@@ -106,8 +106,14 @@ class AccordionItem extends React.Component<AccordionItemProps, {}> {
       bodyStyle
     );
 
+    const _style = {
+      //transition: 'box-shadow ease-in-out 0.15s',
+      ...(active ? { boxShadow: 'rgba(0, 0, 0, 0.1) 0px 3px 9px', margin: '18px 0' } : {}),
+      ...style
+    }
+
     return (
-      <div style={style} className="accordion-item" {...wrapperProps}>
+      <div style={_style} className="accordion-item" {...wrapperProps}>
         <AccordionHeader
           style={_headStyle}
           onClick={onHeadClick as any}

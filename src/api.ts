@@ -170,6 +170,14 @@ export class API {
   getSiteSourceDependencyStatus(siteSourceType: string): Promise<any> {
     return mainProcessBridge.request("getSiteSourceDependencyStatus", { siteSourceType });
   }
+
+  canSyncWorkspace(siteKey: string, workspaceKey: string): Promise<any> {
+    return mainProcessBridge.request("canSyncWorkspace", { siteKey, workspaceKey });
+  }
+
+  syncWorkspace(siteKey: string, workspaceKey: string): Promise<any> {
+    return mainProcessBridge.request("syncWorkspace", { siteKey, workspaceKey });
+  }
 }
 
 export const instance = new API();
