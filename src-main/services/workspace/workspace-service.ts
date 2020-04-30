@@ -324,7 +324,7 @@ class WorkspaceService {
   }
 
   async getWorkspaceConfig(): Promise<any>{
-    let globExpression = path.join(pathHelper.getSiteWorkspaceRoot(this.siteKey, this.workspaceKey), `/hokus.{${formatProviderResolver.allFormatsExt().join(",")}}`);
+    let globExpression = path.join(this.workspacePath, `/hokus.{${formatProviderResolver.allFormatsExt().join(",")}}`);
     const files = glob.sync(globExpression);
     if(files.length){
       const file = files[0];
@@ -337,8 +337,7 @@ class WorkspaceService {
   }
 
   async setWorkspaceConfig(data: any): Promise<void>{
-    const workspaceRoot = pathHelper.getSiteWorkspaceRoot(this.siteKey, this.workspaceKey);
-    const globExpression = path.join(workspaceRoot, `/hokus.{${formatProviderResolver.allFormatsExt().join(",")}}`);
+    const globExpression = path.join(this.workspacePath, `/hokus.{${formatProviderResolver.allFormatsExt().join(",")}}`);
     const files = glob.sync(globExpression);
     let configFile = "hugo.toml";
     let existentData = {};
