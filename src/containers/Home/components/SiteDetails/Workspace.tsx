@@ -17,6 +17,7 @@ interface WorkspaceProps extends RouteComponentProps {
   onStartServerClick: (workspace: WorkspaceHeader, serveKey: string) => void;
   onSelectWorkspaceClick: (e: any, siteKey: string, workspace: WorkspaceHeader) => void;
   onPublishClick: (workspaceHeader: WorkspaceHeader, workspace: WorkspaceConfig) => void;
+  onDeleteWorkspace?: (siteKey: string, workspaceKey: string) => void;
 }
 
 interface WorkspaceState {
@@ -96,6 +97,12 @@ class _Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
     }
   };
 
+  deleteWorkspace = async () => {
+    if(window.confirm('Are you sure you want do delete this workspace?')){
+      this.props.onDeleteWorkspace?.(this.props.site.key, this.props.header.key);
+    }
+  }
+
   render() {
     let { active, header, site } = this.props;
     let { config, error } = this.state;
@@ -117,9 +124,12 @@ class _Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
                   `/sites/${encodeURIComponent(site.key)}/workspaces/${encodeURIComponent(header.key)}/config`
                 );
               }
+              if (index === 1) {
+                this.deleteWorkspace();
+              }
               return true;
             }}
-            options={[/*"Delete Workspace",*/ "Edit Configurations"]}
+            options={[ "Edit Configurations", "Delete Workspace"]}
             triggerType={FlatButton}
             triggerProps={{ icon: <NavigationMoreVert />, style: { minWidth: 40 } }}
           />

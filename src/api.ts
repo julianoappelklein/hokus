@@ -23,6 +23,10 @@ export class API {
     return mainProcessBridge.request("buildWorkspace", { siteKey, workspaceKey, buildKey });
   }
 
+  deleteWorkspace(siteKey: string, workspaceKey: string) {
+    return mainProcessBridge.request("deleteWorkspace", { siteKey, workspaceKey });
+  }
+
   saveSingle(siteKey: string, workspaceKey: string, singleKey: string, document: string) {
     return mainProcessBridge.request("saveSingle", { siteKey, workspaceKey, singleKey, document });
   }

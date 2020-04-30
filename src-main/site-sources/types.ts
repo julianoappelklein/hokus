@@ -8,4 +8,5 @@ export interface SiteSource {
   syncWorkspace?(workspaceKey: string): Promise<void>;
   mountWorkspace?(workspaceKey: string): Promise<void>;
   canCreateWorkspaces(): boolean;
+  canDeleteWorkspace?(workspaceKey: string): boolean;
 }

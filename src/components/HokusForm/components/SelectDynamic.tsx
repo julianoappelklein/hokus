@@ -1,10 +1,11 @@
 import React from "react";
-import { NormalizeStateContext } from "../../HoForm";
+import { NormalizeStateContext, CrawlContext } from "../../HoForm";
 import { BaseDynamic } from "../../HoForm";
 import FormItemWrapper from "./shared/FormItemWrapper";
 import MenuItem from "material-ui/MenuItem";
 import SelectField from "material-ui/SelectField";
 import Tip from "../../Tip";
+import { setValidationErrorIntoState, getValidationError } from "../../HoForm/utils";
 
 type SelectDynamicField = {
   key: string;
@@ -13,7 +14,8 @@ type SelectDynamicField = {
   tip: string;
   title: string;
   options: Array<{ value: string; text: string }>;
-  multiple: boolean;
+  multiple?: boolean;
+  required?: boolean;
 };
 
 type SelectDynamicState = {};
@@ -38,6 +40,16 @@ class SelectDynamic extends BaseDynamic<SelectDynamicField, SelectDynamicState> 
     return "select";
   }
 
+  crawlComponent({ form, node }: CrawlContext<SelectDynamicField>): void {
+    const value = this.getValueFromNode(node);
+
+    if (node.field.required) {
+      const invalid = value == null || value.length === 0;
+      setValidationErrorIntoState(node.state, form.buildDisplayPath(node), invalid?'The field is required.':undefined);      
+    }
+  }
+
+
   handleChange = (e: any, index: number, payload: Array<string>) => {
     let { context } = this.props;
     let field = context.node.field;
@@ -53,7 +65,7 @@ class SelectDynamic extends BaseDynamic<SelectDynamicField, SelectDynamicState> 
 
   renderComponent() {
     let { context } = this.props;
-    let { node, currentPath, parentPath } = context;
+    let { node, currentPath, parentPath, nodePath } = context;
     let { field } = node;
 
     if (!parentPath.startsWith(currentPath)) {
@@ -63,6 +75,8 @@ class SelectDynamic extends BaseDynamic<SelectDynamicField, SelectDynamicState> 
     let iconButtons = [];
     if (field.tip) iconButtons.push(<Tip markdown={field.tip} />);
 
+    const error = getValidationError(node.state, nodePath);
+
     return (
       <FormItemWrapper
         control={
@@ -70,6 +84,7 @@ class SelectDynamic extends BaseDynamic<SelectDynamicField, SelectDynamicState> 
             floatingLabelText={field.title}
             floatingLabelFixed={true}
             value={context.value}
+            errorText={error}
             multiple={field.multiple === true}
             onChange={this.handleChange}
             fullWidth={true}

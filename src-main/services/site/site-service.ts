@@ -5,6 +5,7 @@ import publisherFactory from "../../publishers/publisher-factory";
 import configurationDataProvider from "./../../configuration-data-provider";
 import siteInitializerFactory from "../../site-sources/initializers/site-initializer-factory";
 import { appEventEmitter } from "../../app-event-emmiter";
+import { remove } from "fs-extra";
 
 class SiteService {
   async _getSiteConfig(siteKey: string): Promise<SiteConfig> {
@@ -33,6 +34,14 @@ class SiteService {
     const siteSource = await this._getSiteSource(siteKey);
     const workspaces = await siteSource.listWorkspaces();
     return workspaces.find((x: any) => x.key === workspaceKey);
+  }
+
+  async deleteWorkspace(siteKey: string, workspaceKey: string): Promise<void> {
+    const siteSource = await this._getSiteSource(siteKey);
+    if(siteSource.canDeleteWorkspace?.(workspaceKey)??false){
+      const path = pathHelper.getSiteWorkspaceRoot(siteKey, workspaceKey);
+      await remove(path);
+    }
   }
 
   async canSyncWorkspace(siteKey: string, workspaceKey: string): Promise<boolean|null> {

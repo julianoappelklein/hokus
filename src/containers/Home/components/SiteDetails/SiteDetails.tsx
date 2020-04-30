@@ -103,6 +103,13 @@ class SiteDetails extends React.Component<Props, State> {
     );
   }
 
+  handleDeleteWorkspace = async (siteKey: string, workspaceKey: string) => {
+    await service.api.deleteWorkspace(siteKey, workspaceKey);
+    const workspaces = await service.api.listWorkspaces(this.props.site.key);
+    this.setState({ selectedSiteWorkspaces: workspaces });
+
+  }
+
   async mountWorkspace(siteKey: string, workspace: WorkspaceHeader) {
     await service.api.mountWorkspace(siteKey, workspace.key);
     //this.load(siteKey, workspace.key);
@@ -159,6 +166,7 @@ class SiteDetails extends React.Component<Props, State> {
         }}
         onSelectWorkspaceClick={this.props.onSelectWorkspace}
         onAddWorkspace={this.handleAddWorkspace}
+        onDeleteWorkspace={this.handleDeleteWorkspace}
         site={site}
       />
     );

@@ -17,6 +17,10 @@ class SimpleGitSiteSource implements SiteSource {
   config: GitSiteSourceConfig;
   autoSync: boolean;
 
+  canDeleteWorkspace(workspaceKey: string){
+    return true;
+  }
+
   canCreateWorkspaces() {
     return true;
   }

@@ -101,6 +101,10 @@ api.buildWorkspace = async function({ siteKey, workspaceKey, buildKey }: any) {
   await workspaceService.build(buildKey);
 };
 
+api.deleteWorkspace = async function({ siteKey, workspaceKey }: any) {
+  await siteService.deleteWorkspace(siteKey, workspaceKey);
+};
+
 api.getSingle = async function({ siteKey, workspaceKey, singleKey }: any) {
   const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
   const single = await workspaceService.getSingle(singleKey);

@@ -19,6 +19,7 @@ export function Workspaces(props: {
   getWorkspaceDetails: (workspace: WorkspaceHeader) => Promise<WorkspaceConfig>;
   onUnmountedWorkspaceClick?: (workspace: WorkspaceHeader) => void;
   onAddWorkspace?: (workspaceKey: string) => void;
+  onDeleteWorkspace?: (siteKey: string, workspaceKey: string) => void;
 }) {
   let {
     workspaces,
@@ -28,7 +29,7 @@ export function Workspaces(props: {
     onPublishClick,
     onStartServerClick,
     onSelectWorkspaceClick,
-    getWorkspaceDetails,
+    onDeleteWorkspace,
     site
   } = props;
 
@@ -70,6 +71,7 @@ export function Workspaces(props: {
                     onPublishClick={onPublishClick}
                     onStartServerClick={onStartServerClick}
                     onSelectWorkspaceClick={onSelectWorkspaceClick}
+                    onDeleteWorkspace={onDeleteWorkspace}
                   />
                 }
               />
