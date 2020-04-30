@@ -105,8 +105,10 @@ class _Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
         <div style={{ float: "right", marginRight: "6px" }}>
           <TriggerWithOptions
             onOptionClick={(e, index) => {
-              if(index===0){
-                this.props.history.push(`/sites/${encodeURIComponent(site.key)}/workspaces/${encodeURIComponent(header.key)}/config`);
+              if (index === 0) {
+                this.props.history.push(
+                  `/sites/${encodeURIComponent(site.key)}/workspaces/${encodeURIComponent(header.key)}/config`
+                );
               }
               return true;
             }}

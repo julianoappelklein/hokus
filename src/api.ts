@@ -181,13 +181,13 @@ export class API {
     return mainProcessBridge.request("syncWorkspace", { siteKey, workspaceKey });
   }
 
-  getWorkspaceConfig( siteKey: string, workspaceKey: string) {
+  getWorkspaceConfig(siteKey: string, workspaceKey: string) {
     return mainProcessBridge.request("getWorkspaceConfig", { siteKey, workspaceKey });
-  };
-  
-  setWorkspaceConfig( siteKey: string, workspaceKey: string, data: any) {
+  }
+
+  setWorkspaceConfig(siteKey: string, workspaceKey: string, data: any) {
     return mainProcessBridge.request("setWorkspaceConfig", { siteKey, workspaceKey, data });
-  };
+  }
 }
 
 export const instance = new API();

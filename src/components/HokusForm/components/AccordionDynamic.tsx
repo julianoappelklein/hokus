@@ -25,7 +25,7 @@ const Fragment = React.Fragment;
 type AccordionDynamicField = {
   title: string;
   fields: Array<any>;
-  itemTitleKey?: string;
+  itemTitleKey?: string | string[];
   itemTitleFallbackKey?: string;
 } & FieldBase;
 
@@ -196,16 +196,21 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
     }
   }
 
-  resolveItemLabel(field: any, state: any, childIndex: number) {
-    let label;
-    if (field.itemTitleKey) {
-      label = state[field.itemTitleKey];
-      if (!label && field.itemTitleFallbackKey) {
-        label = state[field.itemTitleFallbackKey];
+  resolveItemLabel(field: AccordionDynamicField, state: any, childIndex: number): string {
+    let title = "";
+    if (field.itemTitleKey != null) {
+      if (Array.isArray(field.itemTitleKey)) {
+        for (let i = 0; i < field.itemTitleKey.length; i++) {
+          const key = field.itemTitleKey[i];
+          title = (state[key] || "").toString();
+          if (title) break;
+        }
+      } else {
+        title = state[field.itemTitleKey];
       }
     }
-    if (!label) label = `Item ${childIndex + 1}`;
-    return label;
+    if (title) return title;
+    return state[field.itemTitleFallbackKey || "title"] || `Item ${childIndex + 1}`;
   }
 
   renderComponent() {

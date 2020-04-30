@@ -168,9 +168,7 @@ class SimpleGitSiteSource implements SiteSource {
       committed = true;
     }
     await sGit.pull();
-    if (committed) {
-      await sGit.push();
-    }
+    await sGit.push();    
   }
 }
 
