@@ -5,7 +5,7 @@ import { FlatButton, TextField, RaisedButton } from "material-ui";
 import { TriggerWithOptions } from "../../../../components/TriggerWithOptions";
 import IconFileFolder from "material-ui/svg-icons/file/folder";
 import service from "./../../../../services/service";
-import { blockingOperationService } from "../../../../services/ui-service";
+import { blockingOperationService, snackMessageService } from "../../../../services/ui-service";
 import { NavigationMoreVert } from "material-ui/svg-icons";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 
@@ -51,9 +51,16 @@ class _Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
     if (this.state.config != null) {
       const operation = "sync";
       blockingOperationService.startOperation({ key: operation, title: "Syncing workspace..." });
-      await service.api.syncWorkspace(this.props.site.key, this.props.header.key);
-      await this.refreshCanSync();
-      blockingOperationService.endOperation(operation);
+      try{
+        await service.api.syncWorkspace(this.props.site.key, this.props.header.key);
+        await this.refreshCanSync();
+      }
+      catch(e){
+        snackMessageService.addSnackMessage("Failed to sync workspace.");
+      }
+      finally{
+        blockingOperationService.endOperation(operation);
+      }
     }
   };
   handleRefreshClick = () => {

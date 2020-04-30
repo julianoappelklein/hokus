@@ -47,6 +47,7 @@ class InitialWorkspaceConfigBuilder {
             { key: "draft", title: "Draft", type: "boolean" },
             {
               key: "bundle-manager",
+              title: "Images",
               type: "bundle-manager",
               path: "imgs",
               extensions: ["png", "jpg", "gif"],

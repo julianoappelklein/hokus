@@ -2,6 +2,7 @@ import * as React from "react";
 import { HokusForm } from "../components/HokusForm";
 import { formConfigurationsIncludes } from "../utils/configurations-includes";
 import service from "../services/service";
+import Spinner from "../components/Spinner";
 
 type WorkspaceConfigProps = {
   siteKey: string;
@@ -17,7 +18,7 @@ type WorkspaceConfigState = {
 export class WorkspaceConfig extends React.Component<WorkspaceConfigProps, WorkspaceConfigState> {
   formRef: any;
   state: WorkspaceConfigState = {
-    values: {},
+    values: null,
     form: {},
     formKey: 1,
     workspaceFormKey: 1
@@ -43,6 +44,10 @@ export class WorkspaceConfig extends React.Component<WorkspaceConfigProps, Works
   };
 
   render() {
+    if (this.state.values == null) {
+      return <Spinner />;
+    }
+
     return (
       <div style={{ display: "flex" }}>
         <div style={{ flex: "1", position: "relative" }}>

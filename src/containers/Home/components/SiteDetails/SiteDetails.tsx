@@ -38,24 +38,19 @@ class SiteDetails extends React.Component<Props, State> {
     });
   }
 
-  handleBuildAndPublishClick = ({ siteKey, workspaceKey, build, publish }: any) => {
+  handleBuildAndPublishClick = async ({ siteKey, workspaceKey, build, publish }: any) => {
     const operationKey = `build-and-publish-${siteKey}`;
-    blockingOperationService.startOperation({ key: operationKey, title: "Building site..." });
-    service.api
-      .buildWorkspace(siteKey, workspaceKey, build)
-      .then(() => {
-        blockingOperationService.startOperation({ key: operationKey, title: "Publishing site..." });
-        return service.api.publishSite(siteKey, publish);
-      })
-      .then(() => {
-        snackMessageService.addSnackMessage("Site successfully published.");
-      })
-      .catch(() => {
-        snackMessageService.addSnackMessage("Publish failed.");
-      })
-      .then(() => {
-        blockingOperationService.endOperation(operationKey);
-      });
+    try {
+      blockingOperationService.startOperation({ key: operationKey, title: "Building site..." });
+      await service.api.buildWorkspace(siteKey, workspaceKey, build);
+      blockingOperationService.startOperation({ key: operationKey, title: "Publishing site..." });
+      await service.api.publishSite(siteKey, publish);
+      snackMessageService.addSnackMessage("Site successfully published.");
+    } catch (e) {
+      snackMessageService.addSnackMessage("Publish failed.");
+    } finally {
+      blockingOperationService.endOperation(operationKey);
+    }
   };
 
   render() {

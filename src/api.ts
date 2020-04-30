@@ -113,7 +113,9 @@ export class API {
     let openDialogOptions = {
       title: title || "Select Files",
       properties: ["multiSelections", "openFile"],
-      filters: [{ name: "Allowed Extensions", extensions: extensions }]
+      filters: [
+        ...(extensions && extensions.length > 0 ? [{ name: "Allowed Extensions", extensions: extensions }] : [])
+      ]
     };
     const { filePaths }: { filePaths: string[] } = await remote.dialog.showOpenDialog(
       remote.getCurrentWindow(),
@@ -142,7 +144,9 @@ export class API {
     let openDialogOptions = {
       title: title || "Select Files",
       properties: ["multiSelections", "openFile"],
-      filters: [{ name: "Allowed Extensions", extensions: extensions }]
+      filters: [
+        ...(extensions && extensions.length > 0 ? [{ name: "Allowed Extensions", extensions: extensions }] : [])
+      ]
     };
     const { filePaths }: { filePaths: string[] } = await remote.dialog.showOpenDialog(
       remote.getCurrentWindow(),

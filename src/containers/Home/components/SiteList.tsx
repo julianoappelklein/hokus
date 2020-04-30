@@ -12,11 +12,13 @@ const styles: { [k: string]: React.CSSProperties } = {
     backgroundColor: "white",
     borderBottom: "solid 1px #e0e0e0",
     borderTop: "solid 1px #e0e0e0",
-    position: "relative"
+    position: "relative",
+    transition: "none"
   },
   siteInactiveStyle: {
     borderBottom: "solid 1px transparent",
-    borderTop: "solid 1px transparent"
+    borderTop: "solid 1px transparent",
+    transition: "none"
   }
 };
 
