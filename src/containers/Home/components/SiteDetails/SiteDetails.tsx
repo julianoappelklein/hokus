@@ -107,8 +107,7 @@ class SiteDetails extends React.Component<Props, State> {
     await service.api.deleteWorkspace(siteKey, workspaceKey);
     const workspaces = await service.api.listWorkspaces(this.props.site.key);
     this.setState({ selectedSiteWorkspaces: workspaces });
-
-  }
+  };
 
   async mountWorkspace(siteKey: string, workspace: WorkspaceHeader) {
     await service.api.mountWorkspace(siteKey, workspace.key);

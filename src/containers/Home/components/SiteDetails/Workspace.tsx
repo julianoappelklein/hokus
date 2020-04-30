@@ -52,14 +52,12 @@ class _Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
     if (this.state.config != null) {
       const operation = "sync";
       blockingOperationService.startOperation({ key: operation, title: "Syncing workspace..." });
-      try{
+      try {
         await service.api.syncWorkspace(this.props.site.key, this.props.header.key);
         await this.refreshCanSync();
-      }
-      catch(e){
+      } catch (e) {
         snackMessageService.addSnackMessage("Failed to sync workspace.");
-      }
-      finally{
+      } finally {
         blockingOperationService.endOperation(operation);
       }
     }
@@ -98,10 +96,10 @@ class _Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
   };
 
   deleteWorkspace = async () => {
-    if(window.confirm('Are you sure you want do delete this workspace?')){
+    if (window.confirm("Are you sure you want do delete this workspace?")) {
       this.props.onDeleteWorkspace?.(this.props.site.key, this.props.header.key);
     }
-  }
+  };
 
   render() {
     let { active, header, site } = this.props;
@@ -129,7 +127,7 @@ class _Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
               }
               return true;
             }}
-            options={[ "Edit Configurations", "Delete Workspace"]}
+            options={["Edit Configurations", "Delete Workspace"]}
             triggerType={FlatButton}
             triggerProps={{ icon: <NavigationMoreVert />, style: { minWidth: 40 } }}
           />

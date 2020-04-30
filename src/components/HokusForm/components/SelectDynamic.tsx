@@ -45,10 +45,13 @@ class SelectDynamic extends BaseDynamic<SelectDynamicField, SelectDynamicState> 
 
     if (node.field.required) {
       const invalid = value == null || value.length === 0;
-      setValidationErrorIntoState(node.state, form.buildDisplayPath(node), invalid?'The field is required.':undefined);      
+      setValidationErrorIntoState(
+        node.state,
+        form.buildDisplayPath(node),
+        invalid ? "The field is required." : undefined
+      );
     }
   }
-
 
   handleChange = (e: any, index: number, payload: Array<string>) => {
     let { context } = this.props;
