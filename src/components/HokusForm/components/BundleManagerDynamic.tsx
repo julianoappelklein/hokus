@@ -82,7 +82,7 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
         let file = files[f];
         let match = currentFiles.find((x: any) => x != null && x.src === file);
         if (match) {
-          if (match.__deleted) delete match.__deleted;
+          if (match.$_deleted) delete match.$_deleted;
         } else {
           currentFiles.push({ src: file });
         }
@@ -92,7 +92,7 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
   }
 
   removeItemWithValue(state: any) {
-    state.__deleted = true;
+    state.$_deleted = true;
     let { context } = this.props;
     context.setValue(context.value);
   }
@@ -117,7 +117,7 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
     let itemsStates = context.value.filter((x: any) => {
       return (
         x.src.startsWith(field.path) &&
-        x.__deleted !== true &&
+        x.$_deleted !== true &&
         (field.extensions || (field.extensions as string[]).indexOf(extractExt(x.src)) != -1)
       );
     });

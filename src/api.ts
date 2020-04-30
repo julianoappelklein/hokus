@@ -131,6 +131,34 @@ export class API {
       });
   }
 
+  async openFileDialogForSingle(
+    siteKey: string,
+    workspaceKey: string,
+    singleKey: string,
+    targetPath: string,
+    { title, extensions }: { title: string; extensions: Array<string> }
+  ) {
+    let remote = window.require("electron").remote;
+    let openDialogOptions = {
+      title: title || "Select Files",
+      properties: ["multiSelections", "openFile"],
+      filters: [{ name: "Allowed Extensions", extensions: extensions }]
+    };
+    const { filePaths }: { filePaths: string[] } = await remote.dialog.showOpenDialog(
+      remote.getCurrentWindow(),
+      openDialogOptions
+    );
+
+    if (filePaths)
+      return mainProcessBridge.request("copyFilesIntoSingle", {
+        siteKey,
+        workspaceKey,
+        singleKey,
+        targetPath,
+        files: filePaths
+      });
+  }
+
   getThumbnailForCollectionItemImage(
     siteKey: string,
     workspaceKey: string,
@@ -141,6 +169,14 @@ export class API {
     return mainProcessBridge.request(
       "getThumbnailForCollectionItemImage",
       { siteKey, workspaceKey, collectionKey, collectionItemKey, targetPath },
+      { timeout: 30000 }
+    );
+  }
+
+  getThumbnailForSingleImage(siteKey: string, workspaceKey: string, singleKey: string, targetPath: string) {
+    return mainProcessBridge.request(
+      "getThumbnailForSingleImage",
+      { siteKey, workspaceKey, singleKey, targetPath },
       { timeout: 30000 }
     );
   }

@@ -115,7 +115,14 @@ The value must match the version you want from the Hugo Releases page (in Hugo G
                 fields: [
                   { key: "key", title: "Key", type: "string", tip: "sample: configuration" },
                   { key: "title", title: "Title", type: "string", required: true, tip: "sample: Configuration File" },
-                  { key: "file", title: "Item Title", type: "string", required: true, tip: "sample: config.toml" },
+                  { key: "file", title: "File", type: "string", required: true, tip: "sample: config.toml" },
+                  {
+                    key: "dataformat",
+                    title: "Data Format",
+                    type: "select",
+                    required: true,
+                    options: [{ value: "json" }, { value: "toml" }, { value: "yaml" }]
+                  },
                   {
                     key: "fieldsAccordionInclude",
                     type: "include",

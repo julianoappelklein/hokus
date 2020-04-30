@@ -78,12 +78,18 @@ class WorkspaceService {
     if (single == null) throw new Error("Could not find single.");
     let filePath = path.join(this.workspacePath, single.file);
 
+    let doc: any;
+
     if (fs.existsSync(filePath)) {
-      let data = fs.readFileSync(filePath, "utf8");
-      return await this._smartParse(filePath, [path.extname(single.file).replace(".", "")], data);
+      const dataStr = fs.readFileSync(filePath, "utf8");
+      doc = await this._smartParse(filePath, [path.extname(single.file).replace(".", "")], dataStr);
     } else {
-      return {};
+      doc = {};
     }
+    if (contentFormats.isContentFile(filePath)) {
+      doc.resources = await this.getResourcesFromContent(filePath, doc.resources);
+    }
+    return doc;
   }
 
   //Update the single
@@ -97,15 +103,29 @@ class WorkspaceService {
 
     if (!fs.existsSync(directory)) fs.mkdirSync(directory); //ensure directory existence
 
-    this._stripNonDocumentData(document);
+    let documentClone = JSON.parse(JSON.stringify(document));
+    this._stripNonDocumentData(documentClone);
 
-    let stringData = await this._smartDump(filePath, [path.extname(single.file).replace(".", "")], document);
+    let stringData = await this._smartDump(filePath, [path.extname(single.file).replace(".", "")], documentClone);
     fs.writeFileSync(filePath, stringData);
     appEventEmitter.emit("onWorkspaceFileChanged", {
       siteKey: this.siteKey,
       workspaceKey: this.workspaceKey,
       files: [filePath]
     });
+
+    //preparing return
+    if (document.resources) {
+      for (let r = 0; r < document.resources.length; r++) {
+        let resource = document.resources[r];
+        if (resource.$_deleted) {
+          let fullSrc = path.join(directory, resource.src);
+          await fs.remove(fullSrc);
+        }
+      }
+      document.resources = document.resources.filter((x: any) => x.$_deleted !== true);
+    }
+
     return document;
   }
 
@@ -131,7 +151,6 @@ class WorkspaceService {
   async getCollectionItem(collectionKey: string, collectionItemKey: string) {
     let config = await this.getConfigurationsData();
     let collection = config.collections.find(x => x.key === collectionKey);
-    let keyExt = path.extname(collectionItemKey);
     if (collection == null) throw new Error("Could not find collection.");
     let filePath = path.join(this.workspacePath, collection.folder, collectionItemKey);
     if (fs.existsSync(filePath)) {
@@ -208,12 +227,12 @@ class WorkspaceService {
 
   _stripNonDocumentData(document: any) {
     for (var key in document) {
-      if (key.startsWith("__")) {
+      if (key.startsWith("$_")) {
         delete document[key];
       }
       if (document.resources) {
-        document.resources = document.resources.filter((x: any) => x.__deleted == true);
-        document.resources.forEach((x: any) => delete x.__deleted);
+        document.resources = document.resources.filter((x: any) => x.$_deleted == true);
+        document.resources.forEach((x: any) => delete x.$_deleted);
       }
     }
   }
@@ -294,12 +313,12 @@ class WorkspaceService {
     if (document.resources) {
       for (let r = 0; r < document.resources.length; r++) {
         let resource = document.resources[r];
-        if (resource.__deleted) {
+        if (resource.$_deleted) {
           let fullSrc = path.join(directory, resource.src);
           await fs.remove(fullSrc);
         }
       }
-      document.resources = document.resources.filter((x: any) => x.__deleted !== true);
+      document.resources = document.resources.filter((x: any) => x.$_deleted !== true);
     }
     return document;
   }
@@ -332,6 +351,46 @@ class WorkspaceService {
     const updatedData = { ...existentData, hugover: hugover, collections: collections, singles: singles };
     const dump = formatProviderResolver.resolveForFilePath(configFile)?.dump(updatedData);
     fs.writeFile(configFile, dump, 'utf-8');
+  }
+
+  async copyFilesIntoSingle(
+    singleKey: string,
+    targetPath: string,
+    files: Array<string>
+  ) {
+    let config = await this.getConfigurationsData();
+    let single = config.singles.find(x => x.key === singleKey);
+    if (single == null) throw new Error("Could not find single.");
+    const indexMatcher = /\/_?index[.](md|markdown|html)$/;
+    if(!indexMatcher.test(single.file)){
+      throw new Error("The current single does not support bundling.");
+    }
+    let filesBasePath = path.join(this.workspacePath, single.file.replace(indexMatcher,""), targetPath);
+
+    for (let i = 0; i < files.length; i++) {
+      let file = files[i];
+
+      let from = file;
+      let to = path.join(filesBasePath, path.basename(file));
+
+      let toExists = fs.existsSync(to);
+      if (toExists) {
+        fs.unlinkSync(to);
+      }
+
+      await fs.copy(from, to);
+    }
+    if (files.length > 0) {
+      appEventEmitter.emit("onWorkspaceFileChanged", {
+        siteKey: this.siteKey,
+        workspaceKey: this.workspaceKey,
+        files: files
+      });
+    }
+
+    return files.map(x => {
+      return path.join(targetPath, path.basename(x)).replace(/\\/g, "/");
+    });
   }
 
   async copyFilesIntoCollectionItem(
@@ -409,6 +468,41 @@ class WorkspaceService {
 
     return `data:${mime};base64,${base64}`;
   }
+
+  async getThumbnailForSingleImage(singleKey: string, targetPath: string) {
+    let config = await this.getConfigurationsData();
+    let single = config.singles.find(x => x.key === singleKey);
+    if (single == null) throw new Error("Could not find collection.");
+    const indexMatcher = /\/_?index[.](md|markdown|html)$/;
+    if(!indexMatcher.test(single.file)){
+      throw new Error("The current single does not support bundling.");
+    }
+    const singleFolder = single.file.replace(indexMatcher, "");
+    let src = path.join(this.workspacePath, singleFolder, targetPath);
+    let srcExists = await this.existsPromise(src);
+    if (!srcExists) {
+      return "NOT_FOUND";
+    }
+
+    let thumbSrc = path.join(this.workspacePath, ".hokus/thumbs", singleFolder, targetPath);
+    let thumbSrcExists = await this.existsPromise(thumbSrc);
+    if (!thumbSrcExists) {
+      try {
+        await createThumbnailJob(src, thumbSrc);
+      } catch (e) {
+        return "NOT_FOUND";
+      }
+    }
+
+    let ext = path.extname(thumbSrc).replace(".", "");
+    let mime = `image/${ext}`;
+    let buffer: any = await promisify(fs.readFile)(thumbSrc);
+    let base64 = buffer.toString("base64");
+
+    return `data:${mime};base64,${base64}`;
+  }
+
+
 
   _findFirstMatchOrDefault<T extends any>(arr: Array<T>, key: string): T {
     let result;

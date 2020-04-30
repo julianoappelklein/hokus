@@ -5,9 +5,9 @@ import * as path from "path";
 const dataFormatsPiped = formatProviderResolver.allFormatsExt().join("|");
 
 let validationUtils = {
-  contentFormatReg: new RegExp("^(md|mmark)$"),
+  contentFormatReg: new RegExp("^(md|mmark|markdown)$"),
   dataFormatReg: new RegExp("^(" + dataFormatsPiped + ")$"),
-  allFormatsReg: new RegExp("^(" + dataFormatsPiped + "|md|mmark)$")
+  allFormatsReg: new RegExp("^(" + dataFormatsPiped + "|md|mmark|markdown)$")
 };
 
 class WorkspaceConfigValidator {
@@ -30,8 +30,8 @@ class WorkspaceConfigValidator {
             .string()
             .trim()
             .required(),
-          collections: joi.array().required(),
-          singles: joi.array().required(),
+          collections: joi.array(),
+          singles: joi.array(),
           build: joi.array().items(
             joi.object().keys({
               key: joi.string(),
@@ -52,12 +52,12 @@ class WorkspaceConfigValidator {
 
     let validationErrorMessage;
 
-    validationErrorMessage = config.collections
+    validationErrorMessage = (config.collections||[])
       .map((x: any) => this.validateCollection(x))
       .find((x: any) => x !== null);
     if (validationErrorMessage) return validationErrorMessage;
 
-    validationErrorMessage = config.singles.map((x: any) => this.validateSingle(x)).find((x: any) => x !== null);
+    validationErrorMessage = (config.singles||[]).map((x: any) => this.validateSingle(x)).find((x: any) => x !== null);
     if (validationErrorMessage) return validationErrorMessage;
 
     return null;
@@ -123,27 +123,25 @@ class WorkspaceConfigValidator {
           .regex(/^(content|data).+$/)
           .regex(/^(?!.*[.][.]).*$/)
           .required()
-          .error(new Error("The folder value is invalid.")),
+          .error(new Error("The collection folder value is invalid.")),
         itemtitle: joi
           .string()
           .trim()
           .min(3)
           .max(30)
-          .error(new Error("The itemtitle value is invalid.")),
+          .error(new Error("The collection itemtitle value is invalid.")),
         extension: joi
           .string()
           .regex(validationUtils.allFormatsReg)
           .required()
-          .error(new Error("The extension value is invalid.")),
+          .error(new Error("The collection extension value is invalid.")),
         dataformat: joi
           .string()
           .trim()
-          .error(new Error("The dataformat value is invalid.")), //is not required here
+          .error(new Error("The collection dataformat value is invalid.")), //is not required here
         fields: joi
           .array()
-          .min(1)
-          .required()
-          .error(new Error("The fields value is invalid."))
+          .error(new Error("The collection fields must be an array"))
       })
     ).error;
 
@@ -196,30 +194,28 @@ class WorkspaceConfigValidator {
           .min(3)
           .max(30)
           .required()
-          .error(new Error("The x value is invalid.")),
+          .error(new Error("The single must have a key.")),
         title: joi
           .string()
           .trim()
           .min(3)
           .max(30)
           .required()
-          .error(new Error("The x value is invalid.")),
+          .error(new Error("The single must have a title.")),
         file: joi
           .string()
           .trim()
           .regex(/^(content|data|config[.]).+$/)
           .regex(/^(?!.*[.][.]).*$/)
           .required()
-          .error(new Error("The x value is invalid.")),
+          .error(new Error("The single has a invalid title.")),
         dataformat: joi
           .string()
           .trim()
-          .error(new Error("The x value is invalid.")),
+          .error(new Error("The single data format is required.")),
         fields: joi
           .array()
-          .min(1)
-          .required()
-          .error(new Error("The x value is invalid."))
+          .error(new Error("The single fields must be an array."))
       })
     ).error;
 
@@ -235,7 +231,7 @@ class WorkspaceConfigValidator {
           .trim()
           .regex(validationUtils.dataFormatReg)
           .required()
-          .error(new Error("The x value is invalid."))
+          .error(new Error("The single file is not invalid."))
       ).error;
 
       if (validationError) return validationError.message;

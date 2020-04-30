@@ -152,6 +152,17 @@ api.copyFilesIntoCollectionItem = async function({
   return workspaceService.copyFilesIntoCollectionItem(collectionKey, collectionItemKey, targetPath, files);
 };
 
+api.copyFilesIntoSingle = async function({
+  siteKey,
+  workspaceKey,
+  singleKey,
+  targetPath,
+  files
+}: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  return workspaceService.copyFilesIntoSingle(singleKey, targetPath, files);
+};
+
 api.deleteCollectionItem = async function({ siteKey, workspaceKey, collectionKey, collectionItemKey }: any) {
   const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
   return workspaceService.deleteCollectionItem(collectionKey, collectionItemKey);
@@ -177,6 +188,16 @@ api.getThumbnailForCollectionItemImage = async function({
 }: any) {
   const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
   return workspaceService.getThumbnailForCollectionItemImage(collectionKey, collectionItemKey, targetPath);
+};
+
+api.getThumbnailForSingleImage = async function({
+  siteKey,
+  workspaceKey,
+  singleKey,
+  targetPath
+}: any) {
+  const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
+  return workspaceService.getThumbnailForSingleImage(singleKey, targetPath);
 };
 
 api.createSite = async function(config: any) {

@@ -60,18 +60,9 @@ export class HokusForm extends React.Component<HokusFormProps, HokusFormState> {
     if (this.props.onSave) {
       var context = {
         accept: (updatedValues: any) => {
-          //this is a rule dependency that must be resolved in the "server" and the changes must be merged in the document
-          // if(this.state.document.resources){
-          //     this.state.document.resources = this.state.document.resources.filter(x => !x.__deleted===true);
-          // }
-
           this.setState({
             changed: false,
             savedOnce: true
-            //document:updatedValues,   //THIS IS A BAD IDEA! BAD WAY TO APPLY CHANGES FROM A SERVER
-            //THE FORM WILL HAVE PROBLEMS. WE MUST UPDATE THE DOCUMENT, NOT REPLACE IT
-            //THE DOC - AGAINST ALL RECOMMENDATIONS - IS MUTABLE
-            // WE MUST FIND A WAY TO UPDATE THIS WITHOUT REPLACING IT
           });
         },
         reject: (msg: string) => {

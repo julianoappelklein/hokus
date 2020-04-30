@@ -66,6 +66,8 @@ class Single extends React.Component<SingleProps, SingleState> {
   }
 
   render() {
+    let { siteKey, workspaceKey, singleKey } = this.props;
+
     if (this.state.singleValues === undefined || this.state.selectedWorkspaceDetails == null) {
       return <Spinner />;
     }
@@ -78,7 +80,17 @@ class Single extends React.Component<SingleProps, SingleState> {
         fields={single.fields}
         values={this.state.singleValues}
         onSave={this.handleSave.bind(this)}
-        plugins={{}}
+        plugins={{
+          openBundleFileDialog: ({ title, extensions, targetPath }: any, onFilesReady: any) => {
+            return service.api.openFileDialogForSingle(siteKey, workspaceKey, singleKey, targetPath, {
+              title,
+              extensions
+            });
+          },
+          getBundleThumbnailSrc: (targetPath: string) => {
+            return service.api.getThumbnailForSingleImage(siteKey, workspaceKey, singleKey, targetPath);
+          }
+        }}
       />
     );
   }
