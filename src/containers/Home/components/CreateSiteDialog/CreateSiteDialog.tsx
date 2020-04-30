@@ -128,7 +128,7 @@ export default class CreateSiteDialog extends React.Component<CreateSiteDialogPr
       <Dialog
         title="New Site"
         open={open && !blockingOperationService.isBlocked()}
-        contentStyle={{ maxWidth: 500 }}
+        contentStyle={{ maxWidth: "600px" }}
         actions={actions}
       >
         <FormItem>

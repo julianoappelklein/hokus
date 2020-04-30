@@ -156,7 +156,7 @@ class _Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
           {site.canSync && (
             <React.Fragment>
               &nbsp;
-              <FlatButton label="Sync" disabled={!(this.state.canSync ?? false)} onClick={this.handleSyncClick} />
+              <FlatButton label="Sync" secondary={this.state.canSync} onClick={this.handleSyncClick} />
             </React.Fragment>
           )}
           &nbsp;

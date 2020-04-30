@@ -18,8 +18,8 @@ export default class GitSourceForm extends React.Component<GitSourceFormProps, G
   validateModel(model: GitSourceFormModel): { [key: string]: string } {
     const errors: any = {};
     if (model.url == null || model.url.trim().length === 0) {
-      errors.url =
-        "Repository URL - with credentials - is required. Sample: https://USER:PASSWORD@github.com/REPOSITORY.git";
+      errors.url = 
+        "Repository URL is required.";
     }
     return errors;
   }
@@ -57,8 +57,10 @@ export default class GitSourceForm extends React.Component<GitSourceFormProps, G
             fullWidth={true}
             floatingLabelText={"Website Repository URL"}
           />
+          <p style={{position: "relative", top:"-1rem"}}><small>You can use a URL with credentials - https://USR:PSWD@github.com/REPO.git - OR use a SSH address - git@github.com:REPO.git".</small></p>
           <FormItem>
             <Checkbox label="Auto Sync" onClick={this.handleAutoSyncClick} checked={model.autoSync ?? true} />
+            <p><small>Keep this checked if you to send and receive updates. Be aware that changes may trigger a CI/CD pipeline.</small></p>
           </FormItem>
         </FormItem>
       </React.Fragment>

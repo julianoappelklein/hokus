@@ -50,7 +50,7 @@ export default class AddWorkspaceDialog extends React.Component<Props, State> {
 
     return (
       <Dialog
-        contentStyle={{ maxWidth: "500px" }}
+        contentStyle={{ maxWidth: "600px" }}
         title="Add Workspace"
         open={open}
         actions={actions}

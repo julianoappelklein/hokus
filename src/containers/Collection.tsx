@@ -130,7 +130,7 @@ class EditItemKeyDialog extends React.Component<EditItemKeyDialogProps, EditItem
     return (
       <Dialog
         title={this.props.title}
-        contentStyle={{ maxWidth: 500 }}
+        contentStyle={{ maxWidth: "600px" }}
         modal={true}
         open={true}
         onRequestClose={this.handleClose}

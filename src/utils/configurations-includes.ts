@@ -133,8 +133,8 @@ export const formConfigurationsIncludes = {
         { key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }
       ]
     },
-    { key: "clearOnChange", title: "clearOnChange", type: "leaf-array", field: { key: "key", type: "string" } },
-    { key: "clearExcept", title: "clearExcept", type: "leaf-array", field: { key: "key", type: "string" } }
+    { key: "clearOnChange", title: "clearOnChange", type: "chips" },
+    { key: "clearExcept", title: "clearExcept", type: "chips" }
   ],
   infoInclude: [
     { key: "content", title: "content", type: "markdown", multiLine: true },
@@ -266,8 +266,7 @@ export const formConfigurationsIncludes = {
             {
               key: "default",
               title: "default",
-              type: "leaf-array",
-              field: { key: "value", title: "Value", type: "string" },
+              type: "chips",
               default: []
             }
           ]
