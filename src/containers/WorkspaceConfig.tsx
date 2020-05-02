@@ -34,7 +34,7 @@ export class WorkspaceConfig extends React.Component<WorkspaceConfigProps, Works
   };
 
   handleSave = (arg1: { data: any; accept: any; reject: any }) => {
-    this.setState({ form: arg1.data, formKey: this.state.formKey+1 });
+    this.setState({ form: arg1.data, formKey: this.state.formKey + 1 });
     arg1.accept();
     service.api.setWorkspaceConfig(this.props.siteKey, this.props.workspaceKey, arg1.data);
   };

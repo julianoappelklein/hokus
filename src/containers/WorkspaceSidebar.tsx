@@ -172,34 +172,38 @@ class WorkspaceSidebar extends React.Component<WorkspaceSidebarProps, WorkspaceS
 
     if (this.state.workspace) {
       //collections menu
-      menus.push({
-        title: "Collections",
-        items: this.state.workspace.collections.map(collection => {
-          return {
-            label: collection.title,
-            onClick: () => {
-              history.push(`${basePath}/collections/${encodeURIComponent(collection.key)}`);
-              this.refresh();
-            },
-            active: false
-          };
-        })
-      });
+      if (this.state.workspace.collections && this.state.workspace.collections.length) {
+        menus.push({
+          title: "Collections",
+          items: this.state.workspace.collections.map(collection => {
+            return {
+              label: collection.title,
+              onClick: () => {
+                history.push(`${basePath}/collections/${encodeURIComponent(collection.key)}`);
+                this.refresh();
+              },
+              active: false
+            };
+          })
+        });
+      }
 
       //singles menu
-      menus.push({
-        title: "Singles",
-        items: this.state.workspace.singles.map(collection => {
-          return {
-            label: collection.title,
-            onClick: () => {
-              history.push(`${basePath}/singles/${encodeURIComponent(collection.key)}`);
-              this.refresh();
-            },
-            active: false
-          };
-        })
-      });
+      if (this.state.workspace.singles && this.state.workspace.singles.length) {
+        menus.push({
+          title: "Singles",
+          items: this.state.workspace.singles.map(collection => {
+            return {
+              label: collection.title,
+              onClick: () => {
+                history.push(`${basePath}/singles/${encodeURIComponent(collection.key)}`);
+                this.refresh();
+              },
+              active: false
+            };
+          })
+        });
+      }
     }
 
     return (

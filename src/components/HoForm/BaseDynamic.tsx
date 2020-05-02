@@ -13,8 +13,8 @@ interface BaseState {
   hasError?: boolean;
 }
 
-export class BaseDynamic<Field extends FieldBase, State extends BaseState> extends React.Component<
-  ComponentProps<Field>,
+export class BaseDynamic<Field extends FieldBase, State extends BaseState, ExtraProps={}> extends React.Component<
+  ComponentProps<Field> & ExtraProps,
   State
 > {
   // override this to set defaults in the field configuration.

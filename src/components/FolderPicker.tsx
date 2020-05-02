@@ -11,27 +11,24 @@ type FolderPickerProps = {
 type FolderPickerState = {};
 
 export default class FolderPicker extends React.Component<FolderPickerProps, FolderPickerState> {
-  handlePickFileClick() {
+  handlePickFileClick = () => {
     this.openPicker();
-  }
+  };
 
-  handleTextFieldClick() {
+  handleTextFieldClick = () => {
     this.openPicker();
-  }
+  };
 
-  openPicker() {
+  openPicker = async () => {
     let { remote } = window.require("electron");
-    remote.dialog.showOpenDialog(
-      remote.getCurrentWindow(),
-      {
-        properties: ["openDirectory"]
-      },
-      (result: any) => {
-        let selectedFolder = (result || [])[0];
-        this.props.onFolderSelected(selectedFolder || null);
-      }
-    );
-  }
+    const { filePaths } = await remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
+      properties: ["openDirectory"]
+    });
+    if (filePaths) {
+      const selectedFolder = filePaths[0] || null;
+      this.props.onFolderSelected(selectedFolder);
+    }
+  };
 
   render() {
     let { selectedFolder, label } = this.props;
@@ -45,10 +42,10 @@ export default class FolderPicker extends React.Component<FolderPickerProps, Fol
           floatingLabelFixed
           errorText={this.props.errorText}
           style={{ flex: "1" }}
-          {...({ onClick: this.handleTextFieldClick.bind(this) } as any)}
+          {...({ onClick: this.handleTextFieldClick } as any)}
         />
         <RaisedButton
-          onClick={this.handlePickFileClick.bind(this)}
+          onClick={this.handlePickFileClick}
           style={{ flex: "140px 0 0", alignSelf: "flex-end", marginLeft: "8px", marginBottom: "8px" }}
           label="Pick Folder"
         />

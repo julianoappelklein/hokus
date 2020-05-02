@@ -1,7 +1,5 @@
 import { darkBaseTheme, getMuiTheme, lightBaseTheme } from "material-ui/styles";
-import {
-  deepOrange500,
-} from "material-ui/styles/colors";
+import { deepOrange500 } from "material-ui/styles/colors";
 
 const themePalette = {
   primary1Color: "#2a0d56",

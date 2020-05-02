@@ -26,7 +26,7 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
   };
 
   handleSave = (arg1: { data: any; accept: any; reject: any }) => {
-    this.setState({ form: arg1.data, formKey: this.state.formKey+1 });
+    this.setState({ form: arg1.data, formKey: this.state.formKey + 1 });
     arg1.accept();
   };
 

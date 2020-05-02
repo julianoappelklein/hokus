@@ -68,7 +68,8 @@ export default class GitSourceForm extends React.Component<GitSourceFormProps, G
           <Checkbox label="Auto Sync" onClick={this.handleAutoSyncClick} checked={model.autoSync ?? true} />
           <div>
             <small>
-              Keep this checked if you to send and receive updates after every change. Be aware that changes may trigger a CI/CD pipeline.
+              Keep this checked if you to send and receive updates after every change. Be aware that changes may trigger
+              a CI/CD pipeline.
             </small>
           </div>
         </FormItem>

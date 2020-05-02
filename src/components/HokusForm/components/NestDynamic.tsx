@@ -3,6 +3,9 @@ import { ListItem } from "material-ui/List";
 import IconChevronRight from "material-ui/svg-icons/navigation/chevron-right";
 import IconFileFolder from "material-ui/svg-icons/file/folder";
 import { BaseDynamic, CrawlContext, NormalizeStateContext, ExtendFieldContext } from "../../HoForm";
+import { hasValidationErrorInTree2 } from "../../HoForm/utils";
+import { MuiTheme } from "material-ui/styles";
+import MuiThemed from "../../MuiThemed";
 
 type NestDynamicField = {
   key: string;
@@ -57,16 +60,24 @@ class NestDynamic extends BaseDynamic<NestDynamicField, {}> {
   }
 
   renderComponent() {
+    return (<MuiThemed render={this.renderComponentWithTheme} />);
+  }
+
+  renderComponentWithTheme = (theme: MuiTheme) => {
     let { context } = this.props;
     let { node, currentPath, nodePath, parentPath } = context;
     let { field } = node;
 
     if (currentPath === parentPath) {
-      //const hasErrors = hasValidationErrorInTree2(node.state, nodePath);
+      const hasErrors = hasValidationErrorInTree2(node.state, nodePath);
+      let color;
+      if(hasErrors===true){
+        color = theme.textField?.errorColor;
+      }
 
       return (
         <ListItem
-          style={{ border: "solid 1px #eee", margin: "3px 0" }}
+          style={{ border: "solid 1px #eee", margin: "3px 0", color }}
           leftIcon={<IconFileFolder />}
           rightIcon={<IconChevronRight />}
           onClick={function() {

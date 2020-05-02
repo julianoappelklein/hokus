@@ -1,13 +1,7 @@
 import * as React from "react";
 import { ComponentContext } from "./component-context";
 import { Debounce } from "./debounce";
-import {
-  FieldBase,
-  DynamicFormNode,
-  BreadcumbComponentType,
-  FormIncludes,
-  BreadcumbNode
-} from "./types";
+import { FieldBase, DynamicFormNode, BreadcumbComponentType, FormIncludes, BreadcumbNode } from "./types";
 import { ComponentRegistry } from "./component-registry";
 import { FormStateBuilder } from "./form-state-builder";
 import { FieldsExtender } from "./fields-extender";

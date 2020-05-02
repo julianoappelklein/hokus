@@ -128,8 +128,9 @@ export const formConfigurationsIncludes = {
       key: "types",
       type: "accordion",
       title: "types",
+      itemTitleKey: ["key"],
       fields: [
-        { key: "type", title: "type", type: "string", required: true },
+        { key: "key", title: "key", type: "string", required: true },
         { key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }
       ]
     },

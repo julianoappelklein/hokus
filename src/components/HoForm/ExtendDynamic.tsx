@@ -47,10 +47,14 @@ export class ExtendDynamic extends BaseDynamic<ExtendDynamicField, {}> {
         if (field.clearOnChange === true || field.clearOnChange == null) {
           clear = Object.keys(state);
         } else if (Array.isArray(field.clearOnChange)) {
-          clear = field.clearOnChange;
+          if (field.clearOnChange.length === 0 && field.clearExcept.length > 0) {
+            clear = Object.keys(state);
+          } else {
+            clear = field.clearOnChange;
+          }
         }
         clear.forEach(x => {
-          if (x != field.selectorKey && except.indexOf(x) === -1) delete state[x];
+          if (x != field.selectorKey && except.indexOf(x) === -1 && !x.startsWith("__")) delete state[x];
         });
         if (selectedTypeField != null && selectedTypeField.initialState != null) {
           const initialState = selectedTypeField.initialState;
