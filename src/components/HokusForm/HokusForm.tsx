@@ -38,7 +38,7 @@ export class HokusForm extends React.Component<HokusFormProps, HokusFormState> {
 
   keydownHandler(e: any) {
     e = e || window.event;
-    var keyCode = e.keyCode || e.which;
+    const keyCode = e.keyCode || e.which;
 
     if (e.ctrlKey && keyCode === 83) {
       if (this.state.changed) {
@@ -58,7 +58,7 @@ export class HokusForm extends React.Component<HokusFormProps, HokusFormState> {
 
   saveContent() {
     if (this.props.onSave) {
-      var context = {
+      const context = {
         accept: (updatedValues: any) => {
           this.setState({
             changed: false,
@@ -70,7 +70,7 @@ export class HokusForm extends React.Component<HokusFormProps, HokusFormState> {
         },
         data: Object.assign({}, this._valueFactory())
       };
-      let updatedValues = this.props.onSave.call(this, context);
+      this.props.onSave.call(this, context);
     } else {
       this.setState({ error: "Save not implemented" });
     }

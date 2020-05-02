@@ -20,10 +20,6 @@ type CreateSiteDialogState = {
   dependencies?: Array<{ program: string; exists: boolean }> | null;
 };
 
-function NotImplementedSourceForm() {
-  return <p>This feature is not implemented yet.</p>;
-}
-
 const SITE_SOURCES = [
   { key: "folder", title: "Folder", enabled: true, form: FolderSourceForm, description: "" },
   { key: "git", title: "Git (Beta)", enabled: true, form: GitSourceForm, description: "" }
@@ -85,7 +81,7 @@ export default class CreateSiteDialog extends React.Component<CreateSiteDialogPr
   };
 
   validate(): any {
-    let { formIsValid, sourceIndex, key } = this.state;
+    let { sourceIndex, key } = this.state;
     let source = SITE_SOURCES[sourceIndex];
     const errors: any = {};
 

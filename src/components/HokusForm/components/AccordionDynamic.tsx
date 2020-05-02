@@ -63,7 +63,7 @@ class AccordionDynamic extends BaseDynamic<AccordionDynamicField, AccordionDynam
   ): void {
     if (items.length > 0) {
       //has a previous item
-      var previousItem = items[items.length - 1];
+      const previousItem = items[items.length - 1];
       const parent = (previousItem as any).node.parent as any;
       const indexKey = this.genIndexKey(currentNode.field);
       const index = currentNode.state[indexKey];

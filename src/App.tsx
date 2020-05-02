@@ -113,7 +113,7 @@ class App extends React.Component<{}, AppState> {
   }
 
   toggleForceShowMenu() {
-    var forceShowMenu = !this.state.forceShowMenu;
+    const forceShowMenu = !this.state.forceShowMenu;
     this.setState({ forceShowMenu });
   }
 
@@ -137,7 +137,7 @@ class App extends React.Component<{}, AppState> {
       <MenuItem
         primaryText="Reload"
         onClick={() => {
-          window.location = window.location;
+          window.location.reload();
         }}
       />,
       <MenuItem
@@ -342,7 +342,6 @@ class App extends React.Component<{}, AppState> {
     let containerStyle = style.container;
     let menuContainerStyle = style.menuContainer;
     let contentContainerStyle = style.contentContainer;
-    let hideMenuItems = false;
 
     if (!this.state.menuIsLocked) {
       contentContainerStyle = Object.assign({}, contentContainerStyle, { display: "block", paddingLeft: "66px" });
@@ -353,7 +352,7 @@ class App extends React.Component<{}, AppState> {
         width: "280px",
         transform: "translateX(-214px)"
       });
-      hideMenuItems = true;
+
       if (this.state.forceShowMenu) {
         menuContainerStyle.transform = "translateX(0px)";
         contentContainerStyle.transform = "translateX(214px)";

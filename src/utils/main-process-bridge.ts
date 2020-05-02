@@ -18,7 +18,7 @@ class MainProcessBridge {
     this.pendingCallbacks = [];
 
     this.ipcRenderer.on("messageAsyncResponse", (event, arg) => {
-      const { token, response, key } = arg;
+      const { token, response } = arg;
       let callback = this._getCallback(token);
       if (callback) {
         callback(response);

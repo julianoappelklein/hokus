@@ -25,7 +25,7 @@ class BundleImgThumbDynamic extends BaseDynamic<BundleImgThumbDynamicField, Bund
         ) : this.state.src === "NOT_FOUND" ? (
           <IconBroken className="fadeIn animated" style={{ width: 32, height: 32, margin: 16, color: "#e84b92" }} />
         ) : (
-          <img src={this.state.src} className="fadeIn animated" style={{ width: "64xp", height: "64px" }} />
+          <img alt="Thumbnail" src={this.state.src} className="fadeIn animated" style={{ width: "64xp", height: "64px" }} />
         )}
       </div>
     );

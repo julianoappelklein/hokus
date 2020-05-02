@@ -24,10 +24,6 @@ export class WorkspaceConfig extends React.Component<WorkspaceConfigProps, Works
     workspaceFormKey: 1
   };
 
-  constructor(props: WorkspaceConfigProps) {
-    super(props);
-  }
-
   async componentDidMount() {
     const values = (await service.api.getWorkspaceConfig(this.props.siteKey, this.props.workspaceKey)) || {};
     this.setState({ values, workspaceFormKey: this.state.workspaceFormKey + 1 });
@@ -38,7 +34,7 @@ export class WorkspaceConfig extends React.Component<WorkspaceConfigProps, Works
   };
 
   handleSave = (arg1: { data: any; accept: any; reject: any }) => {
-    this.setState({ form: arg1.data, formKey: ++this.state.formKey });
+    this.setState({ form: arg1.data, formKey: this.state.formKey+1 });
     arg1.accept();
     service.api.setWorkspaceConfig(this.props.siteKey, this.props.workspaceKey, arg1.data);
   };

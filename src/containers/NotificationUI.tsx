@@ -117,7 +117,7 @@ class SnackbarManager extends React.Component {
   render() {
     let snackMessage = snackMessageService.getCurrentSnackMessage();
     let previousSnackMessage = snackMessageService.getPreviousSnackMessage();
-    let snackbar = undefined;
+    let snackbar;
     if (snackMessage) {
       snackbar = (
         <Snackbar

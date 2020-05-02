@@ -1,4 +1,4 @@
-import React, { ComponentProps } from "react";
+import React from "react";
 import Tip from "../../../Tip";
 import DefaultWrapper from "../shared/DefaultWrapper";
 import IconButton from "material-ui/IconButton";

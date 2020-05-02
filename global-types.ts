@@ -58,6 +58,7 @@ export type SingleConfig = {
   key: string;
   title: string;
   file: string;
+  dataformat: string;
   fields: Array<any>;
 };
 

@@ -1,6 +1,4 @@
 import { BaseDynamic } from "./BaseDynamic";
-import { FieldsExtender } from "./fields-extender";
-import * as React from "react";
 import { DynamicFormNode, NormalizeStateContext, ExtendFieldContext, CrawlContext } from "./types";
 
 type DataNestField = {
@@ -49,7 +47,7 @@ export class DataNestDynamic extends BaseDynamic<DataNestField, DataNestState> {
     let { field } = node;
     let level;
     if (currentPath.startsWith(parentPath)) {
-      var state = node.state;
+      const state = node.state;
       level = context.form.renderLevel({ fields: field.fields, state, parent: node.parent as any });
     }
     return level;

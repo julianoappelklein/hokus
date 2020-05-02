@@ -1,19 +1,6 @@
 import { darkBaseTheme, getMuiTheme, lightBaseTheme } from "material-ui/styles";
 import {
-  indigo500,
-  indigo700,
-  indigo900,
-  deepPurple700,
-  blue500,
-  blue400,
-  blue300,
-  deepPurple300,
-  deepPurple500,
-  deepOrange700,
   deepOrange500,
-  deepOrange300,
-  pink500,
-  deepOrange400
 } from "material-ui/styles/colors";
 
 const themePalette = {

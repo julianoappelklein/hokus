@@ -78,7 +78,7 @@ class NestDynamic extends BaseDynamic<NestDynamicField, {}> {
     }
 
     if (currentPath.startsWith(nodePath)) {
-      var state = node.state;
+      const state = node.state;
       return context.form.renderLevel({ fields: field.fields, state, parent: node });
     }
 

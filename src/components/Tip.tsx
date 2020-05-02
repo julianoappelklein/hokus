@@ -65,7 +65,7 @@ class Tip extends Component<TipProps, TipState> {
   render() {
     let { markdown = "Write a **markdown** tip!", toggle } = this.props;
 
-    let tip = undefined;
+    let tip;
     let alignLeft = (this.props.horizontalAlign || "left") == "left";
 
     if (markdown) {

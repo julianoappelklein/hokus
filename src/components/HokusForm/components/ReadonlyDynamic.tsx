@@ -2,7 +2,7 @@ import React from "react";
 import FormItemWrapper from "./shared/FormItemWrapper";
 import TextField from "material-ui/TextField";
 import Tip from "../../Tip";
-import { FormStateBuilder, NormalizeStateContext } from "../../HoForm";
+import { NormalizeStateContext } from "../../HoForm";
 import { BaseDynamic } from "../../HoForm";
 
 type ReadonlyDynamicField = {

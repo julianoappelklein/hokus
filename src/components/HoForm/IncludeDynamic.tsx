@@ -1,4 +1,3 @@
-import * as React from "react";
 import { BaseDynamic } from "./BaseDynamic";
 import { NormalizeStateContext, CrawlContext, ExtendFieldContext } from "./types";
 
@@ -36,7 +35,7 @@ export class IncludeDynamic extends BaseDynamic<IncludeDynamicField, {}> {
     let { field } = node;
 
     if (currentPath.startsWith(parentPath)) {
-      var state = node.state;
+      const state = node.state;
       return context.form.renderLevel({
         fields: context.form.props.includes[field.include],
         state,

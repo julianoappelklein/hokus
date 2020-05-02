@@ -6,9 +6,7 @@ import IconLockMenu from "material-ui/svg-icons/action/lock-outline";
 import IconMenu from "material-ui/svg-icons/navigation/menu";
 import Border from "./../components/Border";
 
-import darkBaseTheme from "material-ui/styles/baseThemes/darkBaseTheme";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
-import getMuiTheme from "material-ui/styles/getMuiTheme";
 import { FlatButton, IconButton } from "material-ui";
 import { darkMuiTheme } from "../theme";
 

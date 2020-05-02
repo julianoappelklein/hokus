@@ -4,7 +4,6 @@ import { Debounce } from "./debounce";
 import {
   FieldBase,
   DynamicFormNode,
-  ComponentProps,
   BreadcumbComponentType,
   FormIncludes,
   BreadcumbNode
@@ -203,7 +202,7 @@ export class HoForm extends React.Component<FormProps, FormState> {
   }
 
   crawlField(node: DynamicFormNode<FieldBase>) {
-    var { field } = node;
+    const { field } = node;
     let component = this.props.componentRegistry.get(field.type);
     try {
       if (component == null) throw new Error("Could not find component of type " + field.type);
@@ -247,7 +246,7 @@ export class HoForm extends React.Component<FormProps, FormState> {
   }
 
   renderField(node: DynamicFormNode<FieldBase>, onValueChanged: ((value: any) => void) | null = null) {
-    var { field } = node;
+    const { field } = node;
     let component = this.props.componentRegistry.get(field.type);
     try {
       if (component == null) throw new Error("Could not find component of type " + field.type);
@@ -276,7 +275,7 @@ export class HoForm extends React.Component<FormProps, FormState> {
   }
 
   getFormDocClone = () => {
-    var clone = JSON.parse(JSON.stringify(this.state.doc));
+    const clone = JSON.parse(JSON.stringify(this.state.doc));
     traverse(clone, (obj, prop, value) => {
       // if(prop.startsWith('__virtual_')){
       //     let keys = Object.keys(obj[prop]);

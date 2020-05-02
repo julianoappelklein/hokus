@@ -2,8 +2,7 @@ import * as React from "react";
 import RaisedButton from "material-ui/RaisedButton";
 import IconMore from "material-ui/svg-icons/navigation/more-vert";
 import Popover from "material-ui/Popover";
-import { Menu, MenuItem } from "material-ui/Menu";
-const Fragment = React.Fragment;
+import { Menu } from "material-ui/Menu";
 
 type ExtraOptionsProps = {
   items: Array<any>;

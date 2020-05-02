@@ -13,7 +13,7 @@ export default class BlockDialog extends React.Component<{}, {}> {
   }
 
   render() {
-    var operations = blockingOperationService.getRunningBlockingOperations();
+    const operations = blockingOperationService.getRunningBlockingOperations();
 
     return (
       <Dialog contentStyle={{ maxWidth: "600px" }} open={operations.length > 0} modal={true}>

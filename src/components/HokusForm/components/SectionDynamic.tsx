@@ -41,7 +41,7 @@ class SectionDynamic extends BaseDynamic<SectionDynamicField, SectionDynamicStat
 
   renderComponent() {
     let { context } = this.props;
-    let { node, currentPath, nodePath, parentPath } = context;
+    let { node, currentPath, parentPath } = context;
     let { field } = node;
 
     if (currentPath === parentPath) {

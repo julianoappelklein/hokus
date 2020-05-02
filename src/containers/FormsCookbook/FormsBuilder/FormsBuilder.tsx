@@ -4,7 +4,6 @@ import { MultiFormatDataDisplay } from "./../../../components/MultiFormatDataDis
 import dynamicFormComponents from "./../../../components/HokusForm/components/all";
 import { FormBreadcumb } from "./../../../components/Breadcumb";
 import { HokusForm } from "../../../components/HokusForm";
-import { Tabs, Tab } from "material-ui";
 import { formConfigurationsIncludes } from "../../../utils/configurations-includes";
 
 const componentRegistry = new ComponentRegistry(dynamicFormComponents);
@@ -22,16 +21,12 @@ export class FormsBuilder extends React.Component<FormsBuilderProps, FormsBuilde
     formKey: 1
   };
 
-  constructor(props: FormsBuilderProps) {
-    super(props);
-  }
-
   handleFormRef = (ref: any) => {
     this.formRef = ref;
   };
 
   handleSave = (arg1: { data: any; accept: any; reject: any }) => {
-    this.setState({ form: arg1.data, formKey: ++this.state.formKey });
+    this.setState({ form: arg1.data, formKey: this.state.formKey+1 });
     arg1.accept();
   };
 

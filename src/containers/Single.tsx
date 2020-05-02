@@ -29,8 +29,8 @@ class Single extends React.Component<SingleProps, SingleState> {
   }
 
   componentDidMount() {
-    var stateUpdate: Partial<SingleState> = {};
-    var { siteKey, workspaceKey, singleKey } = this.props;
+    let stateUpdate: Partial<SingleState> = {};
+    const { siteKey, workspaceKey, singleKey } = this.props;
 
     Promise.all([
       service.api.getSingle(siteKey, workspaceKey, singleKey).then(single => {
@@ -51,7 +51,7 @@ class Single extends React.Component<SingleProps, SingleState> {
   }
 
   handleSave(context: any) {
-    var { siteKey, workspaceKey, singleKey } = this.props;
+    const { siteKey, workspaceKey, singleKey } = this.props;
 
     let promise = service.api.updateSingle(siteKey, workspaceKey, singleKey, context.data);
     promise.then(

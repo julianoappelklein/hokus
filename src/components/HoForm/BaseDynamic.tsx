@@ -8,7 +8,6 @@ import {
   NormalizeStateContext,
   ExtendFieldContext
 } from "./types";
-import { FieldsExtender } from "./fields-extender";
 
 interface BaseState {
   hasError?: boolean;

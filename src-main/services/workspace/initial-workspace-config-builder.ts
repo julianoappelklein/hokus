@@ -65,6 +65,7 @@ class InitialWorkspaceConfigBuilder {
           key: "mainConfig",
           title: "Main Config",
           file: `config.${opts.ext}`,
+          dataformat: opts.ext,
           fields: [
             { key: getBestKey("title"), title: "Site Title", type: "string", tip: "Your page title." },
             { key: getBestKey("baseURL"), title: "Base URL", type: "string", tip: "Your site URL." },

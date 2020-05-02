@@ -7,7 +7,7 @@ import Spinner from "./../../components/Spinner";
 import muiThemeable from "material-ui/styles/muiThemeable";
 import { MuiTheme } from "material-ui/styles";
 
-import { EmptyConfigurations, Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from "./../../types";
+import { EmptyConfigurations, Configurations, SiteConfig, WorkspaceHeader } from "./../../types";
 import SiteDetails from "./components/SiteDetails/SiteDetails";
 import { blockingOperationService } from "../../services/ui-service";
 import SiteList from "./components/SiteList";
@@ -54,14 +54,14 @@ class Home extends React.Component<HomeProps, HomeState> {
 
   componentDidMount() {
     service.registerListener(this);
-    var { siteKey, workspaceKey } = this.props;
+    const { siteKey, workspaceKey } = this.props;
     this.load(siteKey, workspaceKey);
   }
 
   private load(siteKey?: string, workspaceKey?: string) {
     if (siteKey && workspaceKey) {
       service.getSiteAndWorkspaceData(siteKey, workspaceKey).then(bundle => {
-        var stateUpdate = {} as HomeState;
+        const stateUpdate = {} as HomeState;
         stateUpdate.configurations = bundle.configurations;
         stateUpdate.selectedSite = bundle.site;
         stateUpdate.selectedWorkspace = bundle.workspace;
@@ -69,7 +69,7 @@ class Home extends React.Component<HomeProps, HomeState> {
       });
     } else {
       service.getConfigurations().then(c => {
-        var stateUpdate = {} as HomeState;
+        const stateUpdate = {} as HomeState;
         stateUpdate.configurations = c;
         this.setState(stateUpdate);
       });

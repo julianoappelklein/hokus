@@ -140,7 +140,7 @@ class MarkdownDynamic extends BaseDynamic<MarkdownDynamicField, MarkdownDynamicS
       return null;
     }
 
-    let tip = undefined;
+    let tip;
     let paddingRight = 0;
     if (field.tip) {
       tip = (

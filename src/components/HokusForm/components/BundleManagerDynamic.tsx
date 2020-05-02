@@ -5,7 +5,7 @@ import { Accordion, AccordionItem } from "../../Accordion";
 import DangerButton from "../../DangerButton";
 import FlatButton from "material-ui/FlatButton";
 import IconRemove from "material-ui/svg-icons/content/clear";
-import { ComponentContext, DynamicFormNode, FieldBase, ExtendFieldContext, CrawlContext } from "../../HoForm";
+import { ComponentContext, ExtendFieldContext, CrawlContext } from "../../HoForm";
 import { BaseDynamic } from "../../HoForm";
 import { MuiTheme } from "material-ui/styles";
 import MuiThemed from "../../MuiThemed";

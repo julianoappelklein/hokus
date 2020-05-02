@@ -5,7 +5,7 @@ import RaisedButton from "material-ui/RaisedButton";
 import DefaultWrapper from "./shared/DefaultWrapper";
 import IconAdd from "material-ui/svg-icons/content/add";
 import IconRemove from "material-ui/svg-icons/content/remove";
-import { BaseDynamic, FieldBase, NormalizeStateContext, CrawlContext } from "../../HoForm";
+import { BaseDynamic, NormalizeStateContext, CrawlContext } from "../../HoForm";
 
 class TextFieldLabelMock extends React.Component<{ children: any }, {}> {
   render() {

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Breadcumb, BreadcumbItem } from "./../components/Breadcumb";
 import { Route } from "react-router-dom";
 import service from "./../services/service";
 import Spinner from "./../components/Spinner";
@@ -262,8 +261,8 @@ class Collection extends React.Component<CollectionProps, CollectionState> {
   }
 
   refreshItems() {
-    var stateUpdate: any = {};
-    var { siteKey, workspaceKey, collectionKey } = this.props;
+    let stateUpdate: any = {};
+    const { siteKey, workspaceKey, collectionKey } = this.props;
     if (siteKey && workspaceKey && collectionKey) {
       Promise.all([
         service.api.listCollectionItems(siteKey, workspaceKey, collectionKey).then(items => {
@@ -305,7 +304,6 @@ class Collection extends React.Component<CollectionProps, CollectionState> {
   renameCollectionItem(itemKey: string, itemOldKey: string) {
     let { siteKey, workspaceKey, collectionKey } = this.props;
     if (this.state.view == null) return;
-    let view = this.state.view;
     service.api.renameCollectionItem(siteKey, workspaceKey, collectionKey, itemOldKey, itemKey).then(
       result => {
         if (result.renamed) {
@@ -406,9 +404,9 @@ class Collection extends React.Component<CollectionProps, CollectionState> {
   };
 
   render() {
-    let { siteKey, workspaceKey, collectionKey } = this.props;
+    let { collectionKey } = this.props;
     let { filteredItems, trunked } = this.state;
-    let dialog: any = undefined;
+    let dialog: any;
 
     if (this.state.view) {
       let view = this.state.view;

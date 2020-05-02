@@ -14,8 +14,8 @@ module.exports = {
         }
     },
     rules: {
-        "prefer-const": "warn",
-        "eqeqeq": "warn",
+        //"prefer-const": "warn",
+        // "eqeqeq": "warn",
         "no-multi-spaces": "warn",
         "no-undef-init": "warn",
         "no-var": "warn"

@@ -30,8 +30,8 @@ class CollectionItem extends React.Component<CollectionItemProps, CollectionItem
   }
 
   componentDidMount() {
-    var stateUpdate: Partial<CollectionItemState> = {};
-    var { siteKey, workspaceKey, collectionKey, collectionItemKey } = this.props;
+    const stateUpdate: Partial<CollectionItemState> = {};
+    const { siteKey, workspaceKey, collectionKey, collectionItemKey } = this.props;
 
     Promise.all([
       service.api.getWorkspaceDetails(siteKey, workspaceKey).then(workspaceDetails => {
@@ -73,7 +73,7 @@ class CollectionItem extends React.Component<CollectionItemProps, CollectionItem
       return <Spinner />;
     }
 
-    let { selectedWorkspaceDetails, collectionItemValues } = this.state;
+    let { selectedWorkspaceDetails } = this.state;
     let { siteKey, workspaceKey, collectionKey, collectionItemKey } = this.props;
 
     let collection = selectedWorkspaceDetails.collections.find(x => x.key === collectionKey);

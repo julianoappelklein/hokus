@@ -1,6 +1,4 @@
-import * as React from "react";
 import { BaseDynamic } from "./../../HoForm/BaseDynamic";
-import { FieldsExtender } from "./../../HoForm/fields-extender";
 import { DynamicFormNode, NormalizeStateContext, ExtendFieldContext, CrawlContext } from "./../../HoForm/types";
 
 type DataNestField = {
@@ -49,7 +47,7 @@ export default class DataNestDynamic extends BaseDynamic<DataNestField, DataNest
     let { field } = node;
     let level;
     if (currentPath.startsWith(parentPath)) {
-      var state = node.state;
+      const state = node.state;
       level = context.form.renderLevel({ fields: field.fields, state, parent: node.parent as any });
     }
     return level;

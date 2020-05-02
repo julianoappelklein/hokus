@@ -101,11 +101,11 @@ export class ExtendDynamic extends BaseDynamic<ExtendDynamicField, {}> {
 
   renderComponent() {
     let { context } = this.props;
-    let { node, currentPath, nodePath, parentPath } = context;
+    let { node, currentPath, parentPath } = context;
     let { field } = node;
 
     if (currentPath.startsWith(parentPath)) {
-      var state = node.state;
+      const state = node.state;
       const selectedTypeField = this.getSelectedTypeField(field, state);
       return (
         <React.Fragment>
