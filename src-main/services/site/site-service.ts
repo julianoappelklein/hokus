@@ -39,8 +39,12 @@ class SiteService {
   async deleteWorkspace(siteKey: string, workspaceKey: string): Promise<void> {
     const siteSource = await this._getSiteSource(siteKey);
     if(siteSource.canDeleteWorkspace?.(workspaceKey)??false){
-      const path = pathHelper.getSiteWorkspaceRoot(siteKey, workspaceKey);
-      await remove(path);
+      const workspaces = await siteSource.listWorkspaces();
+      const path = workspaces.find(x => x.key===workspaceKey)?.path;
+      if(path){
+        await remove(path);
+      }
+      
     }
   }
 

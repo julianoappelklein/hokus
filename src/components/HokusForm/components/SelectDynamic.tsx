@@ -48,7 +48,7 @@ class SelectDynamic extends BaseDynamic<SelectDynamicField, SelectDynamicState> 
       setValidationErrorIntoState(
         node.state,
         form.buildDisplayPath(node),
-        invalid ? "The field is required." : undefined
+        invalid ? "The field is required." : ""
       );
     }
   }
