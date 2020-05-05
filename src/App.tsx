@@ -139,13 +139,13 @@ class App extends React.Component<{}, AppState> {
         onClick={() => {
           service.api.reloadMainWindow();
         }}
-      />,
-      <MenuItem
-        primaryText="Restart Application"
-        onClick={() => {
-          service.api.relaunch();
-        }}
       />
+      // <MenuItem
+      //   primaryText="Restart Application"
+      //   onClick={() => {
+      //     service.api.relaunch();
+      //   }}
+      // />
     ];
     return items;
   }

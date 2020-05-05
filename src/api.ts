@@ -233,11 +233,11 @@ export class API {
     return mainProcessBridge.request("setWorkspaceConfig", { siteKey, workspaceKey, data });
   }
 
-  reloadMainWindow(){
+  reloadMainWindow() {
     return mainProcessBridge.request("reloadMainWindow", {});
   }
 
-  relaunch(){
+  relaunch() {
     return mainProcessBridge.request("relaunch", {});
   }
 }

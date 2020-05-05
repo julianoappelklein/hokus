@@ -226,8 +226,7 @@ api.getSiteSourceDependencyStatus = async function({ siteSourceType }: any) {
 };
 
 api.reloadMainWindow = async function(){
-  const mainWindow = mainWindowManager.getCurrentInstance();
-  if(mainWindow){ mainWindow.reload(); }
+  mainWindowManager.getCurrentInstance()?.reload();
 }
 
 api.relaunch = async function(){
