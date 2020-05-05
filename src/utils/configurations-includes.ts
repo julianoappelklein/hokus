@@ -81,8 +81,7 @@ export const formConfigurationsIncludes = {
   baseFieldInclude: [{ key: "key", type: "string", title: "key", required: true }],
   accordionInclude: [
     { key: "title", title: "title", type: "string", required: true },
-    { key: "itemTitleKey", title: "itemTitleKey", type: "string" },
-    { key: "itemTitleFallbackKey", title: "itemTitleFallbackKey", type: "string" },
+    { key: "itemTitleKey", title: "itemTitleKey", type: "chips" },
     { key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }
   ],
   booleanInclude: [

@@ -104,7 +104,7 @@ The value must match the version you want from the Hugo Releases page (in Hugo G
                     key: "fieldsAccordionInclude",
                     type: "include",
                     include: "fieldsAccordionInclude",
-                    itemTitleKey: "key"
+                    itemTitleKey: ["key"]
                   }
                 ]
               },
@@ -128,7 +128,7 @@ The value must match the version you want from the Hugo Releases page (in Hugo G
                     key: "fieldsAccordionInclude",
                     type: "include",
                     include: "fieldsAccordionInclude",
-                    itemTitleKey: "key"
+                    itemTitleKey: ["key"]
                   }
                 ]
               }
