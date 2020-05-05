@@ -171,9 +171,9 @@ class WorkspaceService {
     if (collection == null) throw new Error("Could not find collection.");
     let filePath;
     let returnedKey;
-    
+
     const isContentFile = collection.folder.startsWith("content");
-    
+
     if (isContentFile) {
       returnedKey = path.join(collectionItemKey, "index." + collection.extension);
       filePath = path.join(this.workspacePath, collection.folder, returnedKey);
@@ -184,7 +184,7 @@ class WorkspaceService {
     if (fs.existsSync(filePath)) return { unavailableReason: "already-exists" };
 
     await fs.ensureDir(path.dirname(filePath));
-    const initialContent = isContentFile ? {draft: true} : {};
+    const initialContent = isContentFile ? { draft: true } : {};
     let stringData = await this._smartDump(filePath, [collection.dataformat], initialContent);
     await fs.writeFile(filePath, stringData, { encoding: "utf8" });
     appEventEmitter.emit("onWorkspaceFileChanged", {
@@ -302,7 +302,7 @@ class WorkspaceService {
     this._stripNonDocumentData(documentClone);
     let stringData = await this._smartDump(filePath, [collection.dataformat], documentClone);
     fs.writeFileSync(filePath, stringData);
-    
+
     appEventEmitter.emit("onWorkspaceFileChanged", {
       siteKey: this.siteKey,
       workspaceKey: this.workspaceKey,
@@ -323,12 +323,12 @@ class WorkspaceService {
     return document;
   }
 
-  async getWorkspaceConfig(): Promise<any>{
+  async getWorkspaceConfig(): Promise<any> {
     let globExpression = path.join(this.workspacePath, `/hokus.{${formatProviderResolver.allFormatsExt().join(",")}}`);
     const files = glob.sync(globExpression);
-    if(files.length){
+    if (files.length) {
       const file = files[0];
-      const configStr = await fs.readFile(file, 'utf-8');
+      const configStr = await fs.readFile(file, "utf-8");
       const data = formatProviderResolver.resolveForFilePath(file)?.parse(configStr);
       const { collections, singles, hugover } = data;
       return { collections, singles, hugover };
@@ -336,35 +336,34 @@ class WorkspaceService {
     return {};
   }
 
-  async setWorkspaceConfig(data: any): Promise<void>{
-    const globExpression = path.join(this.workspacePath, `/hokus.{${formatProviderResolver.allFormatsExt().join(",")}}`);
+  async setWorkspaceConfig(data: any): Promise<void> {
+    const globExpression = path.join(
+      this.workspacePath,
+      `/hokus.{${formatProviderResolver.allFormatsExt().join(",")}}`
+    );
     const files = glob.sync(globExpression);
     let configFile = "hugo.toml";
     let existentData = {};
-    if(files.length){
+    if (files.length) {
       configFile = files[0];
-      const configStr = await fs.readFile(configFile, 'utf-8');
+      const configStr = await fs.readFile(configFile, "utf-8");
       existentData = formatProviderResolver.resolveForFilePath(configFile)?.parse(configStr);
     }
     const { collections, singles, hugover } = data;
     const updatedData = { ...existentData, hugover: hugover, collections: collections, singles: singles };
     const dump = formatProviderResolver.resolveForFilePath(configFile)?.dump(updatedData);
-    fs.writeFile(configFile, dump, 'utf-8');
+    fs.writeFile(configFile, dump, "utf-8");
   }
 
-  async copyFilesIntoSingle(
-    singleKey: string,
-    targetPath: string,
-    files: Array<string>
-  ) {
+  async copyFilesIntoSingle(singleKey: string, targetPath: string, files: Array<string>) {
     let config = await this.getConfigurationsData();
     let single = config.singles.find(x => x.key === singleKey);
     if (single == null) throw new Error("Could not find single.");
     const indexMatcher = /\/_?index[.](md|markdown|html)$/;
-    if(!indexMatcher.test(single.file)){
+    if (!indexMatcher.test(single.file)) {
       throw new Error("The current single does not support bundling.");
     }
-    let filesBasePath = path.join(this.workspacePath, single.file.replace(indexMatcher,""), targetPath);
+    let filesBasePath = path.join(this.workspacePath, single.file.replace(indexMatcher, ""), targetPath);
 
     for (let i = 0; i < files.length; i++) {
       let file = files[i];
@@ -473,7 +472,7 @@ class WorkspaceService {
     let single = config.singles.find(x => x.key === singleKey);
     if (single == null) throw new Error("Could not find collection.");
     const indexMatcher = /\/_?index[.](md|markdown|html)$/;
-    if(!indexMatcher.test(single.file)){
+    if (!indexMatcher.test(single.file)) {
       throw new Error("The current single does not support bundling.");
     }
     const singleFolder = single.file.replace(indexMatcher, "");
@@ -501,8 +500,6 @@ class WorkspaceService {
     return `data:${mime};base64,${base64}`;
   }
 
-
-
   _findFirstMatchOrDefault<T extends any>(arr: Array<T>, key: string): T {
     let result;
 
@@ -525,22 +522,20 @@ class WorkspaceService {
 
   async serve(serveKey: string): Promise<void> {
     let workspaceDetails = await this.getConfigurationsData();
-    return new Promise((resolve, reject) => {
-      let serveConfig;
-      if (workspaceDetails.serve && workspaceDetails.serve.length) {
-        serveConfig = this._findFirstMatchOrDefault(workspaceDetails.serve, "");
-      } else serveConfig = { config: "" };
 
-      let hugoServerConfig = {
-        config: serveConfig.config,
-        workspacePath: this.workspacePath,
-        hugover: workspaceDetails.hugover
-      };
+    let serveConfig;
+    if (workspaceDetails.serve && workspaceDetails.serve.length) {
+      serveConfig = this._findFirstMatchOrDefault(workspaceDetails.serve, "");
+    } else serveConfig = { config: "" };
 
-      let hugoServer = new HugoServer(JSON.parse(JSON.stringify(hugoServerConfig)));
+    let hugoServerConfig = {
+      config: serveConfig.config,
+      workspacePath: this.workspacePath,
+      hugover: workspaceDetails.hugover
+    };
 
-      return hugoServer.serve();
-    });
+    let hugoServer = new HugoServer(JSON.parse(JSON.stringify(hugoServerConfig)));
+    await hugoServer.serve();
   }
 
   async build(buildKey: string): Promise<void> {
