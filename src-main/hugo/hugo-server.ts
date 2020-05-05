@@ -3,6 +3,9 @@ import { Stream } from "stream";
 import pathHelper from "./../path-helper";
 import * as fs from "fs-extra";
 import outputConsole from "./../output-console";
+import * as glob from "glob";
+import { join } from "path";
+import formatProviderResolver from "../format-provider-resolver";
 
 let currentServerProccess: ChildProcessWithoutNullStreams | undefined = undefined;
 
@@ -45,7 +48,7 @@ class HugoServer {
     }
   }
 
-  serve(callback: (error: Error | null) => void) {
+  async serve(): Promise<void> {
     let { config, workspacePath, hugover } = this.config;
 
     this.stopIfRunning();
@@ -53,14 +56,25 @@ class HugoServer {
     const exec = pathHelper.getHugoBinForVer(hugover);
 
     if (!fs.existsSync(exec)) {
-      callback(new Error("Could not find hugo.exe for version " + hugover));
-      return;
+      throw new Error("Could not find hugo.exe for version " + hugover);
     }
 
     let hugoArgs = ["server"];
+    if (!config) {
+      const hugoConfigExp = join(workspacePath, "config.{" + formatProviderResolver.allFormatsExt().join(",") + "}");
+      config = (glob.sync(hugoConfigExp)??[])[0];
+    }
+
     if (config) {
       hugoArgs.push("--config");
       hugoArgs.push(config);
+
+      //Perform extra logic if necessary
+      // const formatProvider = formatProviderResolver.resolveForFilePath(config);
+      // if(formatProvider!=null){
+      //   const configData = formatProvider.parse(await fs.readFile(join(workspacePath, config), "utf8"))
+        
+      // }
     }
 
     try {
@@ -97,9 +111,8 @@ class HugoServer {
     } catch (e) {
       outputConsole.appendLine("Hugo Server failed to start.");
       outputConsole.appendLine(e.message);
-      callback(e);
+      throw e;
     }
-    callback(null);
   }
 }
 

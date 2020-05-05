@@ -539,12 +539,7 @@ class WorkspaceService {
 
       let hugoServer = new HugoServer(JSON.parse(JSON.stringify(hugoServerConfig)));
 
-      hugoServer.serve(function(err: any) {
-        if (err) reject(err);
-        else {
-          resolve();
-        }
-      });
+      return hugoServer.serve();
     });
   }
 
