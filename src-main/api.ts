@@ -10,6 +10,8 @@ import { hugoDownloader } from "./hugo/hugo-downloader";
 import { dirname } from "path";
 import { shell } from "electron";
 import { getSiteDependencyStatus, getSiteSourceDependencyStatus } from "./services/site/dependency-status";
+import mainWindowManager from "./main-window-manager";
+const { app } = require('electron')
 
 const siteService = new SiteService();
 
@@ -222,5 +224,15 @@ api.getSiteSourceDependencyStatus = async function({ siteSourceType }: any) {
   const dependencies = await getSiteSourceDependencyStatus(siteSourceType);
   return dependencies;
 };
+
+api.reloadMainWindow = async function(){
+  const mainWindow = mainWindowManager.getCurrentInstance();
+  if(mainWindow){ mainWindow.reload(); }
+}
+
+api.relaunch = async function(){
+  app.relaunch();
+  app.exit();
+}
 
 export default api;

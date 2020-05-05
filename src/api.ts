@@ -232,6 +232,14 @@ export class API {
   setWorkspaceConfig(siteKey: string, workspaceKey: string, data: any) {
     return mainProcessBridge.request("setWorkspaceConfig", { siteKey, workspaceKey, data });
   }
+
+  reloadMainWindow(){
+    return mainProcessBridge.request("reloadMainWindow", {});
+  }
+
+  relaunch(){
+    return mainProcessBridge.request("relaunch", {});
+  }
 }
 
 export const instance = new API();

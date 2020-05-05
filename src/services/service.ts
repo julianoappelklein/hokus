@@ -73,6 +73,7 @@ class Service extends BaseService {
     return this.api.getWorkspaceDetails(siteKey, workspaceKey);
   }
 
+  
   serveWorkspace(siteKey: string, workspaceKey: string, serveKey: string) {
     this.api.serveWorkspace(siteKey, workspaceKey, serveKey);
   }

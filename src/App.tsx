@@ -137,15 +137,13 @@ class App extends React.Component<{}, AppState> {
       <MenuItem
         primaryText="Reload"
         onClick={() => {
-          window.location.reload();
+          service.api.reloadMainWindow();
         }}
       />,
       <MenuItem
         primaryText="Restart Application"
         onClick={() => {
-          const app = window.require("electron").remote.app;
-          app.relaunch();
-          app.exit(0);
+          service.api.relaunch();
         }}
       />
     ];
