@@ -32,7 +32,8 @@ deploy:
       - "dist/hokus-cms_linux_amd64.deb"
     on:
       all_branches: true
-      condition: $TRAVIS_OS_NAME = linux AND $TRAVIS_COMMIT_MESSAGE =~ BUILD\sDRAFT 
+      tags: true
+      condition: $TRAVIS_OS_NAME = linux
   - provider: releases
     skip_cleanup: true
     draft: true
@@ -42,4 +43,5 @@ deploy:
       - "dist/hokus-cms_mac.zip"
     on:
       all_branches: true
-      condition: $TRAVIS_OS_NAME = osx AND $TRAVIS_COMMIT_MESSAGE =~ BUILD\sDRAFT
+      tags: true
+      condition: $TRAVIS_OS_NAME = osx
