@@ -54,10 +54,12 @@ export class ExtendDynamic extends BaseDynamic<ExtendDynamicField, {}> {
           }
         }
         clear.forEach(x => {
-          if (x != field.selectorKey
-            && except.indexOf(x) === -1
-            && (!x.startsWith("__") || x.startsWith("__validation"))
-          ) delete state[x];
+          if (
+            x != field.selectorKey &&
+            except.indexOf(x) === -1 &&
+            (!x.startsWith("__") || x.startsWith("__validation"))
+          )
+            delete state[x];
         });
         if (selectedTypeField != null && selectedTypeField.initialState != null) {
           const initialState = selectedTypeField.initialState;

@@ -1,6 +1,7 @@
 import { BaseService } from "./base-service";
 import * as api from "./../api";
 import { Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from "./../types.js";
+import mainProcessBridge from "../utils/main-process-bridge";
 
 export type SiteAndWorkspaceData = {
   configurations: Configurations;
@@ -23,6 +24,9 @@ class Service extends BaseService {
     this._configurations = null;
     this._configurationsPromise = null;
     this._siteAndWorkspaceDataPromise = null;
+    mainProcessBridge.addMessageHandler("config-invalidation", () => {
+      this._configurations = null;
+    });
   }
 
   async getConfigurations(refetch?: boolean): Promise<Configurations> {

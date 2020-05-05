@@ -1,3 +1,4 @@
+import mainWindowManager from "./main-window-manager";
 import glob = require("glob");
 import * as fs from "fs-extra";
 import path = require("path");
@@ -7,6 +8,7 @@ import formatProviderResolver from "./format-provider-resolver";
 import pathHelper from "./path-helper";
 import outputConsole from "./output-console";
 import { siteSourceFactory } from "./site-sources";
+import watch from 'node-watch';
 
 let configurationCache: Configurations | undefined = undefined;
 
@@ -20,9 +22,6 @@ let EMPTY_CFG: EmptyConfigurations = {
   empty: true,
   fileSearchPatterns: [defaultPathSearchPattern, namespacedPathSearchPattern]
 };
-function emptyCfg() {
-  return EMPTY_CFG;
-}
 
 function normalizeSite(site: SiteConfig): void {}
 
@@ -52,6 +51,12 @@ const GLOBAL_DEFAULTS = {
 function invalidateCache() {
   configurationCache = undefined;
 }
+
+watch(pathHelper.getRoot(), ()=>{
+  invalidateCache();
+  let mainWindow = mainWindowManager.getCurrentInstance();
+  if (mainWindow) mainWindow.webContents.send("message", { type: "config-invalidation", data: { } });
+});
 
 async function get({ invalidateCache }: { invalidateCache?: boolean } = {}): Promise<(Configurations|EmptyConfigurations)> {
   if (invalidateCache === true) configurationCache = undefined;

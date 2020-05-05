@@ -60,7 +60,7 @@ class NestDynamic extends BaseDynamic<NestDynamicField, {}> {
   }
 
   renderComponent() {
-    return (<MuiThemed render={this.renderComponentWithTheme} />);
+    return <MuiThemed render={this.renderComponentWithTheme} />;
   }
 
   renderComponentWithTheme = (theme: MuiTheme) => {
@@ -71,7 +71,7 @@ class NestDynamic extends BaseDynamic<NestDynamicField, {}> {
     if (currentPath === parentPath) {
       const hasErrors = hasValidationErrorInTree2(node.state, nodePath);
       let color;
-      if(hasErrors===true){
+      if (hasErrors === true) {
         color = theme.textField?.errorColor;
       }
 
@@ -94,7 +94,7 @@ class NestDynamic extends BaseDynamic<NestDynamicField, {}> {
     }
 
     return null;
-  }
+  };
 }
 
 export default NestDynamic;
