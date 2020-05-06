@@ -134,10 +134,14 @@ class App extends React.Component<{}, AppState> {
 
   getExtraItems() {
     let items = [
-      <MenuItem
-        primaryText="Reload"
-        onClick={() => {
-          service.api.reloadMainWindow();
+      <Route
+        render={({ match, history }) => {
+          return (<MenuItem
+            primaryText="Reload"
+            onClick={() => {
+              history.push(window.location.toString());
+            }}
+          />);
         }}
       />
       // <MenuItem
@@ -154,7 +158,7 @@ class App extends React.Component<{}, AppState> {
     const isCookbookEnabled =
       this.state.configurations &&
       this.state.configurations?.type == "Configurations" &&
-      this.state.configurations.global.cookbookEnabled;
+      this.state.configurations.global.cookbookEnabled!==false;
     return (
       <Switch>
         <Route
