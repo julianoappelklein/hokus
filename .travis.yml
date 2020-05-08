@@ -12,8 +12,13 @@ matrix:
 
 cache: npm
 
+addons:
+  snaps:
+   - name: snapcraft
+     channel: stable
+     confinement: classic
+
 install:
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo snap install snapcraft --classic; fi
   - npm install
 
 script:
