@@ -8,7 +8,7 @@ import formatProviderResolver from "./format-provider-resolver";
 import pathHelper from "./path-helper";
 import outputConsole from "./output-console";
 import { siteSourceFactory } from "./site-sources";
-import watch from 'node-watch';
+import watch from "node-watch";
 
 let configurationCache: Configurations | undefined = undefined;
 
@@ -52,13 +52,21 @@ function invalidateCache() {
   configurationCache = undefined;
 }
 
-watch(pathHelper.getRoot(), ()=>{
-  invalidateCache();
-  let mainWindow = mainWindowManager.getCurrentInstance();
-  if (mainWindow) mainWindow.webContents.send("message", { type: "config-invalidation", data: { } });
-});
+(async () => {
+  const root = pathHelper.getRoot();
+  
+  await fs.ensureDir(root);
 
-async function get({ invalidateCache }: { invalidateCache?: boolean } = {}): Promise<(Configurations|EmptyConfigurations)> {
+  watch(pathHelper.getRoot(), () => {
+    invalidateCache();
+    let mainWindow = mainWindowManager.getCurrentInstance();
+    if (mainWindow) mainWindow.webContents.send("message", { type: "config-invalidation", data: {} });
+  });
+})();
+
+async function get({ invalidateCache }: { invalidateCache?: boolean } = {}): Promise<
+  Configurations | EmptyConfigurations
+> {
   if (invalidateCache === true) configurationCache = undefined;
 
   if (configurationCache) {
@@ -85,7 +93,7 @@ async function get({ invalidateCache }: { invalidateCache?: boolean } = {}): Pro
         site.configPath = file;
         const siteSource = siteSourceFactory.get(site.key, site.source);
         site.canCreateWorkspaces = siteSource.canCreateWorkspaces();
-        site.canSync = siteSource.canSyncWorkspace!=null;
+        site.canSync = siteSource.canSyncWorkspace != null;
         configurations.sites.push(site);
       } catch (e) {
         outputConsole.appendLine(`Configuration file is invalid '${file}': ${e.toString()}`);

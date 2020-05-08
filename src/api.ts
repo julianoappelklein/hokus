@@ -240,6 +240,10 @@ export class API {
   relaunch() {
     return mainProcessBridge.request("relaunch", {});
   }
+
+  trackScreen(screen: string) {
+    return mainProcessBridge.request("trackScreen", { screen });
+  }
 }
 
 export const instance = new API();

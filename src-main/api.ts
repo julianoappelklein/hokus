@@ -11,6 +11,7 @@ import { dirname } from "path";
 import { shell } from "electron";
 import { getSiteDependencyStatus, getSiteSourceDependencyStatus } from "./services/site/dependency-status";
 import mainWindowManager from "./main-window-manager";
+import analytics from "./analytics";
 const { app } = require('electron')
 
 const siteService = new SiteService();
@@ -232,6 +233,10 @@ api.reloadMainWindow = async function(){
 api.relaunch = async function(){
   app.relaunch();
   app.exit();
+}
+
+api.trackScreen = async function({screen}){
+  analytics.screen(screen);
 }
 
 export default api;
