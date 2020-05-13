@@ -8,6 +8,7 @@ type BuildConfig = {
   key: string;
   url: string;
   path: string;
+  autoSync?: boolean;
 };
 
 export default class GitSiteInitializer implements SiteInitializer {
@@ -41,7 +42,7 @@ export default class GitSiteInitializer implements SiteInitializer {
     let siteConfig: RawSiteConfig = {
       key: config.key,
       name: config.key,
-      source: { type: "git", path: config.path, url: config.url },
+      source: { type: "git", path: config.path, url: config.url, autoSync: config.autoSync||false  },
       publish: [
         //the base use case is just syncing the source - (pushing code) - we don't need to publish anything here by default
       ]
