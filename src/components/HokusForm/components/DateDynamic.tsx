@@ -17,47 +17,44 @@ type DateDynamicField = {
 type DateDynamicState = {};
 
 class DateDynamic extends BaseDynamic<DateDynamicField, DateDynamicState> {
-  normalizeState({ state, field }: { state: any; field: DateDynamicField }) {
+  normalizeState({ state, field }: { state: any; field: DateDynamicField }): void {
     let key = field.key;
     if (state[key] === undefined) {
       state[key] = field.default || undefined;
     }
 
     if (state[key] === "now") {
-      let date = new Date();
-      state[key] = "" + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+      let date = this.formatDate(new Date());
     }
   }
 
-  getType() {
+  private formatDate(date: Date): string {
+    return (date.getFullYear().toString().padStart(4, "0") +
+      "-" + (date.getMonth() + 1).toString().padStart(2, "0") +
+      "-" + date.getDate().toString().padStart(2, "0")
+    );
+  }
+
+  getType(): string {
     return "date";
   }
 
-  getDateValue() {
+  getDateValue(): Date|undefined {
     let val = this.props.context.value;
     if (val === "now") {
       return new Date();
     } else if (val) {
       let values = val.split("-");
-      let year = parseInt(values[0], 10);
-      let month = parseInt(values[1], 10) - 1;
-      let day = parseInt(values[2], 10);
+      const year = parseInt(values[0], 10);
+      const month = parseInt(values[1], 10) - 1;
+      const day = parseInt(values[2], 10);
       return new Date(year, month, day, 12);
     }
     return undefined;
   }
 
   setDateValue(value: Date) {
-    function toStringWithZeros(value: number, length: number) {
-      let str = value.toString();
-      while (str.length < length) str = "0" + str;
-      return str;
-    }
-
-    let year = toStringWithZeros(value.getFullYear(), 4);
-    let month = toStringWithZeros(value.getMonth() + 1, 2);
-    let day = toStringWithZeros(value.getDate(), 2);
-    let dateStr = `${year}-${month}-${day}`;
+    const dateStr = this.formatDate(value);
     this.props.context.setValue(dateStr);
   }
 
