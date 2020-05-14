@@ -12,6 +12,7 @@ import { shell } from "electron";
 import { getSiteDependencyStatus, getSiteSourceDependencyStatus } from "./services/site/dependency-status";
 import mainWindowManager from "./main-window-manager";
 import analytics from "./analytics";
+import { appEventEmitter } from "./app-event-emmiter";
 const { app } = require('electron')
 
 const siteService = new SiteService();
@@ -86,8 +87,13 @@ api.mountWorkspace = async function({ siteKey, workspaceKey }: any) {
 api.serveWorkspace = async function({ siteKey, workspaceKey, serveKey }: any) {
   const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
   await workspaceService.serve(serveKey);
-  shell.openItem("http://localhost:1313");
 };
+
+appEventEmitter.on("onServerStarted", (payload)=>{
+  if(payload.url){
+    shell.openItem(payload.url);
+  }
+})
 
 api.getWorkspaceConfig = async function({ siteKey, workspaceKey }: any) {
   const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);

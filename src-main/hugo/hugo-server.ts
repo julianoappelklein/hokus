@@ -6,6 +6,7 @@ import outputConsole from "./../output-console";
 import * as glob from "glob";
 import { join } from "path";
 import formatProviderResolver from "../format-provider-resolver";
+import { appEventEmitter } from "../app-event-emmiter";
 
 let currentServerProccess: ChildProcessWithoutNullStreams | undefined = undefined;
 
@@ -99,7 +100,8 @@ class HugoServer {
       stdout.resume();
 
       let isFirst = true;
-      stdout.on("line", function(line) {
+      const serverUrlMatcher = /^.+ (http:\/\/localhost:[0-9]+\/) .+$/;
+      stdout.on("line", function(line: string) {
         if (isFirst) {
           isFirst = false;
           outputConsole.appendLine("Starting Hugo Server...");
@@ -107,6 +109,10 @@ class HugoServer {
           return;
         }
         outputConsole.appendLine(line);
+        if(serverUrlMatcher.test(line)){
+          const url = line.replace(serverUrlMatcher,"$1");
+          appEventEmitter.emit("onServerStarted", {url});
+        }
       });
     } catch (e) {
       outputConsole.appendLine("Hugo Server failed to start.");

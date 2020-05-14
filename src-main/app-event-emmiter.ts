@@ -19,7 +19,12 @@ export interface WorkspaceFileChangedEvent extends WorkspaceEvent {
   files: string[];
 }
 
+export interface ServerStartedEvent{
+  url?: string;
+}
+
 interface AppEvents {
+  onServerStarted: (payload: ServerStartedEvent) => void;
   onWorkspaceFileChanged: (payload: WorkspaceFileChangedEvent) => void;
   onSiteTouched: (payload: SiteTouchedEvent) => void;
 }

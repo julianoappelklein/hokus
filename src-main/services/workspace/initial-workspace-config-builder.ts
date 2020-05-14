@@ -54,7 +54,7 @@ class InitialWorkspaceConfigBuilder {
               fields: [
                 { key: "title", title: "Title", type: "string" },
                 { key: "description", title: "Description", type: "string", multiLine: true },
-                { key: "bundle-image-thumbnail", type: "bundle-image-thumbnail" },
+                { key: "bundle-image-thumbnail", type: "bundle-image-thumbnail" }
               ]
             }
           ]
@@ -91,17 +91,27 @@ class InitialWorkspaceConfigBuilder {
   }
 
   build() {
-    let hugoConfigExp = path.join(
+    const hugoConfigExp = path.join(
       this.workspacePath,
       "config.{" + formatProviderResolver.allFormatsExt().join(",") + "}"
     );
+    const themesExp = path.join(this.workspacePath, "themes/*/");
     let hugoConfigPath = glob.sync(hugoConfigExp)[0];
+    const allThemes = glob.sync(themesExp);
+    const firstTheme = (allThemes[0] || "")
+      .split(/[/\\]/)
+      .filter(x => !!x)
+      .slice(-1)[0];
 
     let formatProvider;
     if (hugoConfigPath == null) {
       hugoConfigPath = path.join(this.workspacePath, "config." + formatProviderResolver.getDefaultFormatExt());
       formatProvider = formatProviderResolver.getDefaultFormat();
-      let minimalConfigStr = formatProvider.dump({ title: "New Site Title", baseURL: "http://newsite.com" });
+      let minimalConfigStr = formatProvider.dump({
+        title: "New Site Title",
+        baseURL: "http://newsite.com",
+        theme: firstTheme || "some-theme"
+      });
       fs.writeFileSync(hugoConfigPath, minimalConfigStr, "utf-8");
     } else {
       formatProvider = formatProviderResolver.resolveForFilePath(hugoConfigPath);
