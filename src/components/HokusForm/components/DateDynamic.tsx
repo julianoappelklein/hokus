@@ -29,9 +29,18 @@ class DateDynamic extends BaseDynamic<DateDynamicField, DateDynamicState> {
   }
 
   private formatDate(date: Date): string {
-    return (date.getFullYear().toString().padStart(4, "0") +
-      "-" + (date.getMonth() + 1).toString().padStart(2, "0") +
-      "-" + date.getDate().toString().padStart(2, "0")
+    return (
+      date
+        .getFullYear()
+        .toString()
+        .padStart(4, "0") +
+      "-" +
+      (date.getMonth() + 1).toString().padStart(2, "0") +
+      "-" +
+      date
+        .getDate()
+        .toString()
+        .padStart(2, "0")
     );
   }
 
@@ -39,7 +48,7 @@ class DateDynamic extends BaseDynamic<DateDynamicField, DateDynamicState> {
     return "date";
   }
 
-  getDateValue(): Date|undefined {
+  getDateValue(): Date | undefined {
     let val = this.props.context.value;
     if (val === "now") {
       return new Date();

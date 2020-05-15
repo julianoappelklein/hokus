@@ -144,9 +144,7 @@ class SiteDetails extends React.Component<Props, State> {
     const { site } = this.props;
     const workspaces = this.state.selectedSiteWorkspaces;
 
-    if (workspaces == null) return (
-      <Spinner size={32} margin={25} />
-    );
+    if (workspaces == null) return <Spinner size={32} margin={25} />;
 
     return (
       <Workspaces

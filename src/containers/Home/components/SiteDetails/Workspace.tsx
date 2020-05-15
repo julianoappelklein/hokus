@@ -24,7 +24,7 @@ interface WorkspaceState {
   config?: WorkspaceConfig | null;
   error?: any;
   refreshing: boolean;
-  canSync?: boolean|null;
+  canSync?: boolean | null;
 }
 
 class _Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
