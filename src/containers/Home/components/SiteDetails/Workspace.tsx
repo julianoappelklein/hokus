@@ -24,7 +24,7 @@ interface WorkspaceState {
   config?: WorkspaceConfig | null;
   error?: any;
   refreshing: boolean;
-  canSync?: boolean;
+  canSync?: boolean|null;
 }
 
 class _Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
@@ -161,7 +161,7 @@ class _Workspace extends React.Component<WorkspaceProps, WorkspaceState> {
             options={config != null && config.serve != null ? config.serve.map(x => x.key || "default") : []}
             onOptionClick={this.handleOnStartServerOptionClick}
           />
-          {site.canSync && (
+          {site.canSync !== undefined && (
             <React.Fragment>
               &nbsp;
               <FlatButton label="Sync" secondary={this.state.canSync} onClick={this.handleSyncClick} />

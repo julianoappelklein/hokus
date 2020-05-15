@@ -5,6 +5,7 @@ import { FlatButton, TextField } from "material-ui";
 import { Configurations, SiteConfig, WorkspaceHeader, WorkspaceConfig } from "../../../../../global-types";
 import service from "../../../../services/service";
 import muiThemeable from "material-ui/styles/muiThemeable";
+import Spinner from "../../../../components/Spinner";
 import { MuiTheme } from "material-ui/styles";
 import { Workspaces } from "./Workspaces";
 import PublishSiteDialog from "../PublishSiteDialog";
@@ -143,7 +144,9 @@ class SiteDetails extends React.Component<Props, State> {
     const { site } = this.props;
     const workspaces = this.state.selectedSiteWorkspaces;
 
-    if (workspaces == null) return <Wrapper></Wrapper>;
+    if (workspaces == null) return (
+      <Spinner size={32} margin={25} />
+    );
 
     return (
       <Workspaces

@@ -53,7 +53,7 @@ class Spinner extends React.Component<Props, any> {
       transform: "rotate(" + (this.state.rotated ? 360 * spins : 0) + "deg)"
     };
     return (
-      <div>
+      <div style={{overflow: 'hidden'}}>
         <div style={style}></div>
       </div>
     );
