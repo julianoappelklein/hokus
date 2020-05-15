@@ -2,9 +2,10 @@ import React from "react";
 import FormItemWrapper from "./shared/FormItemWrapper";
 import DatePicker from "material-ui/DatePicker";
 import Tip from "../../Tip";
-import { BaseDynamic } from "../../HoForm";
+import { BaseDynamic, CrawlContext } from "../../HoForm";
 import IconClear from "material-ui/svg-icons/content/clear";
 import IconButton from "material-ui/IconButton";
+import { setValidationErrorIntoState, getValidationError } from "../../HoForm/utils";
 
 type DateDynamicField = {
   type: string;
@@ -12,6 +13,7 @@ type DateDynamicField = {
   default: string | null | undefined;
   tip: string | null | undefined;
   title: string | null | undefined;
+  required: boolean;
 };
 
 type DateDynamicState = {};
@@ -62,6 +64,15 @@ class DateDynamic extends BaseDynamic<DateDynamicField, DateDynamicState> {
     return undefined;
   }
 
+  crawlComponent({ form, node }: CrawlContext<DateDynamicField>): void {
+    const value = this.getValueFromNode(node);
+    if (node.field.required) {
+      const invalid = value == null || value === "";
+      const validationError = invalid ? `The field is required.` : "";
+      setValidationErrorIntoState(node.state, form.buildDisplayPath(node), validationError);
+    }
+  }
+
   setDateValue(value: Date) {
     const dateStr = this.formatDate(value);
     this.props.context.setValue(dateStr);
@@ -69,7 +80,7 @@ class DateDynamic extends BaseDynamic<DateDynamicField, DateDynamicState> {
 
   renderComponent() {
     let { context } = this.props;
-    let { node, currentPath } = context;
+    let { node, currentPath, nodePath } = context;
     let { field } = node;
 
     if (currentPath !== context.parentPath) {
@@ -84,6 +95,8 @@ class DateDynamic extends BaseDynamic<DateDynamicField, DateDynamicState> {
     );
     if (field.tip) iconButtons.push(<Tip markdown={field.tip} />);
 
+    const error = getValidationError(node.state, nodePath);
+
     return (
       <FormItemWrapper
         control={
@@ -93,6 +106,7 @@ class DateDynamic extends BaseDynamic<DateDynamicField, DateDynamicState> {
               this.setDateValue(value);
             }}
             autoOk={true}
+            errorText={error}
             fullWidth={true}
             underlineShow={true}
             floatingLabelText={field.title}

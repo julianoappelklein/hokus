@@ -114,7 +114,7 @@ export const formConfigurationsIncludes = {
   dataNestInclude: [{ key: "fieldsAccordionInclude", type: "include", include: "fieldsAccordionInclude" }],
   dateInclude: [
     { key: "title", title: "title", type: "string", required: true },
-    // { key: "required", title: "required", type: "boolean", default: false },
+    { key: "required", title: "required", type: "boolean", default: true },
     { key: "default", title: "default", type: "date" },
     { key: "tip", title: "tip", type: "string" }
   ],
