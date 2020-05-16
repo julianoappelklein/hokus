@@ -25,6 +25,7 @@ import { EmptyConfigurations, Configurations } from "./types";
 import "./css/App.css";
 import BlockDialog from "./components/BlockDialog";
 import { WorkspaceConfig } from "./containers/WorkspaceConfig";
+import analytics from "./analytics";
 
 //the default locked UI style
 const style: { [k: string]: CSSProperties } = {
@@ -80,6 +81,7 @@ class App extends React.Component<{}, AppState> {
   async componentDidMount() {
     const configurations = await service.getConfigurations();
     this.setState({ configurations });
+    analytics.screen("home");
   }
 
   minimizeWindow() {

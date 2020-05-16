@@ -3,6 +3,7 @@ import { HokusForm } from "../components/HokusForm";
 import { formConfigurationsIncludes } from "../utils/configurations-includes";
 import service from "../services/service";
 import Spinner from "../components/Spinner";
+import analytics from "../analytics";
 
 type WorkspaceConfigProps = {
   siteKey: string;
@@ -27,6 +28,7 @@ export class WorkspaceConfig extends React.Component<WorkspaceConfigProps, Works
   async componentDidMount() {
     const values = (await service.api.getWorkspaceConfig(this.props.siteKey, this.props.workspaceKey)) || {};
     this.setState({ values, workspaceFormKey: this.state.workspaceFormKey + 1 });
+    //analytics.screen("workspace-config");
   }
 
   handleFormRef = (ref: any) => {

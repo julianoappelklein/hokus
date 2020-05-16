@@ -244,6 +244,10 @@ export class API {
   trackScreen(screen: string) {
     return mainProcessBridge.request("trackScreen", { screen });
   }
+
+  getEnviromentInfo(): Promise<any> {
+    return mainProcessBridge.request("getEnvironmentInfo", {});
+  }
 }
 
 export const instance = new API();

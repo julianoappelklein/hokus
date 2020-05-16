@@ -11,9 +11,9 @@ import { dirname } from "path";
 import { shell } from "electron";
 import { getSiteDependencyStatus, getSiteSourceDependencyStatus } from "./services/site/dependency-status";
 import mainWindowManager from "./main-window-manager";
-import analytics from "./analytics";
+import { machineId } from "node-machine-id";
+import { app } from "electron";
 import { appEventEmitter } from "./app-event-emmiter";
-const { app } = require('electron')
 
 const siteService = new SiteService();
 
@@ -89,11 +89,11 @@ api.serveWorkspace = async function({ siteKey, workspaceKey, serveKey }: any) {
   await workspaceService.serve(serveKey);
 };
 
-appEventEmitter.on("onServerStarted", (payload)=>{
-  if(payload.url){
+appEventEmitter.on("onServerStarted", payload => {
+  if (payload.url) {
     shell.openItem(payload.url);
   }
-})
+});
 
 api.getWorkspaceConfig = async function({ siteKey, workspaceKey }: any) {
   const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
@@ -165,13 +165,7 @@ api.copyFilesIntoCollectionItem = async function({
   return workspaceService.copyFilesIntoCollectionItem(collectionKey, collectionItemKey, targetPath, files);
 };
 
-api.copyFilesIntoSingle = async function({
-  siteKey,
-  workspaceKey,
-  singleKey,
-  targetPath,
-  files
-}: any) {
+api.copyFilesIntoSingle = async function({ siteKey, workspaceKey, singleKey, targetPath, files }: any) {
   const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
   return workspaceService.copyFilesIntoSingle(singleKey, targetPath, files);
 };
@@ -203,12 +197,7 @@ api.getThumbnailForCollectionItemImage = async function({
   return workspaceService.getThumbnailForCollectionItemImage(collectionKey, collectionItemKey, targetPath);
 };
 
-api.getThumbnailForSingleImage = async function({
-  siteKey,
-  workspaceKey,
-  singleKey,
-  targetPath
-}: any) {
+api.getThumbnailForSingleImage = async function({ siteKey, workspaceKey, singleKey, targetPath }: any) {
   const { workspaceService } = await getWorkspaceService(siteKey, workspaceKey);
   return workspaceService.getThumbnailForSingleImage(singleKey, targetPath);
 };
@@ -232,17 +221,20 @@ api.getSiteSourceDependencyStatus = async function({ siteSourceType }: any) {
   return dependencies;
 };
 
-api.reloadMainWindow = async function(){
+api.reloadMainWindow = async function() {
   mainWindowManager.getCurrentInstance()?.reload();
-}
+};
 
-api.relaunch = async function(){
+api.relaunch = async function() {
   app.relaunch();
   app.exit();
-}
+};
 
-api.trackScreen = async function({screen}){
-  analytics.screen(screen);
-}
+api.getEnvironmentInfo = async function() {
+  const _machineId = await machineId(false);
+  const version = app.getVersion();
+  const platform = process.platform;
+  return { machineId: _machineId, version, platform };
+};
 
 export default api;

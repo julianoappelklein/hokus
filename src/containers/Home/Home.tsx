@@ -53,7 +53,6 @@ class Home extends React.Component<HomeProps, HomeState> {
   }
 
   componentDidMount() {
-    //service.api.trackScreen("home");
     service.registerListener(this);
     const { siteKey, workspaceKey } = this.props;
     this.load(siteKey, workspaceKey);

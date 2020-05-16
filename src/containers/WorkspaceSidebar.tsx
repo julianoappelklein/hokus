@@ -29,12 +29,13 @@ interface WorkspaceWidgetProps extends RouteComponentProps {
   workspaceConfig?: WorkspaceConfig;
 }
 
-class WorkspaceWidget extends React.Component<WorkspaceWidgetProps>{
-
+class WorkspaceWidget extends React.Component<WorkspaceWidgetProps> {
   render() {
     const { onClick, siteConfig, workspaceConfig } = this.props;
     const serverOptions =
-      workspaceConfig != null && workspaceConfig.serve != null ? workspaceConfig.serve.map(x => x.key || "default") : [];
+      workspaceConfig != null && workspaceConfig.serve != null
+        ? workspaceConfig.serve.map(x => x.key || "default")
+        : [];
 
     return (
       <MenuBorder>
@@ -47,13 +48,13 @@ class WorkspaceWidget extends React.Component<WorkspaceWidgetProps>{
               rightIcon={<IconActionSetting color={translucentColor} />}
             />
           ) : (
-              <ListItem
-                primaryText={"Please"}
-                secondaryText={"select a workspace"}
-                onClick={onClick}
-                rightIcon={<IconActionSetting color={translucentColor} />}
-              />
-            )}
+            <ListItem
+              primaryText={"Please"}
+              secondaryText={"select a workspace"}
+              onClick={onClick}
+              rightIcon={<IconActionSetting color={translucentColor} />}
+            />
+          )}
         </List>
         {siteConfig != null && workspaceConfig != null ? (
           <div style={{ display: "flex" }}>
@@ -81,7 +82,11 @@ class WorkspaceWidget extends React.Component<WorkspaceWidgetProps>{
             />
             <FlatButton
               onClick={() => {
-                this.props.history.push(`/sites/${encodeURIComponent(siteConfig.key)}/workspaces/${encodeURIComponent(workspaceConfig.key)}/config`);
+                this.props.history.push(
+                  `/sites/${encodeURIComponent(siteConfig.key)}/workspaces/${encodeURIComponent(
+                    workspaceConfig.key
+                  )}/config`
+                );
               }}
               style={{ flex: 1, minWidth: 40 }}
               icon={<IconEdit color="white" style={{ opacity: 0.2 }} />}
@@ -94,7 +99,7 @@ class WorkspaceWidget extends React.Component<WorkspaceWidgetProps>{
       </MenuBorder>
     );
   }
-};
+}
 
 const WorkspaceWidgetRouted = withRouter(WorkspaceWidget);
 
