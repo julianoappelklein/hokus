@@ -3,13 +3,15 @@ import { Route } from "react-router-dom";
 import { List, ListItem } from "material-ui/List";
 import { FlatButton } from "material-ui";
 import IconActionSetting from "material-ui/svg-icons/action/settings";
-import IconPlay from "material-ui/svg-icons/av/play-arrow";
 import IconFileFolder from "material-ui/svg-icons/file/folder";
+import IconPlay from "material-ui/svg-icons/av/play-arrow";
+import IconEdit from "material-ui/svg-icons/image/edit";
 import Border from "./../components/Border";
 import { TriggerWithOptions } from "./../components/TriggerWithOptions";
 import service from "./../services/service";
 import { SiteConfig, WorkspaceConfig } from "./../types";
 import * as Sidebar from "./Sidebar";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 const translucentColor = "RGBA(255,255,255,.2)";
 
@@ -21,67 +23,80 @@ const MenuBorder = ({ children }: any) => {
   );
 };
 
-interface WorkspaceWidgetProps {
+interface WorkspaceWidgetProps extends RouteComponentProps {
   onClick: () => void;
   siteConfig?: SiteConfig;
   workspaceConfig?: WorkspaceConfig;
 }
 
-const WorkspaceWidget: React.FC<WorkspaceWidgetProps> = ({ onClick, siteConfig, workspaceConfig }) => {
-  const serverOptions =
-    workspaceConfig != null && workspaceConfig.serve != null ? workspaceConfig.serve.map(x => x.key || "default") : [];
+class WorkspaceWidget extends React.Component<WorkspaceWidgetProps>{
 
-  return (
-    <MenuBorder>
-      <List style={{ padding: 0 }}>
+  render() {
+    const { onClick, siteConfig, workspaceConfig } = this.props;
+    const serverOptions =
+      workspaceConfig != null && workspaceConfig.serve != null ? workspaceConfig.serve.map(x => x.key || "default") : [];
+
+    return (
+      <MenuBorder>
+        <List style={{ padding: 0 }}>
+          {siteConfig != null && workspaceConfig != null ? (
+            <ListItem
+              primaryText={siteConfig.name}
+              secondaryText={workspaceConfig.key}
+              onClick={onClick}
+              rightIcon={<IconActionSetting color={translucentColor} />}
+            />
+          ) : (
+              <ListItem
+                primaryText={"Please"}
+                secondaryText={"select a workspace"}
+                onClick={onClick}
+                rightIcon={<IconActionSetting color={translucentColor} />}
+              />
+            )}
+        </List>
         {siteConfig != null && workspaceConfig != null ? (
-          <ListItem
-            primaryText={siteConfig.name}
-            secondaryText={workspaceConfig.key}
-            onClick={onClick}
-            rightIcon={<IconActionSetting color={translucentColor} />}
-          />
-        ) : (
-          <ListItem
-            primaryText={"Please"}
-            secondaryText={"select a workspace"}
-            onClick={onClick}
-            rightIcon={<IconActionSetting color={translucentColor} />}
-          />
-        )}
-      </List>
-      {siteConfig != null && workspaceConfig != null ? (
-        <div style={{ display: "flex" }}>
-          <TriggerWithOptions
-            triggerType={FlatButton}
-            triggerProps={{
-              style: { flex: 1, minWidth: 40 },
-              icon: <IconPlay color="white" style={{ opacity: 0.2 }} />,
-              disabled: workspaceConfig == null || workspaceConfig.build == null || workspaceConfig.build.length == 0
-            }}
-            menuProps={{ style: { background: "rgb(22, 6, 47)" } }}
-            popoverProps={{ style: { background: "rgb(22, 6, 47)" } }}
-            options={serverOptions}
-            onOptionClick={(event: any, index: number) => {
-              service.serveWorkspace(siteConfig.key, workspaceConfig.key, serverOptions[index]);
-              return true;
-            }}
-          />
-          <FlatButton
-            onClick={function() {
-              service.openWorkspaceDir(siteConfig.key, workspaceConfig.key);
-            }}
-            style={{ flex: 1, minWidth: 40 }}
-            icon={<IconFileFolder color="white" style={{ opacity: 0.2 }} />}
-          />
-          {/* <FlatButton
+          <div style={{ display: "flex" }}>
+            <TriggerWithOptions
+              triggerType={FlatButton}
+              triggerProps={{
+                style: { flex: 1, minWidth: 40 },
+                icon: <IconPlay color="white" style={{ opacity: 0.2 }} />,
+                disabled: workspaceConfig == null || workspaceConfig.build == null || workspaceConfig.build.length == 0
+              }}
+              menuProps={{ style: { background: "rgb(22, 6, 47)" } }}
+              popoverProps={{ style: { background: "rgb(22, 6, 47)" } }}
+              options={serverOptions}
+              onOptionClick={(event: any, index: number) => {
+                service.serveWorkspace(siteConfig.key, workspaceConfig.key, serverOptions[index]);
+                return true;
+              }}
+            />
+            <FlatButton
+              onClick={() => {
+                service.openWorkspaceDir(siteConfig.key, workspaceConfig.key);
+              }}
+              style={{ flex: 1, minWidth: 40 }}
+              icon={<IconFileFolder color="white" style={{ opacity: 0.2 }} />}
+            />
+            <FlatButton
+              onClick={() => {
+                this.props.history.push(`/sites/${encodeURIComponent(siteConfig.key)}/workspaces/${encodeURIComponent(workspaceConfig.key)}/config`);
+              }}
+              style={{ flex: 1, minWidth: 40 }}
+              icon={<IconEdit color="white" style={{ opacity: 0.2 }} />}
+            />
+            {/* <FlatButton
            style={{flex:1, minWidth:40}}
            icon={<IconMore color="white"  style={{opacity:.2}} />} /> */}
-        </div>
-      ) : null}
-    </MenuBorder>
-  );
+          </div>
+        ) : null}
+      </MenuBorder>
+    );
+  }
 };
+
+const WorkspaceWidgetRouted = withRouter(WorkspaceWidget);
 
 type WorkspaceSidebarProps = {
   siteKey: string | null | undefined;
@@ -162,7 +177,7 @@ class WorkspaceSidebar extends React.Component<WorkspaceSidebarProps, WorkspaceS
     menus.push({
       title: "Current Workspace",
       widget: (
-        <WorkspaceWidget
+        <WorkspaceWidgetRouted
           siteConfig={this.state.site}
           workspaceConfig={this.state.workspace}
           onClick={handleClickWorkspaceWidget}
