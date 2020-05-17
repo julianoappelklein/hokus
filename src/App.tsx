@@ -81,7 +81,7 @@ class App extends React.Component<{}, AppState> {
   async componentDidMount() {
     const configurations = await service.getConfigurations();
     this.setState({ configurations });
-    analytics.screen("home");
+    analytics.pageView("/home");
   }
 
   minimizeWindow() {
@@ -148,12 +148,6 @@ class App extends React.Component<{}, AppState> {
           );
         }}
       />
-      // <MenuItem
-      //   primaryText="Restart Application"
-      //   onClick={() => {
-      //     service.api.relaunch();
-      //   }}
-      // />
     ];
     return items;
   }
