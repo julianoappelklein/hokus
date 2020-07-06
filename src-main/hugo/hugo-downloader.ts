@@ -131,7 +131,7 @@ export class OfficialHugoUnpacker {
 }
 
 export class HugoDownloader {
-  _isRunning: boolean = false;
+  _downloadPromises: { [key: string]: Promise<void> } = {};
   _queue = [];
 
   async _downloadToFile(url: string, dest: string) {
@@ -155,42 +155,44 @@ export class HugoDownloader {
   }
 
   async download(version: string) {
-    if (this._isRunning) {
-      return;
+    if (this._downloadPromises[version] != null) {
+      return this._downloadPromises[version];
     }
 
-    let bin = pathHelper.getHugoBinForVer(version);
-    if (fs.existsSync(bin)) {
-      return;
-    }
+    this._downloadPromises[version] = (async () => {
+      try {
+        let bin = pathHelper.getHugoBinForVer(version);
+      
+        if (fs.existsSync(bin)) {
+          delete this._downloadPromises[version];
+          return;
+        }
 
-    this._isRunning = true;
+        let Environment = new EnvironmentResolver().resolve();
+        let url = new OfficialHugoSourceUrlBuilder().build(Environment, version);
+        let unpacker = new OfficialHugoUnpacker();
+        let tempDest = pathHelper.getHugoBinDirForVer(version) + "download.partial";
 
-    try {
-      let Environment = new EnvironmentResolver().resolve();
-      let url = new OfficialHugoSourceUrlBuilder().build(Environment, version);
-      let unpacker = new OfficialHugoUnpacker();
-      let tempDest = pathHelper.getHugoBinDirForVer(version) + "download.partial";
+        if (fs.existsSync(tempDest)) {
+          await fs.unlink(tempDest);
+        }
 
-      if (fs.existsSync(tempDest)) {
+        outputConsole.appendLine(`Hugo installation started. Downloading package from ${url}...`);
+
+        await this._downloadToFile(url, tempDest);
+
+        outputConsole.appendLine(`Unpacking....`);
+        await unpacker.unpack(tempDest, Environment);
         await fs.unlink(tempDest);
+
+        outputConsole.appendLine(`Hugo installation completed.`);
+        delete this._downloadPromises[version];
+      } catch (e) {
+        outputConsole.appendLine(`Hugo installation failed.`);
+        delete this._downloadPromises[version];
+        throw e;
       }
-
-      outputConsole.appendLine(`Hugo installation started. Downloading package from ${url}...`);
-
-      await this._downloadToFile(url, tempDest);
-
-      outputConsole.appendLine(`Unpacking....`);
-      await unpacker.unpack(tempDest, Environment);
-      await fs.unlink(tempDest);
-
-      outputConsole.appendLine(`Hugo installation completed.`);
-      this._isRunning = false;
-    } catch (e) {
-      outputConsole.appendLine(`Hugo installation failed.`);
-      this._isRunning = false;
-      return e;
-    }
+    })();
   }
 }
 

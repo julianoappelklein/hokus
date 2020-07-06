@@ -12,6 +12,7 @@ import HugoBuilder from "../../hugo/hugo-builder.js";
 import pathHelper from "../../path-helper.js";
 import HugoServer from "../../hugo/hugo-server.js";
 import { appEventEmitter } from "../../app-event-emmiter.js";
+import { hugoDownloader } from "../../hugo/hugo-downloader.js";
 
 class WorkspaceService {
   workspacePath: string;
@@ -523,10 +524,12 @@ class WorkspaceService {
   async serve(serveKey: string): Promise<void> {
     let workspaceDetails = await this.getConfigurationsData();
 
+    await hugoDownloader.download(workspaceDetails.hugover);
+
     let serveConfig;
     if (workspaceDetails.serve && workspaceDetails.serve.length) {
       serveConfig = this._findFirstMatchOrDefault(workspaceDetails.serve, "");
-    } else serveConfig = { config: "" };
+    } else serveConfig = { config: "" };   
 
     let hugoServerConfig = {
       config: serveConfig.config,
