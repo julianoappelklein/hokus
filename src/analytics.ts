@@ -39,7 +39,6 @@ class AnalyticsFacade {
       if (this._clientId != null) {
         localStorage.setItem("clientID", this._clientId);
       }
-
     } catch (e) {}
   }
 }

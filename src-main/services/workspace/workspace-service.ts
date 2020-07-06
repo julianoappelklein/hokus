@@ -501,7 +501,7 @@ class WorkspaceService {
     return `data:${mime};base64,${base64}`;
   }
 
-  _findFirstMatchOrDefault<T extends any>(arr: Array<T>, key: string): T {
+  _findFirstMatchOrDefault<T extends {key: string}>(arr: Array<T>, key: string): T {
     let result;
 
     if (key) {
