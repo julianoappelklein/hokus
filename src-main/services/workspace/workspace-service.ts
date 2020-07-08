@@ -532,7 +532,7 @@ class WorkspaceService {
     } else serveConfig = { config: "" };   
 
     let hugoServerConfig = {
-      config: serveConfig.config,
+      ...serveConfig,
       workspacePath: this.workspacePath,
       hugover: workspaceDetails.hugover
     };

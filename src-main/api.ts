@@ -89,7 +89,7 @@ api.serveWorkspace = async function({ siteKey, workspaceKey, serveKey }: any) {
   await workspaceService.serve(serveKey);
 };
 
-appEventEmitter.on("onServerStarted", payload => {
+appEventEmitter.on("onHugoServerStarted", payload => {
   if (payload.url) {
     shell.openItem(payload.url);
   }

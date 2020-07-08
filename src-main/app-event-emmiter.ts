@@ -24,7 +24,7 @@ export interface ServerStartedEvent{
 }
 
 interface AppEvents {
-  onServerStarted: (payload: ServerStartedEvent) => void;
+  onHugoServerStarted: (payload: ServerStartedEvent) => void;
   onWorkspaceFileChanged: (payload: WorkspaceFileChangedEvent) => void;
   onSiteTouched: (payload: SiteTouchedEvent) => void;
 }
