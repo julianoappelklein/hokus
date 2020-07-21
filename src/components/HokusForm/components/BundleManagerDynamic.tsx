@@ -84,7 +84,10 @@ class BundleManagerDynamic extends BaseDynamic<BundleManagerDynamicField, Bundle
         if (match) {
           if (match.$_deleted) delete match.$_deleted;
         } else {
-          currentFiles.push({ src: file });
+            let filename = file.replace(/^.*[\\\/]/, '');
+            filename = filename.replace(/\.[^.$]+$/, '');
+            // src and name is needed by hugo for bundle post
+            currentFiles.push({ src: file, name: filename });
         }
       }
       context.setValue(currentFiles);

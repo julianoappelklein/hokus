@@ -231,10 +231,15 @@ class WorkspaceService {
       if (key.startsWith("$_")) {
         delete document[key];
       }
-      if (document.resources) {
-        document.resources = document.resources.filter((x: any) => x.$_deleted == true);
-        document.resources.forEach((x: any) => delete x.$_deleted);
-      }
+    }
+
+    if (document.resources) {
+        document.resources = document.resources.filter((x: any) => {
+            if (x.$_deleted == true) {
+            } else {
+                return x;
+            }
+        });
     }
   }
 
@@ -275,18 +280,45 @@ class WorkspaceService {
     let config = await this.getConfigurationsData();
     let collection = config.collections.find(x => x.key === collectionKey);
     if (collection == null) throw new Error("Could not find collection.");
+
     let filePath = path.join(this.workspacePath, collection.folder, collectionItemKey);
-    if (fs.existsSync(filePath)) {
-      //TODO: use async await with a promise to test if deletion succeded
-      fs.unlink(filePath);
-      appEventEmitter.emit("onWorkspaceFileChanged", {
-        siteKey: this.siteKey,
-        workspaceKey: this.workspaceKey,
-        files: [filePath]
-      });
-      return true;
+
+    let pathArray = collectionItemKey.split('/');
+
+    let folderName = "";
+    if(pathArray.length >1){
+        folderName = pathArray[0];
     }
-    return false;
+
+    let folderPath = path.join(this.workspacePath, collection.folder, folderName);
+    
+    let filename = filePath.replace(/^.*[\\\/]/, '');
+    filename = filename.replace(/\.[^.$]+$/, '');
+    if(filename === "index"){
+        // delete folder recurvively
+        try {
+            fs.rmdirSync(folderPath, { recursive: true });
+
+            console.log(`${folderPath} is deleted!`);
+        } catch (err) {
+            console.error(`Error while deleting ${folderPath}.`);
+        }
+        appEventEmitter.emit("onWorkspaceFileChanged", {
+            siteKey: this.siteKey,
+            workspaceKey: this.workspaceKey,
+            files: [filePath,folderPath]
+        });
+        return true;
+    }else{
+        // delete file
+        fs.unlink(filePath);
+        appEventEmitter.emit("onWorkspaceFileChanged", {
+            siteKey: this.siteKey,
+            workspaceKey: this.workspaceKey,
+            files: [filePath]
+        });
+        return true;
+    }
   }
 
   async updateCollectionItem(collectionKey: string, collectionItemKey: string, document: any) {
