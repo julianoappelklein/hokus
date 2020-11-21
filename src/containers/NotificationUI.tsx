@@ -1,4 +1,4 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import Snackbar from "material-ui/Snackbar";
 import { consoleService, snackMessageService } from "../services/ui-service";
 import ConsoleIcon from "material-ui/svg-icons/hardware/keyboard-arrow-right";
@@ -71,7 +71,8 @@ class ConsoleOutput extends React.Component {
 
   render() {
     let visible = !consoleService.getConsoleIsHidden();
-    let preStyle = Object.assign({}, consoleStyle.pre, visible ? undefined : { display: "none" });
+    let preStyle = {
+    }
 
     if (this.preElement) {
       this.preElement.scrollTop = 5000;
@@ -92,7 +93,10 @@ class ConsoleOutput extends React.Component {
           className={visible ? "slideInRight animated-fast" : ""}
           onMouseEnter={this.handleMouseEnter.bind(this)}
           onMouseLeave={this.handleMouseLeave.bind(this)}
-          style={preStyle}
+          style={{
+            ...consoleStyle.pre as any,
+            ...(visible ? {} : { display: "none" })
+          }}
           ref={pre => (this.preElement = pre)}
         >
           {consoleService
