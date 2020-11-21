@@ -1,12 +1,14 @@
-export type ServeConfig = {
+export type Keyed = {
   key: string;
+}
+
+export type ServeConfig = {
   config: string;
-};
+} & Keyed;
 
 export type BuildConfig = {
-  key: string;
   config: string;
-};
+} & Keyed;
 
 export type PublisherConfig<P> = {
   type: string;
@@ -14,20 +16,18 @@ export type PublisherConfig<P> = {
 
 export type SitePublishConfig<P> = {
   config: PublisherConfig<P>;
-  key: string;
-};
+} & Keyed;
 
 export type SiteSource<S> = {
   type: string;
 } & S;
 
 export type RawSiteConfig = {
-  key: string;
   name: string;
   source: SiteSource<any>;
   // transform: Array<SiteTransformConfig<*>>,
   publish: Array<SitePublishConfig<any>>;
-};
+} & Keyed;
 
 export type SiteConfig = RawSiteConfig & {
   configPath: string;
@@ -44,33 +44,29 @@ export type WorkspaceConfigRaw = {
 };
 
 export type WorkspaceConfig = WorkspaceConfigRaw & {
-  key: string;
   path: string;
-};
+} & Keyed;
 
 export type WorkspaceHeader = {
-  key: string;
   path: string;
   state: "mounted" | "unmounted";
-};
+} & Keyed;
 
 export type SingleConfig = {
-  key: string;
   title: string;
   file: string;
   dataformat: string;
   fields: Array<any>;
-};
+} & Keyed;
 
 export type CollectionConfig = {
-  key: string;
   title: string;
   itemtitle: string;
   fields: Array<any>;
   folder: string;
   extension: string;
   dataformat: string;
-};
+} & Keyed;
 
 export type EmptyConfigurations = {
   type: "EmptyConfigurations";

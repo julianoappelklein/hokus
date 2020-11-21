@@ -2,7 +2,7 @@ import * as fs from "fs-extra";
 import path = require("path");
 import glob = require("glob");
 import { promisify } from "util";
-import { WorkspaceConfig } from "./../../../global-types.js";
+import { Keyed, WorkspaceConfig } from "./../../../global-types.js";
 import { WorkspaceConfigProvider } from "./workspace-config-provider.js";
 import * as contentFormats from "./../../content-formats";
 import formatProviderResolver from "../../format-provider-resolver.js";
@@ -501,7 +501,7 @@ class WorkspaceService {
     return `data:${mime};base64,${base64}`;
   }
 
-  _findFirstMatchOrDefault<T extends any>(arr: Array<T>, key: string): T {
+  _findFirstMatchOrDefault<T extends Keyed>(arr: Array<T>, key: string): T {
     let result;
 
     if (key) {

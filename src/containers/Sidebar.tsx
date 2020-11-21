@@ -74,7 +74,7 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
                       innerDivStyle={style}
                       onClick={item.onClick}
                       primaryText={item.label}
-                      leftIcon={<IconActionList color={translucentColor} />}
+                      leftIcon={<IconActionList color={translucentColor}/>}
                     />
                   );
                 })}
@@ -89,15 +89,14 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
       <MuiThemeProvider muiTheme={darkMuiTheme}>
         <React.Fragment>
           <div className={"slideFadeInRight animated"} style={{ position: "relative", opacity: 1 }}>
-            <IconMenu style={{ position: "absolute", right: "21px", top: "15px" }} />
+            <IconMenu style={{ position: "absolute", right: "21px", top: "15px" }}/>
 
             <FlatButton
-              style={Object.assign(
-                {},
-                { height: "calc(100vh - 42px)", width: "100%", position: "absolute" },
-                { transition: menuIsLocked ? undefined : "opacity 1s linear" },
-                hideItems ? { opacity: 1 } : { opacity: 0, pointerEvents: "none" }
-              )}
+              style={{
+                ...{ height: "calc(100vh - 42px)", width: "100%", position: "absolute" },
+                ...{ transition: menuIsLocked ? undefined : "opacity 1s linear" },
+                ...(hideItems ? { opacity: 1 } : { opacity: 0, pointerEvents: "none" })
+              }}
               label=" "
               onClick={() => {
                 onToggleItemVisibility();
@@ -105,23 +104,22 @@ export class Sidebar extends React.Component<SidebarProps, SidebarState> {
             />
 
             <div
-              style={Object.assign(
-                {},
-                { width: "280px", transition: "all .2s" },
-                hideItems ? { opacity: 0, pointerEvents: "none" } : { opacity: 1 }
-              )}
+              style={{
+                ...{ width: "280px", transition: "all .2s" },
+                ...(hideItems ? { opacity: 0, pointerEvents: "none" } : { opacity: 1 })
+              }}
             >
               <IconButton
                 onClick={() => this.props.onLockMenuClicked()}
                 style={{ position: "absolute", right: "48px", top: "3px" }}
                 iconStyle={{ opacity: menuIsLocked ? "1" : ".2" }}
               >
-                <IconLockMenu />}
+                <IconLockMenu/>
               </IconButton>
 
               {menusNodes}
 
-              <br />
+              <br/>
             </div>
           </div>
         </React.Fragment>
