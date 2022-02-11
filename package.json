@@ -48,7 +48,7 @@
     "@typescript-eslint/parser": "^2.23.0",
     "@types/uuid": "3.4.3",
     "ace-editor-builds": "1.2.4",
-    "ajv": "6.5.4",
+    "ajv": "6.12.3",
     "ansi-styles": "^3.2.1",
     "chai": "4.1.2",
     "chalk": "^2.4.2",
