@@ -37,7 +37,7 @@
     "node-machine-id": "^1.1.12",
     "node-watch": "^0.6.4",
     "request": "2.88.2",
-    "simple-git": "^1.132.0",
+    "simple-git": "^3.3.0",
     "toml": "2.3.3",
     "tomlify-j0.4": "3.0.0",
     "user-home": "2.0.0"
